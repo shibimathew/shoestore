@@ -3,15 +3,15 @@ const env = require("dotenv").config();
 const nodemailer = require("nodemailer")
 const bcrypt = require("bcrypt")
 
-// const pageNotFound = async(req,res)=>{
-//     try{
-//         res.render("user/page-404.ejs")
-//     }catch (error) {
-//         res.redirect("/pageNotFound")
+const pageNotFound = async(req,res)=>{
+    try{
+        res.render("user/page-404.ejs")
+    }catch (error) {
+        res.redirect("/pageNotFound")
         
-//     }
+    }
    
-// };
+};
 
 
 const loadHomepage = async (req,res)=>{
@@ -31,19 +31,6 @@ const loadSignup = async (req,res)=>{
         res.status(500).send('Server Error');
     }
 }
-
-// const signup = async (req,res)=>{
-//     const {name,email,phone,password} = req.body; //destructuring
-//     try{
-//         const newUser = new User({name,email,phone,password});
-//         console.log(newUser); 
-//         await newUser.save();
-//         return res.redirect("/signup")
-//     } catch (error){
-//         console.error("Error for save user",error);
-//         res.status(500).send('Internal server error')
-//     }
-// }  
 
        function generateOtp(){
         return Math.floor(100000 + Math.random()*900000).toString();
@@ -77,7 +64,7 @@ const loadSignup = async (req,res)=>{
       const signup = async (req,res)=>{
           
           try{
-              const {email,name,password,cPassword} = req.body; //destructuring
+              const {name,email,phone,password,cPassword} = req.body; //destructuring
               if(password!==cPassword){
                 console.log("workr",cPassword);
                 
@@ -93,9 +80,9 @@ const loadSignup = async (req,res)=>{
             return res.json("email-error")
         }
         req.session.userOtp=otp;
-        req.session.userDate={email,password};
+        req.session.userData={name,phone,email,password};
 
-        // res.render("verify-otp");
+        res.render("user/verify-otp");
         console.log("OTP Sent",otp);
 
 
@@ -105,7 +92,69 @@ const loadSignup = async (req,res)=>{
 
        }
 }
+const securePassword = async(password)=>{
+    try {
 
+        const passwordHash = await bcrypt.hash(password,10)
+        return passwordHash;
+        
+    } catch (error) {
+        
+    }
+}
+const verifyOtp = async(req,res)=>{
+    try {
+        const {otp}=req.body;
+        console.log(otp);
+        if(otp===req.session.userOtp){
+            const user=req.session.userData
+            const passwordHash = await securePassword(user.password)
+
+            const saveUserData = new User({
+                name:user.name,
+                email:user.email,
+                phone:user.phone,
+                password:passwordHash
+            })
+            await saveUserData.save();
+            req.session.user = saveUserData._id;
+            res.json({success:true,redirectUrl:"/"})
+        }else{
+            res.status(400).json({success:false,message:"Invalid Otp, Please try again"})
+        }
+    } catch (error) {
+        console.error("Error Verifying OTP",error);
+        res.status(500).json({success:false,message:"An error occured"})
+        
+    }
+}
+
+
+const resendOtp = async (req,res)=>{
+    try {
+
+        const {email} = req.session.userData;
+        if(!email){
+            return res.status(400).json({success:false,message:"Email not found in session"})
+        }
+        const otp = generateOtp();
+        req.session.userOtp = otp;
+        
+        const emailSent = await sendVerificationEmail(email,otp);
+        if(emailSent){
+          console.log("Resend OTP:",otp);
+          res.status(200).json({success:true,message:"OTP Reset Successfully"})
+          
+        }else{
+            res.status(500).json({success:false,message:"Failed to resend OTP.please try again"})
+        }
+    } catch (error) {
+
+        console.error("Error resending OTP",error);
+        res.status(500).json({success:false,message:"Internal Server Error.Please try again"})
+        
+    }
+}
 
 // const loadShopping = async (req, res) => {
 //     try {
@@ -118,9 +167,11 @@ const loadSignup = async (req,res)=>{
 
 module.exports={
     loadHomepage,
-    // pageNotFound,
+    pageNotFound,
     loadSignup,
     signup,
+    verifyOtp,
+    resendOtp
     // loadShopping
     
 };

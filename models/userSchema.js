@@ -20,6 +20,7 @@ const userSchema = new Schema({
         sparse : true,// to set unique constrains since phone no is not there
         default : null
     },
+    
     googleId: {
         type : String,
         unique : true,
