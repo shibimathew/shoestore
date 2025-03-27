@@ -1,0 +1,163 @@
+<%- include('partials/header') %>
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title">Edit Category</h2>
+            <p>Update category information</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Category Details</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/admin/editCategory/<%=category._id%>" onsubmit="return handleEditSubmit(event)">
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Category Name</label>
+                            <input type="text" name="categoryName" value="<%=category.name%>" placeholder="Enter category name" class="form-control" id="product_name">
+                            <div id="name-error" class="error-message" style="color: red; display: none;"></div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Slug</label>
+                            <input type="text" placeholder="Enter URL slug" class="form-control" id="product_slug" value="<%=category.name.toLowerCase().replace(/\s+/g, '-')%>" readonly>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Parent Category</label>
+                            <select class="form-select" name="parent">
+                                <option value="">None</option>
+                                <% if(typeof cat !== 'undefined' && cat) { %>
+                                    <% cat.forEach((parentCat) => { %>
+                                        <option value="<%= parentCat._id %>" <%= parentCat._id.toString() === category.parent?.toString() ? 'selected' : '' %>>
+                                            <%= parentCat.name %>
+                                        </option>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea placeholder="Enter category description" name="description" class="form-control" rows="4"><%= category.description %></textarea>
+                            <div id="description-error" class="error-message" style="color: red; display: none;"></div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Visibility</label>
+                            <select class="form-select" name="isListed">
+                                <option value="true" <%= category.isListed ? 'selected' : '' %>>Active</option>
+                                <option value="false" <%= !category.isListed ? 'selected' : '' %>>Inactive</option>
+                            </select>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Category Image</h4>
+                </div>
+                <div class="card-body">
+                    <div class="input-upload">
+                        <img src="<%= category.image || '/assets/imgs/theme/upload.svg' %>" alt="Category Image">
+                        <input class="form-control" type="file" name="categoryImage" accept="image/*">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function handleEditSubmit(event) {
+        event.preventDefault();
+        if (!validateForm()) {
+            return false;
+        }
+
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                categoryName: formData.get('categoryName'),
+                description: formData.get('description'),
+                isListed: formData.get('isListed') === "true",
+                parent: formData.get('parent')
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.error);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Category updated successfully',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.href = '/admin/category';
+            });
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'An error occurred while updating the category'
+            });
+        });
+    }
+
+    function validateForm() {
+        clearErrorMessage();
+        const name = document.getElementsByName("categoryName")[0].value.trim();
+        const description = document.getElementsByName("description")[0].value.trim();
+        let isValid = true;
+
+        if (name === "") {
+            displayErrorMessage("name-error", "Please enter a category name");
+            isValid = false;
+        } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+            displayErrorMessage("name-error", "Category name should contain only alphabetic characters");
+            isValid = false;
+        }
+
+        if (description === "") {
+            displayErrorMessage("description-error", "Please enter a description");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function displayErrorMessage(elementId, message) {
+        const errorElement = document.getElementById(elementId);
+        errorElement.innerText = message;
+        errorElement.style.display = "block";
+    }
+
+    function clearErrorMessage() {
+        const errorElements = document.getElementsByClassName("error-message");
+        Array.from(errorElements).forEach((element) => {
+            element.innerText = "";
+            element.style.display = "none";
+        });
+    }
+</script>
+
+<%- include('partials/footer') %>
+            

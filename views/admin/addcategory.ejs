@@ -1,0 +1,160 @@
+<%- include('partials/header') %>
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title">Add Category</h2>
+            <p>Create a new category for your products</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Category Details</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Category Name</label>
+                            <input type="text" placeholder="Enter category name" class="form-control" id="product_name" name="name">
+                            <div id="name-error" class="error-message" style="color: red; display: none;"></div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Slug</label>
+                            <input type="text" placeholder="Enter URL slug" class="form-control" id="product_slug" name="slug">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Parent Category</label>
+                            <select class="form-select" name="parent">
+                                <option value="">None</option>
+                                <% if(typeof cat !== 'undefined' && cat) { %>
+                                    <% cat.forEach((category) => { %>
+                                        <option value="<%= category._id %>"><%= category.name %></option>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea placeholder="Enter category description" class="form-control" rows="4" id="descriptionId" name="description"></textarea>
+                            <div id="description-error" class="error-message" style="color: red; display: none;"></div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Visibility</label>
+                            <select class="form-select" name="isListed">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Create Category</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Category Image</h4>
+                </div>
+                <div class="card-body">
+                    <div class="input-upload">
+                        <img src="/assets/imgs/theme/upload.svg" alt="">
+                        <input class="form-control" type="file" name="categoryImage" accept="image/*">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        if (!validateForm()) {
+            return false;
+        }
+
+        const formData = {
+            name: document.getElementsByName("name")[0].value,
+            description: document.getElementById("descriptionId").value,
+            isListed: document.getElementsByName("isListed")[0].value === "true"
+        };
+
+        fetch('/admin/addCategory', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.error);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Category added successfully',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.href = '/admin/category';
+            });
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'An error occurred while adding the category'
+            });
+        });
+    }
+
+    function validateForm() {
+        clearErrorMessage();
+        const name = document.getElementsByName("name")[0].value.trim();
+        const description = document.getElementById("descriptionId").value.trim();
+        let isValid = true;
+
+        if (name === "") {
+            displayErrorMessage("name-error", "Please enter a category name");
+            isValid = false;
+        } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+            displayErrorMessage("name-error", "Category name should contain only alphabetic characters");
+            isValid = false;
+        }
+
+        if (description === "") {
+            displayErrorMessage("description-error", "Please enter a description");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function displayErrorMessage(elementId, message) {
+        const errorElement = document.getElementById(elementId);
+        errorElement.innerText = message;
+        errorElement.style.display = "block";
+    }
+
+    function clearErrorMessage() {
+        const errorElements = document.getElementsByClassName("error-message");
+        Array.from(errorElements).forEach((element) => {
+            element.innerText = "";
+            element.style.display = "none";
+        });
+    }
+</script>
+
+<%- include('partials/footer') %>
+
+   
