@@ -28,7 +28,14 @@ router.get('/unlistCategory',adminAuth,categoryController.getUnlistCategory);
 
 
 // //product management
-// router.get("/addProducts",adminAuth,productController.getProductAdd);
+router.get("/products", adminAuth, productController.getProducts);
+router.get("/addProducts", adminAuth, productController.getProductAdd);
+router.post("/addProducts", adminAuth, productController.addProduct);
+router.get("/editProduct/:id", adminAuth, productController.getEditProduct);
+router.post("/editProduct/:id", adminAuth, productController.editProduct);
+router.get("/listProduct", adminAuth, productController.listProduct);
+router.get("/unlistProduct", adminAuth, productController.unlistProduct);
+router.get("/deleteProduct", adminAuth, productController.deleteProduct);
 
 
 module.exports = router;

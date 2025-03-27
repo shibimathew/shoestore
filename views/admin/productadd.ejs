@@ -1,0 +1,604 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Shoestore Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="assets2/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/assets2/css/main.css" rel="stylesheet"/>
+    <style>
+        /* General Styles */
+        body {
+            background-color: #f5f5f5;
+        }
+        .main-wrap {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+        }
+        .content-main {
+            padding: 20px;
+        }
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .content-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+        .btn-md {
+            padding: 8px 20px;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            background-color: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+        }
+        .card-header h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Form Styles */
+        .form-label {
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        .form-control {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            transition: border-color 0.2s ease;
+        }
+        .form-control:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 0.2rem rgba(74,144,226,0.25);
+        }
+        .form-select {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            background-color: #fff;
+        }
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Image Upload Styles */
+        .input-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .input-upload:hover {
+            border-color: #4a90e2;
+            background: #f0f7ff;
+        }
+        .input-upload img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .image-preview-container {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 10px;
+            display: none;
+            position: relative;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .cropper-container {
+            width: 100% !important;
+            height: 300px !important;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 4px;
+        }
+
+        /* Variants Section */
+        .variant-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .variant-input {
+            text-align: center;
+        }
+        .variant-input input {
+            text-align: center;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 991px) {
+            .main-wrap {
+                margin-left: 0;
+            }
+            .content-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 15px;
+            }
+            .variant-inputs {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Error Message Styles */
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background-color: #4a90e2;
+            border-color: #4a90e2;
+        }
+        .btn-primary:hover {
+            background-color: #357abd;
+            border-color: #357abd;
+        }
+
+        /* Price Input Styles */
+        .price-input {
+            position: relative;
+        }
+        .price-input::before {
+            content: "$";
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+        .price-input input {
+            padding-left: 25px;
+        }
+    </style>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="/admin/dashboard" class="brand-wrap">
+                <img src="assets2/imgs/theme/logo.svg" class="logo" alt="Shoestore Dashboard">
+            </a>
+            <div>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+            </div>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="menu-item active">
+                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_cart"></i>
+                        <span class="text">Products</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/customers"> <i class="icon material-icons md-store"></i>
+                        <span class="text">Customers</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-add_box"></i>
+                        <span class="text">Orders</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/coupons"> <i class="icon material-icons md-monetization_on"></i>
+                        <span class="text">Coupons</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
+                        <span class="text">Refund/Return</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/reviews"> <i class="icon material-icons md-comment"></i>
+                        <span class="text">Reviews</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/reports"> <i class="icon material-icons md-stars"></i>
+                        <span class="text">Sales Report</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/login"> <i class="icon material-icons md-exit_to_app"></i>
+                        <span class="text">Sign Out</span>
+                    </a>
+                </li>
+            </ul>
+            <br>
+            <br>
+        </nav>
+    </aside>
+
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iphone">
+                        <option value="Ahmed Hassan">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="/assets/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="row">
+                <div class="col-9">
+                    <form method="post" action="/admin/addProducts" enctype="multipart/form-data" onsubmit="return validateForm()">
+                        <div class="content-header">
+                            <h2 class="content-title">Add New Product</h2>
+                            <div>
+                                <button class="btn btn-md rounded font-sm hover-up" type="submit">Publish</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Basic</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-4">
+                                            <label for="product_name" class="form-label">Product Title</label>
+                                            <input type="text" placeholder="Type here" class="form-control" id="product_name" name="productName" required>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Category</label>
+                                            <select class="form-select" name="category" required>
+                                                <option value="">Select a category</option>
+                                                <% categories.forEach(category => { %>
+                                                    <option value="<%= category._id %>"><%= category.name %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Short description</label>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="description" required></textarea>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Full description</label>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="fullDescription" required></textarea>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Specifications</label>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="specifications"></textarea>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="mb-4">
+                                                    <label class="form-label">Regular price</label>
+                                                    <div class="row gx-2">
+                                                        <input placeholder="$" type="number" class="form-control" name="regularPrice" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="mb-4">
+                                                    <label class="form-label">Offer Price</label>
+                                                    <input placeholder="$" type="number" class="form-control" name="salePrice" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Quantity</label>
+                                            <input type="number" placeholder="Enter quantity" class="form-control" name="quantity" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Variants</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <label class="form-label">Size</label>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][1]" placeholder="1" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][2]" placeholder="2" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][3]" placeholder="3" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][4]" placeholder="4" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][5]" placeholder="5" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][6]" placeholder="6" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][7]" placeholder="7" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][8]" placeholder="8" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][9]" placeholder="9" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][10]" placeholder="10" min="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Media</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="input-upload">
+                                            <img src="/assets/imgs/theme/upload.svg" id="croppedImg1" alt="">
+                                            <div class="image-preview-container" id="preview1">
+                                                <img id="imgView1" src="" alt="">
+                                            </div>
+                                            <input class="form-control" type="file" name="images" id="input1"
+                                            accept="image/png, image/jpeg, image/jpg"
+                                            onchange="viewImage(event,1)">
+                                            <div id="image-error" class="error-message"></div>
+                                            <button type="button" id="saveButton1" class="btn-sm btn-primary">Save</button>
+                                            <input type="hidden" name="croppedImages" id="croppedImage1">
+                                        </div>
+                                        <div class="input-upload">
+                                            <img src="/assets/imgs/theme/upload.svg" id="croppedImg2" alt="">
+                                            <div class="image-preview-container" id="preview2">
+                                                <img id="imgView2" src="" alt="">
+                                            </div>
+                                            <input class="form-control" type="file" name="images" id="input2"
+                                            accept="image/png, image/jpeg, image/jpg"
+                                            onchange="viewImage(event,2)">
+                                            <div id="image-error" class="error-message"></div>
+                                            <button type="button" id="saveButton2" class="btn-sm btn-primary">Save</button>
+                                            <input type="hidden" name="croppedImages" id="croppedImage2">
+                                        </div>
+                                        <div class="input-upload">
+                                            <img src="/assets/imgs/theme/upload.svg" id="croppedImg3" alt="">
+                                            <div class="image-preview-container" id="preview3">
+                                                <img id="imgView3" src="" alt="">
+                                            </div>
+                                            <input class="form-control" type="file" name="images" id="input3"
+                                            accept="image/png, image/jpeg, image/jpg"
+                                            onchange="viewImage(event,3)">
+                                            <div id="image-error" class="error-message"></div>
+                                            <button type="button" id="saveButton3" class="btn-sm btn-primary">Save</button>
+                                            <input type="hidden" name="croppedImages" id="croppedImage3">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <script>
+let cropperInstances = {};
+
+function validateForm() {
+    const productName = document.querySelector('input[name="productName"]').value;
+    const description = document.querySelector('textarea[name="description"]').value;
+    const regularPrice = document.querySelector('input[name="regularPrice"]').value;
+    const salePrice = document.querySelector('input[name="salePrice"]').value;
+    const quantity = document.querySelector('input[name="quantity"]').value;
+    const category = document.querySelector('select[name="category"]').value;
+
+    if (!productName || !description || !regularPrice || !salePrice || !quantity || !category) {
+        alert('Please fill in all required fields');
+        return false;
+    }
+
+    if (parseFloat(regularPrice) <= parseFloat(salePrice)) {
+        alert('Regular price must be greater than sale price');
+        return false;
+    }
+
+    // Check if at least one image is uploaded
+    const hasImages = document.querySelectorAll('input[name="images"]').some(input => input.files.length > 0);
+    if (!hasImages) {
+        alert('Please upload at least one image');
+        return false;
+    }
+
+    return true;
+}
+
+function viewImage(event, index) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const image = document.getElementById('imgView' + index);
+        const preview = document.getElementById('preview' + index);
+        const croppedImg = document.getElementById('croppedImg' + index);
+        
+        // Hide cropped image and show preview
+        croppedImg.style.display = 'none';
+        preview.style.display = 'block';
+        
+        // Set image source
+        image.src = e.target.result;
+
+        // Wait for image to load
+        image.onload = function() {
+            // Destroy existing cropper if it exists
+            if (cropperInstances[index]) {
+                cropperInstances[index].destroy();
+            }
+
+            // Create new cropper instance
+            cropperInstances[index] = new Cropper(image, {
+                aspectRatio: 1,
+                viewMode: 1,
+                guides: true,
+                background: false,
+                autoCropArea: 1,
+                zoomable: true,
+                minCropBoxWidth: 200,
+                minCropBoxHeight: 200,
+                ready() {
+                    // Ensure the cropper is properly initialized
+                    this.cropper.setData({
+                        width: 440,
+                        height: 440
+                    });
+                }
+            });
+        };
+    };
+    reader.readAsDataURL(file);
+}
+
+// Add save button functionality
+document.querySelectorAll('[id^="saveButton"]').forEach(button => {
+    button.addEventListener('click', function() {
+        const index = this.id.replace('saveButton', '');
+        if (cropperInstances[index]) {
+            const canvas = cropperInstances[index].getCroppedCanvas({
+                width: 440,
+                height: 440
+            });
+            const croppedImage = document.getElementById('croppedImg' + index);
+            const preview = document.getElementById('preview' + index);
+            const hiddenInput = document.getElementById('croppedImage' + index);
+            
+            // Show cropped image and hide preview
+            croppedImage.src = canvas.toDataURL();
+            croppedImage.style.display = 'block';
+            preview.style.display = 'none';
+            
+            // Store the cropped image data
+            hiddenInput.value = canvas.toDataURL();
+            
+            // Convert canvas to blob and update file input
+            canvas.toBlob(blob => {
+                const file = new File([blob], `cropped-${index}.jpg`, { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                document.getElementById(`input${index}`).files = dataTransfer.files;
+            });
+        }
+    });
+});
+</script>
