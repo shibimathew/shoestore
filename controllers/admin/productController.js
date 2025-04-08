@@ -44,17 +44,20 @@ const getProductAdd = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, stock, category } = req.body;
+        const { productName, description, regularPrice, salePrice ,quantity , category } = req.body;
+        console.log(req.body)
+        // console.log(req.files)
         const images = req.files.map(file => file.filename);
 
+        console.log(req.body);
         const newProduct = new Product({
-            name,
+            productName,
             description,
-            price,
-            stock,
+            regularPrice,
+            salePrice,
+            quantity,
             category,
             images,
-            isListed: true
         });
 
         await newProduct.save();
@@ -109,6 +112,7 @@ const editProduct = async (req, res) => {
 };
 
 const listProduct = async (req, res) => {
+    console.log("byyy")
     try {
         const productId = req.query.productId;
         await Product.findByIdAndUpdate(productId, { isListed: true });
@@ -126,6 +130,7 @@ const listProduct = async (req, res) => {
 };
 
 const unlistProduct = async (req, res) => {
+    console.log('Hyyy')
     try {
         const productId = req.query.productId;
         await Product.findByIdAndUpdate(productId, { isListed: false });

@@ -1,0 +1,216 @@
+<%- include('../partials/user/header.ejs') %>
+
+<section class="content-main d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card card-login shadow-lg border-0" style="max-width: 500px; width: 100%;">
+        <div class="card-body p-5">
+            <h3 class="card-title mb-3 text-center text-primary">🔐 OTP Verification</h3>
+            <p class="text-center text-muted mb-4">Enter the 6-digit OTP sent to your email</p>
+            
+            <form onsubmit= "return validateOtpForm()" >
+                <!-- method="POST"action="/forgot-email-valid"  id="forgotPasswordForm" -->
+                <div class="d-flex justify-content-center gap-2 mb-4">
+                    <% for (let i = 1; i <= 6; i++) { %>
+                        <input class="form-control text-center border border-secondary fw-bold fs-4" type="text" maxlength="1" name="otp<%= i %>" id="otp<%= i %>" required style="width: 50px; height: 60px;">
+                    <% } %>
+                </div> 
+
+                <div class="mb-3 text-center">
+                    <p id="timer" class="text-danger small">⏳ Resend OTP in <span id="countdown">2:00</span></p>
+                </div>
+                          
+                
+                <%if(locals.message && message.length > 0){%>
+                    <div class ="alert alert-danger mt-3">
+                      <%=message%>
+                    </div>
+                    <%}%>
+                <div class="mb-4">
+                    <button type="submit" class="btn btn-success w-100 shadow-sm">✅ Verify OTP</button>
+                </div> 
+            </form>
+
+            <p class="text-center small text-muted mb-2">Didn't receive the OTP?</p>
+            <div class="d-grid gap-2 mb-4">
+                <button class="btn btn-outline-primary w-100" id="resendOtp" onclick="resendOTP()" disabled>🔁 Resend OTP</button>
+            </div>
+            
+
+            <p class="text-center mb-0 text-muted">
+                🔙 Back to <a href="/signup" class="text-decoration-none">Signup</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+<script>
+    
+
+// let otpTimerInterval;
+// let timer = 60;
+
+// function updateTimerColor(percentage){
+//     const timerElement = document.getElementById('countdown');
+//     if(percentage>50){
+//         timerElement.style.backgroundColor ='#28a745';
+//     }else if(percentage>25){
+//         timerElement.style.backgroundColor = '#ffc107';
+//     }else{
+//         timerElement.style.backgroundColor = '#dc3545'
+//     }
+// }
+// function startOtpTimer(){
+//     const timeElement = document.getElementById('countdown');
+//     otpTimerInterval= setInterval(function(){
+//         const minutes = Math.floor(timer/60);
+//         const seconds = timer%60;
+//         timerElement.textContent = `${minutes}:${seconds < 10?'0':''}${seconds}`;
+//         updateTimerColor((timer/60)*100);
+//         if(--timer <0){
+//             clearInterval(otpTimerInterval);
+//             timeElement.textContent = 'Expired';
+//             timeElement.style.backgroundColor = 'red';
+
+//         }
+//     },1000);
+// }
+
+// initializeOtpTimer();
+
+// function  initializeOtpTimer(){
+//     clearInterval(otpTimerInterval);
+//     timer = 60;
+//     startOtpTimer();
+
+// 
+let otpTimerInterval;
+let timer = 120;
+
+function updateTimerColor(percentage) {
+    const countdownElement = document.getElementById('countdown');
+    if (percentage > 50) {
+        countdownElement.style.color = '#28a745';
+    } else if (percentage > 25) {
+        countdownElement.style.color = '#ffc107';
+    } else {
+        countdownElement.style.color = '#dc3545';
+    }
+}
+
+function startOtpTimer() {
+    const countdownElement = document.getElementById('countdown');
+    const resendBtn = document.getElementById('resendOtp');
+
+    resendBtn.disabled = true;
+
+    otpTimerInterval = setInterval(function () {
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+        countdownElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        updateTimerColor((timer / 120) * 100);
+
+        if (--timer < 0) {
+            clearInterval(otpTimerInterval);
+            countdownElement.textContent = '0:00';
+            resendBtn.disabled = false;
+        }
+    }, 1000);
+}
+
+function initializeOtpTimer() {
+    clearInterval(otpTimerInterval);
+    timer = 10;
+    startOtpTimer();
+}
+
+initializeOtpTimer();
+
+
+function validateOtpForm() {
+    let otpInput = '';
+    for (let i = 1; i <= 6; i++) {
+        const val = document.getElementById('otp' + i).value;
+        if (!val) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Incomplete OTP',
+                text: 'Please enter all 6 digits of the OTP.'
+            });
+            return false;
+        }
+        otpInput += val;
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: '/verify-passForgot-otp',
+        data: { otp: otpInput },
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'OTP Verified Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = response.redirectUrl;
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid OTP',
+                    text: response.message
+                });
+            }
+        },
+        error: function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to verify OTP. Please try again.'
+            });
+        }
+    });
+
+    return false;
+}
+
+
+function resendOTP(){
+    clearInterval(otpTimerInterval);
+    timer = 10;
+    startOtpTimer();
+    $.ajax({   // to send otp to backend
+
+        type:'POST',
+        url:'/resend-forgot-otp',
+        success: function (response){
+            if(response.success){
+                Swal.fire({
+                    icon:'success',
+                    title:'Resend OTP Successfull',
+                    showConfirmButton:false,
+                    timer:1500,
+                })
+            }else{
+                Swal.fire({
+                    icon:'error',
+                    title:'Error',
+                    text:'Failed to resend OTP. Please try again'
+                })
+            }
+        },
+        error: function(){
+            Swal.fire({
+                icon:'error',
+                title:"Error",
+                text: 'Failed to send OTP . Please try again'
+            })
+        }
+    })
+}
+
+</script>
+
+
+
+// <%- include('../partials/user/footer.ejs') %>

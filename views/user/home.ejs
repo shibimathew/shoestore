@@ -1,7 +1,39 @@
 <%- include('../partials/user/header.ejs') %>
 
     <!-- Modal -->
-   
+
+    <style>
+        .dropdown{
+            position:relative;
+            display:inline-block;
+        }
+        .dropdown-content{
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgb(0,0,0,0,2);
+            z-index: 1000;
+            right: 0;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+        }
+        .dropdown-content a:hover{
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content{
+            display:block;
+        }
+        .header {
+            position: relative;
+            z-index: 500;
+        }
+    </style>
 
     <!-- Quick view -->
     <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
@@ -172,7 +204,18 @@
                                         <li><a href="#"><img src="assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                     </ul>
                                 </li>
-                                <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
+                                  
+                                <% if (locals.user) { %>  <!-- Fixed locals.user issue -->
+                                    <div class="dropdown">
+                                        <a href="#" class="sign-in-link"><%= locals.user.name %></a>  <!-- Fixed locals.user -->
+                                        <div class="dropdown-content">
+                                            <a href="/userProfile">Profile</a>
+                                            <a href="/logout">Logout</a>
+                                        </div>
+                                    </div>
+                                <% } else { %>
+                                    <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
+                                <% } %>
                             </ul>
                         </div>
                     </div>
@@ -680,17 +723,7 @@
                 <!--End tab-content-->
             </div>
         </section>
-        <!-- <section class="banner-2 section-padding pb-0">
-            <div class="container">
-                <div class="banner-img banner-big wow fadeIn animated f-none">
-                    <img src="assets2/imgs/banner/LUFFY.jpg" alt="">
-                    <div class="banner-text d-md-block d-none">
-                        <h4 class="mb-15 mt-40 text-brand">Repair Services</h4>
-                        <h1 class="fw-600 mb-20">We're an Apple <br>Authorised Service Provider</h1>
-                        <a href="shop-grid-right.html" class="btn">Learn More <i class="fi-rs-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
+
         </section> -->
         <section class="popular-categories section-padding mt-15 mb-25">
             <div class="container wow fadeIn animated">
@@ -716,55 +749,13 @@
                             </figure>
                             <h5><a href="shop-grid-right.html">kids</a></h5>
                         </div>
-                        <!-- <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="shop-grid-right.html"><img src="assets/imgs/shop/hoodie.jpeg" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">Hoodies and Sweatshirts</a></h5>
-                        </div>
-                        <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="shop-grid-right.html"><img src="assets/imgs/shop/desktoppic.jpeg" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">Desktop setup</a></h5>
-                        </div> -->
+                        
                     </div>
                 </div>
             </div>
         </section>
         
-        <!-- <section class="section-padding">
-            <div class="container">
-                <h3 class="section-title mb-20 wow fadeIn animated"><span>Featured</span> Animes</h3>
-                <div class="carausel-6-columns-cover position-relative wow fadeIn animated">
-                    <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-3-arrows"></div>
-                    <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets/imgs/banner/aot-logo.png" alt="">
-                        </div>
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets/imgs/banner/ds-logo.png" alt="">
-                        </div>
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets/imgs/banner/hxh-logo.png" alt="">
-                        </div>
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets/imgs/banner/onepiece.png" alt="">
-                        </div>
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets/imgs/banner/bleach-logo.png" alt="">
-                        </div>
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets/imgs/banner/db-logo.png" alt="">
-                        </div>
-                        <!-- <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets/imgs/banner/brand-3.png" alt="">
-                        </div> -->
-                    <!-- </div>
-                </div>
-            </div>
-        </section> --> -->
-              
+       
     </main>
 
 

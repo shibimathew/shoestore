@@ -13,7 +13,7 @@ const productSchema = new Schema({
     },
     brand: {
         type : String,
-        required : true,
+        required : false,
     },
     category: {
         type : Schema.Types.ObjectId,
@@ -26,7 +26,7 @@ const productSchema = new Schema({
     },
     salePrice: {
         type : Number,
-        required : true,
+        required : false,
     },
     productOffer: {
         type : Number,
@@ -36,17 +36,21 @@ const productSchema = new Schema({
         type : Number,
         default : 0
     },
+    quantity : {
+        type :  Number,
+        required : true
+    },
     color: {
         type : String,
-        required : true,   
+        required : false,   
     },
-    productImage:{
+    images:{
         type : [String],// multiple image so array
         required : true,
     },
-    isBlocked: {
+    isListed: {
         type : Boolean,
-        default : false
+        default : true
     },
     status: {
         type : String,

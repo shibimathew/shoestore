@@ -332,7 +332,7 @@
 <body>
     <main>
         <section class="pt-150 pb-150">
-            <div class="container">
+            <!-- <div class="container">
                 <div class="row">
                     <div class="col-lg-10 m-auto">
                         <div class="row">
@@ -365,7 +365,7 @@
                                         </form>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="col-lg-1"></div>
 
                             <div class="col-lg-6">
@@ -398,6 +398,11 @@
                                                 <input type="password" name="cPassword" id="cPassword" placeholder="Confirm password">
                                                 <div id="error5" style="color : red" class="error-message"></div>
                                             </div>
+                                            <%if(locals.message && message.length>0){%>
+                                                <div class="alert alert-danger text-center">
+                                                    <%=message%>
+                                                </div>
+                                            <%}%>
                                             <div class="login_footer form-group">
                                                 <div class="chek-form">
                                                     <div class="custome-checkbox">
@@ -418,7 +423,7 @@
                                             <li><a href="#" class="btn btn-facebook hover-up mb-lg-0 mb-sm-4">Login With Facebook</a></li>
                                             <li><a href="/auth/google" class="btn btn-google hover-up">Login With Google</a></li>
                                         </ul>
-                                        <div class="text-muted text-center">Already have an account? <a href="#">Sign in now</a></div>
+                                        <div class="text-muted text-center">Already have an account? <a href="/login">Login</a></div>
                                     </div>
                                 </div>
                             </div>  

@@ -16,7 +16,14 @@ const pageNotFound = async(req,res)=>{
 
 const loadHomepage = async (req,res)=>{
     try{
-        return res.render('user/home');
+        const user = req.session.user;
+        if(user){
+            const userData = await User.findOne({_id:user._id});
+            res.render("user/home",{user:userData})
+        }else{
+            return res.render('user/home');
+        }
+        
     }catch (error){
         console.log("Home page not found");
         res.status(404).send("Server error")
@@ -154,16 +161,133 @@ const resendOtp = async (req,res)=>{
         res.status(500).json({success:false,message:"Internal Server Error.Please try again"})
         
     }
+};
+
+
+const loadLogin = async (req,res)=>{
+    try {
+        if(!req.session.user){
+            return res.render('user/login');
+        }else{
+            res.redirect("/")
+        }
+    } catch (error) {
+        res.redirect("pageNotFound");
+        
+    }
+};
+
+
+const login = async (req,res)=>{
+    try {
+        const {email,password} = req.body;
+
+        const findUser = await User.findOne({isAdmin:0,email:email});
+        if(!findUser){
+            return res.render("user/login",{message:"User not found"})
+        }
+        if(findUser.isBlocked){
+            return res.render("user/login",{message:"User is blocked by admin"})
+        }
+
+        const  passwordMatch = await bcrypt.compare(password,findUser.password);
+        if(!passwordMatch){
+            return res.render("user/login",{message:"Incorrect Password"})
+        }
+
+        req.session.user = findUser;
+        res.redirect("/")
+    } catch (error) {
+        console.error("login error",error)
+        res.render("user/login",{message:"login failed. Please try again later"})
+        
+    }
+
+};
+
+
+const logout = async (req,res) =>{
+    try {
+        req.session.destroy((err)=>{
+            if(err){
+                console.log("Session destruction error",err.message);
+                return res.redirect("/pageNotFound")
+            }
+            return res.redirect("user/login")
+        })
+        
+    } catch (error) {
+        console.log("Logout error",error);
+        res.redirect("/pageNotFound")
+    }
 }
 
-// const loadShopping = async (req, res) => {
+// const loadShoppingPage = async (req, res) => {
 //     try {
 //         return res.render('shop'); // Ensure shop.ejs exists
 //     } catch (error) {
-//         console.log("Error loading shop page:", error);
-//         res.status(500).send('Server Error');
+//        res.redirect("/pageNotFound")
 //     }
 // };
+const loadShoppingPage = async(req,res)=>{
+    try {
+        const user = req.session.user;
+        const userData = await User.findOne({_id:user});
+        const categories = await Category.find({isListed:true});
+        
+        // Get sort parameter from query
+        const sortOption = req.query.sort;
+        const searchQuery = req.query.query || "";
+        
+        // Define sort object based on sort option
+        let sortObject = { createdAt: -1 }; // Default sort
+        
+        if (sortOption === 'price_low') {
+            sortObject = { salePrice: 1 }; // Sort by price low to high
+        } else if (sortOption === 'price_high') {
+            sortObject = { salePrice: -1 }; // Sort by price high to low
+        }
+        
+        let query = {
+            isBlocked: false,
+            category: {$in: categories.map(cat => cat._id)}
+        };
+
+        // Add search query if it exists
+        if (searchQuery) {
+            query.productName = { $regex: ".*" + searchQuery + ".*", $options: "i" };
+        }
+        
+        const products = await Product.find(query)
+        .populate('category')
+        .sort(sortObject)
+        .lean();
+
+        // Pagination setup
+        const page = parseInt(req.query.page) || 1;
+        const itemsPerPage = 6;
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const totalPages = Math.ceil(products.length / itemsPerPage);
+        const currentProduct = products.slice(startIndex, endIndex);
+
+        res.render("shop", {
+            user: userData,
+            products: currentProduct,
+            category: categories,
+            totalProducts: products.length,
+            currentPage: page,
+            totalPages: totalPages,
+            selectedCategory: null,
+            sortOption: sortOption, // Pass sort option to view
+            searchQuery: searchQuery // Pass search query to view
+        });
+
+    } catch (error) {
+        console.error("Error in loadShoppingPage:", error);
+        res.redirect("/pageNotFound");
+    }
+}
 
 module.exports={
     loadHomepage,
@@ -171,7 +295,10 @@ module.exports={
     loadSignup,
     signup,
     verifyOtp,
-    resendOtp
-    // loadShopping
+    resendOtp,
+    loadLogin,
+    login,
+    logout,
+    loadShoppingPage,
     
 };

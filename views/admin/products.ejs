@@ -84,7 +84,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="/admin/customers"> <i class="icon material-icons md-store"></i>
+                    <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-store"></i>
                         <span class="text">Customers</span>
                     </a>
                 </li>
@@ -221,10 +221,10 @@
                                         </div>
                                     </td>
                                     <td><%= product._id %></td>
-                                    <td><b><%= product.name %></b></td>
-                                    <td><%= product.category %></td>
-                                    <td>₹<%= product.price %></td>
-                                    <td><%= product.stock %></td>
+                                    <td><b><%= product.productName %></b></td>
+                                    <td><%= product.category.name %></td>
+                                    <td>₹<%= product.salePrice %></td>
+                                    <td><%= product.quantity %></td>
                                     <td>
                                         <span class="<%= product.isListed ? 'text-success' : 'text-danger' %>">
                                             <%= product.isListed ? 'Active' : 'Inactive' %>
@@ -236,11 +236,11 @@
                                         </a>
                                         <% if (product.isListed) { %>
                                             <button onclick="toggleProductStatus('<%= product._id %>', false)" class="btn btn-warning btn-sm me-2">
-                                                <i class="material-icons md-block"></i> Unlist
+                                                <i class="material-icons md-block"></i>  Block
                                             </button>
                                         <% } else { %>
                                             <button onclick="toggleProductStatus('<%= product._id %>', true)" class="btn btn-success btn-sm me-2">
-                                                <i class="material-icons md-check_circle"></i> List
+                                                <i class="material-icons md-check_circle"></i> Unblock
                                             </button>
                                         <% } %>
                                         <button onclick="deleteProduct('<%= product._id %>')" class="btn btn-danger btn-sm">
@@ -283,17 +283,19 @@
             });
         });
 
-        function toggleProductStatus(productId, isActive) {
+      async function toggleProductStatus(productId, isActive) {
+           try {
+            
             const url = isActive ? '/admin/listProduct' : '/admin/unlistProduct';
-            fetch(`${url}?productId=${productId}`, {
+            const response = await fetch(`${url}?productId=${productId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+            const data = await response.json()
+            
+                if (response.ok) {
                     Swal.fire({
                         title: 'Success!',
                         text: data.message,
@@ -310,16 +312,15 @@
                         confirmButtonText: 'OK'
                     });
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+           } catch (error) {
+            console.error('Error:', error);
                 Swal.fire({
                     title: 'Error!',
                     text: 'An error occurred while updating product status',
                     icon: 'error',
                     confirmButtonText: 'OK'
                 });
-            });
+           }
         }
 
         function deleteProduct(productId) {
