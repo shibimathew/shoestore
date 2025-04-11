@@ -205,16 +205,21 @@
                                     </ul>
                                 </li>
                                   
-                                <% if (locals.user) { %>  <!-- Fixed locals.user issue -->
+                                <% if (locals.user) { %>
                                     <div class="dropdown">
-                                        <a href="#" class="sign-in-link"><%= locals.user.name %></a>  <!-- Fixed locals.user -->
+                                        <a href="#" class="sign-in-link"><%= locals.user.name %></a>
                                         <div class="dropdown-content">
                                             <a href="/userProfile">Profile</a>
                                             <a href="/logout">Logout</a>
                                         </div>
                                     </div>
                                 <% } else { %>
-                                    <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
+                                    <li>
+                                        <div class="d-flex gap-2">
+                                            <a href="/login" class="btn btn-sm btn-outline-primary">Login</a>
+                                            <a href="/signup" class="btn btn-sm btn-primary">Sign Up</a>
+                                        </div>
+                                    </li>
                                 <% } %>
                             </ul>
                         </div>

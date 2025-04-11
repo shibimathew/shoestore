@@ -1,12 +1,18 @@
 const User = require("../models/userSchema");
 const userAuth = (req,res,next)=>{
     if(req.session.user){
-        User.findById(req.ression.user)
+        User.findById(req.session.user)
         .then(data=>{
             if(data && !data.isBlocked){
                 next()
             }else{
-                res.redirect("/login")
+                // If user is blocked, destroy the session and redirect to login
+                req.session.destroy((err) => {
+                    if(err) {
+                        console.error("Error destroying session:", err);
+                    }
+                    res.redirect("/login?message=Your account has been blocked. Please contact support.");
+                });
             }
         })
         .catch(error=>{

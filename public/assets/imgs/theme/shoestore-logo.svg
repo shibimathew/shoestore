@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="50" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Shape -->
+    <rect x="0" y="0" width="200" height="50" rx="8" fill="#ffffff" opacity="0.9"/>
+    
+    <!-- Shoe Icon -->
+    <path d="M30 15 C25 15, 20 18, 18 22 C16 26, 15 30, 20 33 C25 36, 35 35, 40 32 C45 29, 42 25, 40 22 C38 19, 35 15, 30 15" 
+          fill="#1e918b" stroke="#1e918b" stroke-width="1"/>
+    
+    <!-- Text: ShoeStore -->
+    <text x="55" y="33" font-family="Arial, sans-serif" font-size="24" font-weight="bold">
+        <tspan fill="#1e918b">Shoe</tspan>
+        <tspan fill="#333333">Store</tspan>
+    </text>
+</svg> 

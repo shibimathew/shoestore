@@ -60,6 +60,15 @@ const sendVerificationEmail = async (email,otp)=>{
 }
 
 
+
+const securePassword = async (password)=>{
+    try {
+        const passwordHash = await bcrypt.hash(password,10);
+        return passwordHash;
+    } catch (error) {
+        
+    }
+}
 const getForgotPassPage = async (req,res)=>{
     try {
         res.render("user/forgot-password");
@@ -140,6 +149,45 @@ const resendOtp = async (req,res)=>{
 }
 
 
+const postNewPassword = async (req,res)=>{
+    try {
+        const {newPass1,newPass2}= req.body;
+        const email = req.session.email;
+        if(newPass1===newPass2){
+            const passwordHash = await securePassword(newPass1);
+            await User.updateOne(
+                {email:email},
+                {$set:{password:passwordHash}}
+            );
+            // Clear the session data
+            req.session.destroy((err) => {
+                if(err) {
+                    console.error("Error destroying session:", err);
+                }
+                // Send success response with redirect URL
+                res.json({
+                    success: true,
+                    message: "Password changed successfully!",
+                    redirectUrl: "/login"
+                });
+            });
+        }else{
+            res.json({
+                success: false,
+                message: "Passwords do not match"
+            });
+        }
+    } catch (error) {
+        console.error("Error in postNewPassword:", error);
+        res.json({
+            success: false,
+            message: "An error occurred while changing password"
+        });
+    }
+}
+
+
+
 
 
 
@@ -148,5 +196,6 @@ module.exports = {
     forgotEmailValid,
     verifyForgotPassOtp,
     getResetPassPage,
-    resendOtp
+    resendOtp,
+    postNewPassword
 };

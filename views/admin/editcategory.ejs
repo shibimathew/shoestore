@@ -14,7 +14,7 @@
                     <h4>Category Details</h4>
                 </div>
                 <div class="card-body">
-                    <form method="post" action="/admin/editCategory/<%=category._id%>" onsubmit="return handleEditSubmit(event)">
+                    <form method="post" action="/admin/editCategory/<%=category._id%>" onsubmit=" handleEditSubmit(event)">
                         <div class="mb-4">
                             <label for="product_name" class="form-label">Category Name</label>
                             <input type="text" name="categoryName" value="<%=category.name%>" placeholder="Enter category name" class="form-control" id="product_name">
@@ -30,7 +30,7 @@
                                 <option value="">None</option>
                                 <% if(typeof cat !== 'undefined' && cat) { %>
                                     <% cat.forEach((parentCat) => { %>
-                                        <option value="<%= parentCat._id %>" <%= parentCat._id.toString() === category.parent?.toString() ? 'selected' : '' %>>
+                                        <option value="<%= parentCat._id %>" <%= parentCat._id.toString() === category.parent?.toString() ? 'selected' : '' %>
                                             <%= parentCat.name %>
                                         </option>
                                     <% }) %>
@@ -74,6 +74,7 @@
 
 <script>
     function handleEditSubmit(event) {
+        
         event.preventDefault();
         if (!validateForm()) {
             return false;
@@ -125,7 +126,7 @@
     function validateForm() {
         clearErrorMessage();
         const name = document.getElementsByName("categoryName")[0].value.trim();
-        const description = document.getElementsByName("description")[0].value.trim();
+        const description = document.getElementsByName("description")[0].value;
         let isValid = true;
 
         if (name === "") {

@@ -44,19 +44,32 @@ const getProductAdd = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const { productName, description, regularPrice, salePrice ,quantity , category } = req.body;
+        const { productName, description, longDescription, specifications, regularPrice, salePrice, quantity, category, brand, color, status } = req.body;
         console.log(req.body)
         // console.log(req.files)
-        const images = req.files.map(file => file.filename);
+        const images = req.files.map(file => file.path);
+
+        // Process shoe sizes
+        const shoeSizes = new Map();
+        for (let i = 1; i <= 10; i++) {
+            const sizeKey = `shoeSize${i}`;
+            shoeSizes.set(i.toString(), parseInt(req.body[sizeKey]) || 0);
+        }
 
         console.log(req.body);
         const newProduct = new Product({
             productName,
             description,
+            longDescription,
+            specifications,
             regularPrice,
             salePrice,
             quantity,
             category,
+            brand,
+            color,
+            status,
+            shoeSizes,
             images,
         });
 
@@ -77,8 +90,16 @@ const getEditProduct = async (req, res) => {
         if (!product) {
             return res.redirect('/admin/products');
         }
+        
+        // Initialize shoeSizes if it doesn't exist
+        if (!product.shoeSizes) {
+            product.shoeSizes = new Map();
+            for (let i = 1; i <= 10; i++) {
+                product.shoeSizes.set(i.toString(), 0);
+            }
+        }
 
-        res.render('admin/editProduct', { product, categories });
+        res.render('admin/edit-product', { product, categories });
     } catch (error) {
         console.error('Error in getEditProduct:', error);
         res.redirect('/admin/pageerror');
@@ -88,18 +109,46 @@ const getEditProduct = async (req, res) => {
 const editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
-        const { name, description, price, stock, category } = req.body;
+        const { 
+            productName, 
+            description, 
+            longDescription,
+            specifications,
+            regularPrice, 
+            salePrice, 
+            category,
+            quantity,
+            color,
+            brand,
+            status
+        } = req.body;
+        
+        // Process shoe sizes
+        const shoeSizes = new Map();
+        for (let i = 1; i <= 10; i++) {
+            const sizeKey = `shoeSize${i}`;
+            shoeSizes.set(i.toString(), parseInt(req.body[sizeKey]) || 0);
+        }
+        
+        // Get image URLs from Cloudinary uploads
         const images = req.files ? req.files.map(file => file.filename) : undefined;
 
         const updateData = {
-            name,
+            productName,
             description,
-            price,
-            stock,
-            category
+            longDescription,
+            specifications,
+            regularPrice,
+            salePrice,
+            category,
+            quantity,
+            color,
+            brand,
+            status,
+            shoeSizes
         };
 
-        if (images) {
+        if (images && images.length > 0) {
             updateData.images = images;
         }
 

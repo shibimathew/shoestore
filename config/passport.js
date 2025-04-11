@@ -12,21 +12,36 @@ passport.use(new GoogleStrategy({
 },
 async (accessToken,refeshToken,profile,done)=>{
     try {
+        // First check if user exists by Google ID
         let user = await User.findOne({googleId:profile.id});
+        
         if(user){
             return done(null,user);
-        }else{
-            user = new User({
-                name:profile.displayName,
-                email:profile.emails[0].value,
-                googleId:profile.id
-            }),
-            await user.save();
-            return done(null,user);
+        } else {
+            // If not found by Google ID, check if user exists by email
+            const existingUser = await User.findOne({email: profile.emails[0].value});
+            
+            if(existingUser) {
+                // If user exists with this email but no Google ID, update the user with Google ID
+                existingUser.googleId = profile.id;
+                await existingUser.save();
+                return done(null, existingUser);
+            } else {
+                // Create new user if no existing user found
+                user = new User({
+                    name: profile.displayName,
+                    email: profile.emails[0].value,
+                    googleId: profile.id,
+                    phone: "0000000000", // Initialize with default phone number
+                    isVerified: true // Google accounts are pre-verified
+                });
+                await user.save();
+                return done(null, user);
+            }
         }
     } catch (error) {
-        return done(error,null);
-        
+        console.error("Google authentication error:", error);
+        return done(error, null);
     }
 }
 ));
@@ -34,19 +49,15 @@ async (accessToken,refeshToken,profile,done)=>{
 passport.serializeUser((user,done)=>{  //to assign user details to session
    done(null,user.id)
 });
-passport.deserializeUser((user,done)=>{
-    done(null,user.id)
+
+passport.deserializeUser(async (id,done)=>{
+    try {
+        const user = await User.findById(id);
+        done(null, user);
+    } catch (err) {
+        done(err, null);
+    }
 });
- 
-passport.deserializeUser((id,done)=>{
-    User.findById(id)
-    .then(user=>{
-        done(null,user)
-    })
-    .catch(err=>{
-        done(err,null)
-    })
-})
 
 module.exports = passport;
 

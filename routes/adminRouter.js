@@ -29,6 +29,7 @@ router.get('/listCategory',adminAuth,categoryController.getListCategory);
 router.get('/unlistCategory',adminAuth,categoryController.getUnlistCategory);
 // router.get("/editCategory",adminAuth,categoryController.loadEditCategory);
 router.get("/editCategory/:id", adminAuth, categoryController.loadEditCategory);
+router.post("/editCategory/:id", adminAuth, categoryController.editCategory);
 
 
 
@@ -36,8 +37,8 @@ router.get("/editCategory/:id", adminAuth, categoryController.loadEditCategory);
 router.get("/products", adminAuth, productController.getProducts);
 router.get("/addProducts", adminAuth, productController.getProductAdd);
 router.post("/addProducts", adminAuth, upload.any(), productController.addProduct);
-router.get("/editProduct/:id", adminAuth, productController.getEditProduct);
-router.post("/editProduct/:id", adminAuth, productController.editProduct);
+router.get("/edit-product/:id", adminAuth, productController.getEditProduct);
+router.post("/edit-product/:id", adminAuth, upload.any(), productController.editProduct);
 router.get("/listProduct", adminAuth, productController.listProduct);
 router.get("/unlistProduct", adminAuth, productController.unlistProduct);
 router.get("/deleteProduct", adminAuth, productController.deleteProduct);

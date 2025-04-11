@@ -11,6 +11,14 @@ const productSchema = new Schema({
         type : String,
         required : true,
     },
+    longDescription: {
+        type : String,
+        required : false,
+    },
+    specifications: {
+        type : String,
+        required : false,
+    },
     brand: {
         type : String,
         required : false,
@@ -34,15 +42,23 @@ const productSchema = new Schema({
     },
     quantity: {
         type : Number,
+        required : true,
         default : 0
-    },
-    quantity : {
-        type :  Number,
-        required : true
     },
     color: {
         type : String,
         required : false,   
+    },
+    shoeSizes: {
+        type: Map,
+        of: Number,
+        default: function() {
+            const sizes = {};
+            for (let i = 1; i <= 10; i++) {
+                sizes[i] = 0;
+            }
+            return sizes;
+        }
     },
     images:{
         type : [String],// multiple image so array

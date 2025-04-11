@@ -8,20 +8,45 @@
     color: #0056b3;
     text-decoration: underline;
 }
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #f8f9fa;
+}
+.card-login {
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+.card-body {
+    padding: 2rem;
+}
 </style>
 
-<section class="content-main mt-80 mb-80 d-flex justify-content-center">
-    <div class="card card-login" style="max-width: 400px; width: 100%;">
+<section class="login-container">
+    <div class="card card-login">
         <div class="card-body">
             <h4 class="card-title mb-4 text-center">Log in</h4>
             <form action="/login" method="post">
                 <div class="mb-3">
                     <input class="form-control" placeholder="Username or email" type="text" id="email" name="email">
-                </div> <!-- form-group// -->
+                </div>
                 <div class="mb-3">
                     <input class="form-control" placeholder="Password" type="password" id="password" name="password">
                     <div id="error2" class="error-message"></div>
-                </div> <!-- form-group// -->
+                </div>
 
                 <% if (locals.message && message.length > 0) { %>
                     <div class="alert alert-danger text-center">
@@ -38,17 +63,13 @@
                 </div>
 
                 <div class="mb-4">
-                    <button type="submit" class="btn btn-primary w-100" style="max-width: 200px; margin: 0 auto; display: block;"> Login </button>
-                </div> <!-- form-group// -->
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </div>
             </form>
             <p class="text-center small text-muted mb-15">or sign up with</p>
             <div class="d-grid gap-3 mb-4">
                 <ul class="btn-login list_none text-center mb-15">
-                    <li><a href="" class="btn btn-facebook hover-up mb-lg-0 mb-sm-4">Login With Facebook</a></li>
-                    <div>
-                        <p>or</p>
-                    </div>
-                    <li><a href="/google" class="btn btn-google hover-up">Login With Google</a></li>
+                    <li><a href="/auth/google" class="btn btn-google hover-up">Login With Google</a></li>
                 </ul>
             </div>
             <p class="text-center mb-4">Don't have an account? <a href="/signup">Sign up</a></p>
