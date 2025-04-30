@@ -30,6 +30,7 @@ router.get('/unlistCategory',adminAuth,categoryController.getUnlistCategory);
 // router.get("/editCategory",adminAuth,categoryController.loadEditCategory);
 router.get("/editCategory/:id", adminAuth, categoryController.loadEditCategory);
 router.post("/editCategory/:id", adminAuth, categoryController.editCategory);
+router.get("/deleteCategory", adminAuth, categoryController.deleteCategory);
 
 
 

@@ -23,6 +23,66 @@
         .logo:hover img {
             transform: scale(1.05);
         }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-profile .user-name {
+            font-weight: 600;
+            color: #253D4E;
+        }
+        .user-profile .user-menu {
+            position: relative;
+            display: inline-block;
+        }
+        .user-profile .user-menu .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            padding: 8px 0;
+            min-width: 150px;
+        }
+        .user-profile .user-menu:hover .dropdown-menu {
+            display: block;
+        }
+        .user-profile .user-menu .dropdown-menu a {
+            display: block;
+            padding: 8px 16px;
+            color: #253D4E;
+            text-decoration: none;
+        }
+        .user-profile .user-menu .dropdown-menu a:hover {
+            background: #f5f5f5;
+        }
+
+        .header-area {
+    width: 100%;
+}
+
+.header-middle {
+    width: 100%;
+    padding: 10px 0; /* optional padding */
+    background-color: #fff; /* optional background */
+}
+
+.header-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 100%; /* remove Bootstrap or other framework constraints */
+    padding: 0 20px; /* optional, for inner spacing */
+    margin: 0 auto;
+}
+
     </style>
 </head>
 
@@ -35,7 +95,26 @@
                     <div class="logo logo-width-1">
                         <a href="/"><img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore Logo" style="max-height: 50px;"></a>
                     </div>
-                    <!-- ... existing code ... -->
+                    <!-- <div class="header-right">
+                        <div class="user-profile">
+                            <% if (locals.user) { %>
+                                <div class="user-menu">
+                                    <span class="user-name">Welcome, <%= user.name %></span>
+                                    <div class="dropdown-menu">
+                                        <a href="/userProfile">My Profile</a>
+                                        <a href="/orders">My Orders</a>
+                                        <a href="/wishlist">Wishlist</a>
+                                        <a href="/logout">Logout</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <div>
+                                    <a href="/login" class="btn btn-sm">Login</a>
+                                    <a href="/signup" class="btn btn-sm btn-outline">Sign Up</a>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div> -->
                 </div>
             </div>
         </div>

@@ -213,7 +213,7 @@
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="/admin/dashboard" class="brand-wrap">
-                <img src="assets2/imgs/theme/logo.svg" class="logo" alt="Shoestore Dashboard">
+                <img src="/assets/imgs/theme/shoestore-logo.svg" class="logo" alt="Shoestore Dashboard">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -351,11 +351,11 @@
                                     <div class="card-body">
                                         <div class="mb-4">
                                             <label for="product_name" class="form-label">Product Title</label>
-                                            <input type="text" placeholder="Type here" class="form-control" id="product_name" name="productName" required>
+                                            <input type="text" placeholder="Type here" class="form-control" id="product_name" name="productName" >
                                         </div>
                                         <div class="mb-4">
                                             <label class="form-label">Category</label>
-                                            <select class="form-select" name="category" required>
+                                            <select class="form-select" name="category" >
                                                 <option value="">Select a category</option>
                                                 <% categories.forEach(category => { %>
                                                     <option value="<%= category._id %>"><%= category.name %></option>
@@ -363,13 +363,13 @@
                                             </select>
                                         </div>
                                         <div class="mb-4">
-                                            <label class="form-label">Short description</label>
-                                            <textarea placeholder="Type here" class="form-control" rows="4" name="description" required></textarea>
+                                            <label class="form-label">Description</label>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="description" ></textarea>
                                         </div>
-                                        <div class="mb-4">
+                                        <!-- <div class="mb-4">
                                             <label class="form-label">Full description</label>
-                                            <textarea placeholder="Type here" class="form-control" rows="4" name="fullDescription" required></textarea>
-                                        </div>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="fullDescription" ></textarea>
+                                        </div> -->
                                         <div class="mb-4">
                                             <label class="form-label">Specifications</label>
                                             <textarea placeholder="Type here" class="form-control" rows="4" name="specifications"></textarea>
@@ -379,67 +379,24 @@
                                                 <div class="mb-4">
                                                     <label class="form-label">Regular price</label>
                                                     <div class="row gx-2">
-                                                        <input placeholder="$" type="number" class="form-control" name="regularPrice" required>
+                                                        <input placeholder="$" type="number" class="form-control" name="regularPrice">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-lg-4">
                                                 <div class="mb-4">
                                                     <label class="form-label">Offer Price</label>
-                                                    <input placeholder="$" type="number" class="form-control" name="salePrice" required>
+                                                    <input placeholder="$" type="number" class="form-control" name="salePrice" >
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="mb-4">
+                                        <!-- <div class="mb-4">
                                             <label class="form-label">Quantity</label>
-                                            <input type="number" placeholder="Enter quantity" class="form-control" name="quantity" required>
-                                        </div>
+                                            <input type="number" placeholder="Enter quantity" class="form-control" name="quantity" >
+                                        </div> -->
                                     </div>
                                 </div>
-                                <!-- <div class="card mb-4">
-                                    <div class="card-header">
-                                        <h4>Variants</h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                <label class="form-label">Size</label>
-                                                <div class="row">
-                                                    <div class="col-lg-4">
-                                                        <input type="number" class="form-control" name="variant[size][1]" placeholder="1" min="0">
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <input type="number" class="form-control" name="variant[size][2]" placeholder="2" min="0">
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <input type="number" class="form-control" name="variant[size][3]" placeholder="3" min="0">
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <input type="number" class="form-control" name="variant[size][4]" placeholder="4" min="0">
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <input type="number" class="form-control" name="variant[size][5]" placeholder="5" min="0">
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <input type="number" class="form-control" name="variant[size][6]" placeholder="6" min="0">
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <input type="number" class="form-control" name="variant[size][7]" placeholder="7" min="0">
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <input type="number" class="form-control" name="variant[size][8]" placeholder="8" min="0">
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <input type="number" class="form-control" name="variant[size][9]" placeholder="9" min="0">
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <input type="number" class="form-control" name="variant[size][10]" placeholder="10" min="0">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
+                               
                                 <div class="card mb-4">
                                     <div class="card-header">
                                         <h4>Shoe Sizes</h4>
@@ -515,30 +472,99 @@
         </section>
         
         <script>
-let cropperInstances = {};
+            let cropperInstances = {};
 
 function validateForm() {
     const productName = document.querySelector('input[name="productName"]').value;
     const description = document.querySelector('textarea[name="description"]').value;
     const regularPrice = document.querySelector('input[name="regularPrice"]').value;
     const salePrice = document.querySelector('input[name="salePrice"]').value;
-    const quantity = document.querySelector('input[name="quantity"]').value;
     const category = document.querySelector('select[name="category"]').value;
-
-    if (!productName || !description || !regularPrice || !salePrice || !quantity || !category) {
-        alert('Please fill in all required fields');
+    const specifications= document.querySelector('textarea[name="specifications"]').value;
+   
+    // Reset error messages
+    document.querySelectorAll('.error-message').forEach(error => {
+        error.style.display = 'none';
+        error.textContent = '';
+    });
+    if (!productName) {
+        alert('Please fill productname');
         return false;
     }
-
-    if (parseFloat(regularPrice) <= parseFloat(salePrice)) {
+    if ( !category) {
+        alert('Please fill category');
+        return false;
+    }
+    if ( !description) {
+        alert('Please fill description');
+        return false;
+    }
+    if ( !specifications) {
+        alert('Please fill specifications');
+        return false;
+    }
+    if ( !regularPrice ) {
+        alert('Please fill regular price');
+        return false;
+    }
+    if (regularPrice < 0) {
+                alert('Regular price cannot be negative');
+                return false;
+            }
+    if (  !salePrice ) {
+        alert('Please fill sale price');
+        return false;
+    }
+     // Validate price logic
+     if (salePrice < 0) {
+                alert('Offer price cannot be negative');
+                return false;
+            }
+     if (parseFloat(regularPrice) <= parseFloat(salePrice)) {
         alert('Regular price must be greater than sale price');
         return false;
     }
+    let hasValidShoeSize = false;
+    for (let i = 1; i <= 10; i++) {
+        const sizeValue = parseInt(document.querySelector(`input[name="shoeSize${i}"]`).value) || 0;
+        if (sizeValue > 0) {
+            hasValidShoeSize = true;
+            break;
+        }
+    }
+    
+    if (!hasValidShoeSize) {
+        alert('Please add at least one shoe size quantity');
+        return false;
+    }
+   
 
-    // Check if at least one image is uploaded
-    const hasImages = document.querySelectorAll('input[name="images"]').some(input => input.files.length > 0);
-    if (!hasImages) {
-        alert('Please upload at least one image');
+   
+    
+
+    // Validate images
+    let hasValidImage = false;
+    const imageInputs = document.querySelectorAll('input[name="images"]');
+    const errorMessages = document.querySelectorAll('.error-message');
+
+    imageInputs.forEach((input, index) => {
+        const croppedImage = document.getElementById(`croppedImage${index + 1}`).value;
+        const errorMessage = errorMessages[index];
+
+        if (input.files.length > 0) {
+            // If an image is selected, check if it has been cropped
+            if (!croppedImage) {
+                errorMessage.textContent = 'Please crop and save the selected image';
+                errorMessage.style.display = 'block';
+            } else {
+                hasValidImage = true;
+            }
+        }
+    });
+
+    // Check if at least one valid cropped image exists
+    if (!hasValidImage) {
+        alert('Please upload and crop at least one image');
         return false;
     }
 
@@ -550,20 +576,25 @@ function viewImage(event, index) {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function(e) {
-        const image = document.getElementById('imgView' + index);
-        const preview = document.getElementById('preview' + index);
-        const croppedImg = document.getElementById('croppedImg' + index);
-        
-        // Hide cropped image and show preview
+    reader.onload = function (e) {
+        const image = document.getElementById(`imgView${index}`);
+        const preview = document.getElementById(`preview${index}`);
+        const croppedImg = document.getElementById(`croppedImg${index}`);
+        const hiddenInput = document.getElementById(`croppedImage${index}`);
+        const errorMessage = document.querySelectorAll('.error-message')[index - 1];
+
+        // Reset previous state
         croppedImg.style.display = 'none';
+        croppedImg.src = '/assets/imgs/theme/upload.svg';
         preview.style.display = 'block';
-        
+        hiddenInput.value = '';
+        errorMessage.style.display = 'none';
+
         // Set image source
         image.src = e.target.result;
 
         // Wait for image to load
-        image.onload = function() {
+        image.onload = function () {
             // Destroy existing cropper if it exists
             if (cropperInstances[index]) {
                 cropperInstances[index].destroy();
@@ -580,7 +611,6 @@ function viewImage(event, index) {
                 minCropBoxWidth: 200,
                 minCropBoxHeight: 200,
                 ready() {
-                    // Ensure the cropper is properly initialized
                     this.cropper.setData({
                         width: 440,
                         height: 440
@@ -594,25 +624,30 @@ function viewImage(event, index) {
 
 // Add save button functionality
 document.querySelectorAll('[id^="saveButton"]').forEach(button => {
-    button.addEventListener('click', function() {
+    button.addEventListener('click', function () {
         const index = this.id.replace('saveButton', '');
+        const errorMessage = document.querySelectorAll('.error-message')[index - 1];
+
         if (cropperInstances[index]) {
             const canvas = cropperInstances[index].getCroppedCanvas({
                 width: 440,
                 height: 440
             });
-            const croppedImage = document.getElementById('croppedImg' + index);
-            const preview = document.getElementById('preview' + index);
-            const hiddenInput = document.getElementById('croppedImage' + index);
-            
+            const croppedImage = document.getElementById(`croppedImg${index}`);
+            const preview = document.getElementById(`preview${index}`);
+            const hiddenInput = document.getElementById(`croppedImage${index}`);
+
             // Show cropped image and hide preview
             croppedImage.src = canvas.toDataURL();
             croppedImage.style.display = 'block';
             preview.style.display = 'none';
-            
+
             // Store the cropped image data
             hiddenInput.value = canvas.toDataURL();
-            
+
+            // Clear any error message
+            errorMessage.style.display = 'none';
+
             // Convert canvas to blob and update file input
             canvas.toBlob(blob => {
                 const file = new File([blob], `cropped-${index}.jpg`, { type: 'image/jpeg' });
@@ -620,7 +655,118 @@ document.querySelectorAll('[id^="saveButton"]').forEach(button => {
                 dataTransfer.items.add(file);
                 document.getElementById(`input${index}`).files = dataTransfer.files;
             });
+        } else {
+            errorMessage.textContent = 'Please select an image to crop';
+            errorMessage.style.display = 'block';
         }
     });
 });
-</script>
+// let cropperInstances = {};
+
+// function validateForm() {
+//     const productName = document.querySelector('input[name="productName"]').value;
+//     const description = document.querySelector('textarea[name="description"]').value;
+//     const regularPrice = document.querySelector('input[name="regularPrice"]').value;
+//     const salePrice = document.querySelector('input[name="salePrice"]').value;
+//     const quantity = document.querySelector('input[name="quantity"]').value;
+//     const category = document.querySelector('select[name="category"]').value;
+
+//     if (!productName || !description || !regularPrice || !salePrice || !quantity || !category) {
+//         alert('Please fill in all required fields');
+//         return false;
+//     }
+
+//     if (parseFloat(regularPrice) <= parseFloat(salePrice)) {
+//         alert('Regular price must be greater than sale price');
+//         return false;
+//     }
+
+//     // Check if at least one image is uploaded
+//     const hasImages = document.querySelectorAll('input[name="images"]').some(input => input.files.length > 0);
+//     if (!hasImages) {
+//         alert('Please upload at least one image');
+//         return false;
+//     }
+
+//     return true;
+// }
+
+// function viewImage(event, index) {
+//     const file = event.target.files[0];
+//     if (!file) return;
+
+//     const reader = new FileReader();
+//     reader.onload = function(e) {
+//         const image = document.getElementById('imgView' + index);
+//         const preview = document.getElementById('preview' + index);
+//         const croppedImg = document.getElementById('croppedImg' + index);
+        
+//         // Hide cropped image and show preview
+//         croppedImg.style.display = 'none';
+//         preview.style.display = 'block';
+        
+//         // Set image source
+//         image.src = e.target.result;
+
+//         // Wait for image to load
+//         image.onload = function() {
+//             // Destroy existing cropper if it exists
+//             if (cropperInstances[index]) {
+//                 cropperInstances[index].destroy();
+//             }
+
+//             // Create new cropper instance
+//             cropperInstances[index] = new Cropper(image, {
+//                 aspectRatio: 1,
+//                 viewMode: 1,
+//                 guides: true,
+//                 background: false,
+//                 autoCropArea: 1,
+//                 zoomable: true,
+//                 minCropBoxWidth: 200,
+//                 minCropBoxHeight: 200,
+//                 ready() {
+//                     // Ensure the cropper is properly initialized
+//                     this.cropper.setData({
+//                         width: 440,
+//                         height: 440
+//                     });
+//                 }
+//             });
+//         };
+//     };
+//     reader.readAsDataURL(file);
+// }
+
+// // Add save button functionality
+// document.querySelectorAll('[id^="saveButton"]').forEach(button => {
+//     button.addEventListener('click', function() {
+//         const index = this.id.replace('saveButton', '');
+//         if (cropperInstances[index]) {
+//             const canvas = cropperInstances[index].getCroppedCanvas({
+//                 width: 440,
+//                 height: 440
+//             });
+//             const croppedImage = document.getElementById('croppedImg' + index);
+//             const preview = document.getElementById('preview' + index);
+//             const hiddenInput = document.getElementById('croppedImage' + index);
+            
+//             // Show cropped image and hide preview
+//             croppedImage.src = canvas.toDataURL();
+//             croppedImage.style.display = 'block';
+//             preview.style.display = 'none';
+            
+//             // Store the cropped image data
+//             hiddenInput.value = canvas.toDataURL();
+            
+//             // Convert canvas to blob and update file input
+//             canvas.toBlob(blob => {
+//                 const file = new File([blob], `cropped-${index}.jpg`, { type: 'image/jpeg' });
+//                 const dataTransfer = new DataTransfer();
+//                 dataTransfer.items.add(file);
+//                 document.getElementById(`input${index}`).files = dataTransfer.files;
+//             });
+//         }
+//     });
+// });
+// </script>

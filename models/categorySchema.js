@@ -3,6 +3,11 @@ const {Schema} = mongoose;
 
 
 const categorySchema = new mongoose.Schema({
+    categoryId : {
+        type : String,
+        required : true,
+        unique : true
+    },
     name: {
         type:String,
         required:true,
@@ -17,9 +22,10 @@ const categorySchema = new mongoose.Schema({
         type:Boolean,
         required:true
     },
+   
     categoryOffer: {
         type:Date,
-        default:true,
+        default: null,
     },
     createdAt: {
         type:Date,

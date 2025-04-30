@@ -4,15 +4,23 @@ const User = require("../../models/userSchema");
 const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
+const {nanoid} = require("nanoid")
 
 const getProducts = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = 10;
         const skip = (page - 1) * limit;
+        const filter = {}
+        const searchQuery = req.query.searchQuery;
+        
+        if(searchQuery){
+            const searchRegex = new RegExp(searchQuery,"i")
+            filter.productName = searchRegex;
+        }
 
-        const products = await Product.find({})
-            .populate('category', 'name')
+        const products = await Product.find(filter)
+            .populate('category')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
@@ -44,8 +52,8 @@ const getProductAdd = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const { productName, description, longDescription, specifications, regularPrice, salePrice, quantity, category, brand, color, status } = req.body;
-        console.log(req.body)
+        const { productName, description, longDescription, specifications, regularPrice, salePrice, category, brand, color, status } = req.body;
+        // console.log(req.body)
         // console.log(req.files)
         const images = req.files.map(file => file.path);
 
@@ -56,15 +64,21 @@ const addProduct = async (req, res) => {
             shoeSizes.set(i.toString(), parseInt(req.body[sizeKey]) || 0);
         }
 
+           const generateProductId = () => {
+                    return `SPR-${nanoid(10)}`;
+                  };
+        
+                  const productId = generateProductId()
+
         console.log(req.body);
         const newProduct = new Product({
+            productId,
             productName,
             description,
             longDescription,
             specifications,
             regularPrice,
             salePrice,
-            quantity,
             category,
             brand,
             color,
@@ -117,11 +131,12 @@ const editProduct = async (req, res) => {
             regularPrice, 
             salePrice, 
             category,
-            quantity,
             color,
             brand,
             status
         } = req.body;
+
+        
         
         // Process shoe sizes
         const shoeSizes = new Map();
@@ -131,7 +146,7 @@ const editProduct = async (req, res) => {
         }
         
         // Get image URLs from Cloudinary uploads
-        const images = req.files ? req.files.map(file => file.filename) : undefined;
+        const images = req.files ? req.files.map(file => file.path) : undefined;
 
         const updateData = {
             productName,
@@ -141,7 +156,6 @@ const editProduct = async (req, res) => {
             regularPrice,
             salePrice,
             category,
-            quantity,
             color,
             brand,
             status,
@@ -167,7 +181,7 @@ const listProduct = async (req, res) => {
         await Product.findByIdAndUpdate(productId, { isListed: true });
         res.json({
             success: true,
-            message: "Product listed successfully"
+            message: "Product unblocked successfully"
         });
     } catch (error) {
         console.error('Error in listProduct:', error);
@@ -185,7 +199,7 @@ const unlistProduct = async (req, res) => {
         await Product.findByIdAndUpdate(productId, { isListed: false });
         res.json({
             success: true,
-            message: "Product unlisted successfully"
+            message: "Product blocked successfully"
         });
     } catch (error) {
         console.error('Error in unlistProduct:', error);

@@ -16,7 +16,11 @@ async (accessToken,refeshToken,profile,done)=>{
         let user = await User.findOne({googleId:profile.id});
         
         if(user){
+           if(user.isBlocked){
+            return done(null, false, { message: "Your account has been blocked by admin. Please contact customer support." });
+           }else{
             return done(null,user);
+           }
         } else {
             // If not found by Google ID, check if user exists by email
             const existingUser = await User.findOne({email: profile.emails[0].value});
@@ -25,6 +29,7 @@ async (accessToken,refeshToken,profile,done)=>{
                 // If user exists with this email but no Google ID, update the user with Google ID
                 existingUser.googleId = profile.id;
                 await existingUser.save();
+
                 return done(null, existingUser);
             } else {
                 // Create new user if no existing user found

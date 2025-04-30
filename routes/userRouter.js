@@ -17,11 +17,11 @@ router.get("/pageNotFound", userController.pageNotFound);
 // Shop routes
 router.get("/shop", userController.loadShoppingPage);
 router.get("/filter", userController.filterProduct);
-router.get("/filterPrice", userAuth, userController.filterByPrice);
-router.post("/search", userAuth, userController.searchProducts);
+router.get("/filterPrice", userController.filterByPrice);
+router.post("/search", userController.searchProducts);
 
 // Product routes
-router.get("/productDetails", userAuth, productController.productDetails);
+router.get("/productDetails", productController.productDetails);
 
 // Auth routes
 router.get("/signup", userController.loadSignup);
@@ -31,9 +31,10 @@ router.post("/resend-otp", userController.resendOtp);
 
 // Google auth routes
 router.get('/auth/google', passport.authenticate('google', {scope: ['profile', 'email']}));
-router.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/signup'}), (req, res) => {
-    res.redirect('/');
-});
+router.get('/auth/google/callback', userController.googleFunctiion );
+// passport.authenticate('google', {failureRedirect: '/signup'}), (req, res) => {
+//     res.redirect('/');
+// }
 
 router.get("/login", userController.loadLogin);
 router.post("/login", userController.login);

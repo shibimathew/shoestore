@@ -2,40 +2,10 @@ const Product = require("../../models/productSchema");
 const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 
-
-
-// const productDetails = async (req,res)=>{
-//     try {
-//         const userId = req.session.user;
-//         const userData = await User.findById(userId);
-//         const productId = req.query.id;
-//         const product = await Product.findById(productId).populate('category'); 
-//         const findCategory = product.category;
-//         const categoryOffer = findCategory && findCategory.categoryOffer ? findCategory.categoryOffer : 0;
-
-//         const productOffer = product.productOffer || 0;
-//         const totalOffer = categoryOffer + productOffer;
-//         res.render("product-details",{
-//             user:userData,
-//             product:product,
-//             quantity:product.quantity,
-//             totalOffer:totalOffer,
-//             category:findCategory,
-//         });
-
-//     } catch (error) {
-//         console.error("Error for fetching product details",error);
-//         res.redirect("/pageNotFoun")
-//     }
-// }
-
-// module.exports={
-//     productDetails,
-// }
 const productDetails = async (req, res) => {
     try {
-        const userId = req.session.user;
-        const userData = userId ? await User.findById(userId) : null;
+        const user = req.session.user||req.user||null;
+        const userData = user ? await User.findById(user._id) : null;
         const productId = req.query.id;
         
         if (!productId) {
@@ -43,7 +13,6 @@ const productDetails = async (req, res) => {
         }
         
         const product = await Product.findById(productId).populate('category');
-        console.log("PRODUCT",product)
         
         if (!product) {
             return res.redirect("/pageNotFound");
@@ -51,9 +20,11 @@ const productDetails = async (req, res) => {
         
         // Ensure we have valid data for all required fields
         const findCategory = product.category || {};
+        const categoryId = findCategory._id;
         const categoryOffer = findCategory.categoryOffer || 0;
         const productOffer = product.productOffer || 0;
         const totalOffer = categoryOffer + productOffer;
+        const sort = req.query.sort || 'newest';
         
         // Initialize shoeSizes if it doesn't exist
         if (!product.shoeSizes) {
@@ -77,12 +48,29 @@ const productDetails = async (req, res) => {
             product.specifications = "";
         }
         
+        // Get related products from same category
+        const products = await Product.find({
+            category: categoryId,
+            _id: { $ne: productId }, // Exclude current product
+            isBlocked: { $ne: true } // Only show products that aren't blocked
+        })
+        .limit(4) // Limit to 4 related products
+        .populate('category')
+        .lean();
+        
         res.render("user/product-details", {
             user: userData,
             product: product,
             quantity: product.quantity || 0,
             totalOffer: totalOffer,
             category: findCategory,
+            selectedCategory: categoryId,
+            currentSort: sort,
+            priceRange: {
+                gt: req.query.gt || '',
+                lt: req.query.lt || ''
+            },
+            products: products // Changed from relatedProducts to products to match your template
         });
         
     } catch (error) {
@@ -91,6 +79,6 @@ const productDetails = async (req, res) => {
     }
 };
 
-module.exports={
+module.exports = {
     productDetails,
 }

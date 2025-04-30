@@ -1,0 +1,54 @@
+ // Initialize zoom on the first image
+                                $(".zoom-image").elevateZoom({
+                                    zoomType: "lens",
+                                    lensShape: "circle",
+                                    lensSize: 150,
+                                    cursor: "zoom-in",
+                                    zoomWindowFadeIn: 500,
+                                    zoomWindowFadeOut: 500,
+                                    zoomWindowWidth: 40,
+                                    zoomWindowHeight: 400,
+                                    zoomWindowPosition: 1,
+                                    zoomWindowOffsetX: 20,
+                                    zoomWindowOffsetY: 0,
+                                    borderSize: 1,
+                                    borderColour: "#999",
+                                    zoomLevel: 2,
+                                    scrollZoom: false,
+                                    easing: true,
+                                    gallery: 'slider-nav-thumbnails',
+                                    galleryActiveClass: "active",
+                                    imageCrossfade: true,
+                                    loadingIcon: true,
+                                    responsive: true
+                                });
+
+                                // Reinitialize zoom when changing slides
+                                $('.product-image-slider').on('beforeChange', function(event, slick, currentSlide, nextSlide) {
+                                    $('.zoom-image').removeData('elevateZoom');
+                                    setTimeout(function() {
+                                        $(".zoom-image").elevateZoom({
+                                            zoomType: "lens",
+                                            lensShape: "circle",
+                                            lensSize: 150,
+                                            cursor: "zoom-in",
+                                            zoomWindowFadeIn: 500,
+                                            zoomWindowFadeOut: 500,
+                                            zoomWindowWidth: 400,
+                                            zoomWindowHeight: 400,
+                                            zoomWindowPosition: 1,
+                                            zoomWindowOffsetX: 20,
+                                            zoomWindowOffsetY: 0,
+                                            borderSize: 1,
+                                            borderColour: "#999",
+                                            zoomLevel: 1,
+                                            scrollZoom: false,
+                                            easing: true,
+                                            gallery: 'slider-nav-thumbnails',
+                                            galleryActiveClass: "active",
+                                            imageCrossfade: true,
+                                            loadingIcon: true,
+                                            responsive: true
+                                        });
+                                    }, 100);
+                                });

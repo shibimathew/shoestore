@@ -1,13 +1,21 @@
 const { get } = require("mongoose");
 const Category = require("../../models/categorySchema")
+const {nanoid} = require("nanoid")
 
 const categoryInfo =  async (req,res)=>{
     try {
         const page = parseInt(req.query.page)||1;// parsing the url
         const limit = 4;
         const skip = (page-1)*limit;
+        const filter = {}
+        const searchQuery = req.query.searchQuery;
+        
+        if(searchQuery){
+            const searchRegex = new RegExp(searchQuery,"i")
+            filter.name = searchRegex;
+        }
 
-        const categoryData  = await Category.find({})
+        const categoryData  = await Category.find(filter)
         .sort({createdAt:-1})
         .skip(skip)
         .limit(limit);
@@ -41,10 +49,18 @@ const addCategory = async (req,res)=>{
             return res.status(400).json({error: "Category already exists"});
         }
 
+        const generateCategoryId = () => {
+            return `CAT-${nanoid(10)}`;
+          };
+
+          const categoryId = generateCategoryId()
+
         const newCategory = new Category({
+            categoryId : categoryId,
             name: name.trim(),
             description: description.trim(),
-            isListed: isListed === "true"
+            isListed: isListed === "true" || isListed === true,
+            
         });
 
   
@@ -116,7 +132,7 @@ const loadEditCategory = async (req, res) => {
 const editCategory = async (req, res) => {
     try {
         const categoryId = req.params.id;
-        const { categoryName, description, isListed, parent } = req.body;
+        const { categoryName, description, } = req.body;
 
         // Validate required fields
         if (!categoryName || !description) {
@@ -139,8 +155,7 @@ const editCategory = async (req, res) => {
             {
                 name: categoryName.trim(),
                 description: description.trim(),
-                isListed: isListed === "true",
-                parent: parent || null
+                
             },
             { new: true }
         );
@@ -168,26 +183,35 @@ const deleteCategory = async (req, res) => {
     try {
         const categoryId = req.query.id;
         
-        
         const category = await Category.findById(categoryId);
         if (!category) {
-            return res.status(404).json({ error: "Category not found" });
+            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                return res.status(404).json({ error: "Category not found" });
+            }
+            return res.redirect('/admin/category');
         }
 
-        // Deleting  the category
+        // Deleting the category
         await Category.findByIdAndDelete(categoryId);
         
-        return res.json({
-            success: true,
-            message: "Category deleted successfully"
-        });
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            return res.json({
+                success: true,
+                message: "Category deleted successfully"
+            });
+        }
+        
+        return res.redirect('/admin/category');
 
     } catch (error) {
         console.error("Error in deleteCategory:", error);
-        return res.status(500).json({
-            error: "An error occurred while deleting the category",
-            details: error.message
-        });
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            return res.status(500).json({
+                error: "An error occurred while deleting the category",
+                details: error.message
+            });
+        }
+        return res.redirect('/admin/pageerror');
     }
 }
 

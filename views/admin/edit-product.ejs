@@ -16,66 +16,216 @@
     <!-- Template CSS -->
     <link href="/assets2/css/main.css" rel="stylesheet"/>
     <style>
-        .navbar-aside {
-            width: 280px;
-            height: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: #fff;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        /* General Styles */
+        body {
+            background-color: #f5f5f5;
         }
         .main-wrap {
             margin-left: 280px;
             transition: all 0.3s ease;
         }
-        .screen-overlay {
-            width: 100%;
-            height: 100%;
-            z-index: 999;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
+        .content-main {
+            padding: 20px;
         }
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .content-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+        .btn-md {
+            padding: 8px 20px;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            background-color: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+        }
+        .card-header h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Form Styles */
+        .form-label {
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        .form-control {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            transition: border-color 0.2s ease;
+        }
+        .form-control:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 0.2rem rgba(74,144,226,0.25);
+        }
+        .form-select {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            background-color: #fff;
+        }
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Image Upload Styles */
+        .input-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .input-upload:hover {
+            border-color: #4a90e2;
+            background: #f0f7ff;
+        }
+        .input-upload img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .image-preview-container {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 10px;
+            display: none;
+            position: relative;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .cropper-container {
+            width: 100% !important;
+            height: 300px !important;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 4px;
+        }
+
+        /* Variants Section */
+        .variant-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .variant-input {
+            text-align: center;
+        }
+        .variant-input input {
+            text-align: center;
+        }
+
+        /* Responsive Styles */
         @media (max-width: 991px) {
-            .navbar-aside {
-                transform: translateX(-100%);
-            }
             .main-wrap {
                 margin-left: 0;
             }
-            .navbar-aside.show {
-                transform: translateX(0);
+            .content-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
             }
         }
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 15px;
+            }
+            .variant-inputs {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Error Message Styles */
         .error-message {
-            color: red;
+            color: #dc3545;
             font-size: 12px;
             margin-top: 5px;
             display: none;
         }
-        
-        .variant-size-input {
-            margin-bottom: 10px;
+
+        /* Button Styles */
+        .btn-primary {
+            background-color: #4a90e2;
+            border-color: #4a90e2;
+        }
+        .btn-primary:hover {
+            background-color: #357abd;
+            border-color: #357abd;
+        }
+
+        /* Price Input Styles */
+        .price-input {
+            position: relative;
+        }
+        .price-input::before {
+            content: "$";
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+        .price-input input {
+            padding-left: 25px;
         }
         
-        .variant-size-label {
-            font-weight: bold;
-            margin-bottom: 5px;
+        .delete-image-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #ff4444;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        
-        .image-preview-container {
-            margin-bottom: 15px;
-        }
-        
         .delete-image-btn:hover {
             background-color: #cc0000 !important;
         }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
 </head>
 
 <body>
@@ -83,7 +233,7 @@
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="/admin/dashboard" class="brand-wrap">
-                <img src="assets2/imgs/theme/logo.svg" class="logo" alt="Shoestore Dashboard">
+                <img src="/assets/imgs/theme/shoestore-logo.svg" class="logo" alt="Shoestore Dashboard">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -147,62 +297,7 @@
         </nav>
     </aside>
     <main class="main-wrap">
-        <header class="main-header navbar">
-            <div class="col-search">
-                <form class="searchform">
-                    <div class="input-group">
-                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
-                    </div>
-                    <datalist id="search_terms">
-                        <option value="Products">
-                        <option value="New orders">
-                        <option value="Apple iphone">
-                        <option value="Ahmed Hassan">
-                    </datalist>
-                </form>
-            </div>
-            <div class="col-nav">
-                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
-                <ul class="list-inline nav-aside mb-0">
-                    <li class="list-inline-item dropdown notif">
-                        <a class="nav-link btn-icon" href="#" data-bs-toggle="dropdown">
-                            <i class="material-icons md-notifications"></i>
-                            <span class="badge rounded-pill">3</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <div class="rdropdown-menu-content">
-                                <div class="dropdown-item-header">
-                                    <h5 class="menu-title">Notifications</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-inline-item dropdown notif">
-                        <a class="nav-link btn-icon" href="#" data-bs-toggle="dropdown">
-                            <i class="material-icons md-nights_stay"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <div class="rdropdown-menu-content">
-                                <div class="dropdown-item-header">
-                                    <h5 class="menu-title">Settings</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-inline-item dropdown">
-                        <a class="nav-link btn-icon" href="#" data-bs-toggle="dropdown">
-                            <i class="material-icons md-account_circle"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="#">My profile</a>
-                            <a class="dropdown-item" href="#">Settings</a>
-                            <a class="dropdown-item text-danger" href="/admin/login">Exit</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </header>
+        
         <section class="content-main">
             <div class="row">
                 <div class="col-9">
@@ -210,7 +305,7 @@
                         <div class="content-header">
                             <h2 class="content-title">Edit Product</h2>
                             <div>
-                                <button class="btn btn-md rounded font-sm hover-up" type="submit" onclick="validateAndSubmit()">Update</button>
+                                <button class="btn btn-md rounded font-sm hover-up" type="submit">Update</button>
                             </div>
                         </div>
                         <div class="row">
@@ -222,54 +317,35 @@
                                     <div class="card-body">
                                         <div class="mb-4">
                                             <label for="product_name" class="form-label">Product Title</label>
-                                            <input type="text" value="<%=product.productName%>" placeholder="Type here" class="form-control" id="product_name" name="productName" required>
-                                            <div id="productName-error" class="error-message"></div>
+                                            <input type="text" placeholder="Type here" class="form-control" id="product_name" name="productName" value="<%=product.productName%>" >
+                                            <div id="name-error" class="error-message"></div>
                                         </div>
                                         <div class="mb-4">
                                             <label class="form-label">Category</label>
-                                            <select class="form-select" name="category" required>
-                                                <%for(let i=0;i<categories.length;i++){%>
-                                                    <option value="<%=categories[i]._id%>" <%= product.category.toString() === categories[i]._id.toString() ? 'selected' : '' %>>
-                                                        <%=categories[i].name%>
+                                            <select class="form-select" name="category" >
+                                                <% categories.forEach((category) => { %>
+                                                    <option value="<%= category._id %>" <%= category._id.toString() === product.category.toString() ? 'selected' : '' %>>
+                                                        <%= category.name %>
                                                     </option>
-                                                <%}%>
+                                                <% }) %>
                                             </select>
                                         </div>
                                         <div class="mb-4">
-                                            <label class="form-label">Short description</label>
+                                            <label class="form-label">Description</label>
                                             <textarea placeholder="Type here" class="form-control" rows="4" name="description"><%=product.description%></textarea>
                                             <div id="description-error" class="error-message"></div>
                                         </div>
-                                        <div class="mb-4">
-                                            <label class="form-label">Long description</label>
-                                            <textarea placeholder="Type here" class="form-control" rows="4" name="longDescription"><%=product.longDescription || ''%></textarea>
-                                        </div>
+                                       
                                         <div class="mb-4">
                                             <label class="form-label">Specifications</label>
                                             <textarea placeholder="Type here" class="form-control" rows="4" name="specifications"><%=product.specifications || ''%></textarea>
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="form-label">Brand</label>
-                                            <input type="text" value="<%=product.brand || ''%>" placeholder="Type here" class="form-control" name="brand">
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="form-label">Color</label>
-                                            <input type="text" value="<%=product.color || ''%>" placeholder="Type here" class="form-control" name="color">
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="form-label">Status</label>
-                                            <select class="form-select" name="status" required>
-                                                <option value="Available" <%= product.status === 'Available' ? 'selected' : '' %>>Available</option>
-                                                <option value="out of stock" <%= product.status === 'out of stock' ? 'selected' : '' %>>Out of Stock</option>
-                                                <option value="Discountinued" <%= product.status === 'Discountinued' ? 'selected' : '' %>>Discontinued</option>
-                                            </select>
                                         </div>
                                         <div class="row">
                                             <div class="col-lg-4">
                                                 <div class="mb-4">
                                                     <label class="form-label">Regular price</label>
                                                     <div class="row gx-2">
-                                                        <input placeholder="$" type="number" class="form-control" value="<%=product.regularPrice%>" name="regularPrice" required>
+                                                        <input placeholder="$" type="number" class="form-control" name="regularPrice" value="<%=product.regularPrice%>" >
                                                     </div>
                                                     <div id="regularPrice-error" class="error-message"></div>
                                                 </div>
@@ -277,16 +353,11 @@
                                             <div class="col-lg-4">
                                                 <div class="mb-4">
                                                     <label class="form-label">Offer Price</label>
-                                                    <input placeholder="$" type="number" class="form-control" name="salePrice" value="<%=product.salePrice || ''%>">
+                                                    <input placeholder="$" type="number" class="form-control" name="salePrice" value="<%=product.salePrice%>" >
                                                     <div id="salePrice-error" class="error-message"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4">
-                                                <div class="mb-4">
-                                                    <label class="form-label">Quantity</label>
-                                                    <input type="number" class="form-control" name="quantity" value="<%=product.quantity%>" required>
-                                                </div>
-                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -314,47 +385,39 @@
                                     </div>
                                 </div>
                             </div>
-                            
-
                             <div class="col-lg-4">
                                 <div class="card mb-4">
                                     <div class="card-header">
                                         <h4>Media</h4>
                                     </div>
                                     <div class="card-body">
-                                        <% for(let i = 0; i < product.images.length; i++) { %>
+                                        <% for(let i = 0; i < 3; i++) { %>
                                         <div class="input-upload">
+                                            <% if (i < product.images.length) { %>
                                             <!-- Display Existing Image -->
-                                            <div class="image-preview-container" id="preview<%=i%>" style="position: relative; display: inline-block;">
-                                                <img id="imgView<%=i%>" src="/uploads/product-images/<%=product.images[i]%>" alt="Product Image" width="150">
-                                                <button type="button" onclick="deleteSingleImage('<%=product.images[i]%>', '<%=product._id%>')" 
-                                                    class="delete-image-btn" 
-                                                    style="position: absolute; top: -10px; right: -10px; width: 25px; height: 25px; border-radius: 50%; background: #ff4444; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                                                    ×
-                                                </button>
+                                            <img src="<%=product.images[i]%>" id="croppedImg<%=i%>" alt="Product Image">
+                                            <% } else { %>
+                                            <!-- Empty Image Placeholder -->
+                                            <img src="/assets/imgs/theme/upload.svg" id="croppedImg<%=i%>" alt="">
+                                            <% } %>
+                                            <div class="image-preview-container" id="preview<%=i%>">
+                                                <img id="imgView<%=i%>" src="" alt="">
                                             </div>
-                            
-                                            <!-- Upload New Image -->
                                             <input class="form-control" type="file" name="images" id="input<%= i %>"
                                                    accept="image/png, image/jpeg, image/jpg"
                                                    onchange="viewImage(event, '<%= i %>')">
-
-                                            
                                             <div id="image-error" class="error-message"></div>
-                            
-                                           
+                                            <button type="button" id="saveButton<%=i%>" class="btn-sm btn-primary">Save</button>
                                             <input type="hidden" name="croppedImages" id="croppedImage<%=i%>">
+                                            <% if (i < product.images.length) { %>
+                                            <button type="button" onclick="deleteSingleImage('<%=product.images[i]%>', '<%=product._id%>')" 
+                                                class="delete-image-btn">×</button>
+                                            <% } %>
                                         </div>
-                                        
-                                        <br>
-                                        <br>
-                                        <br>
-        
                                         <% } %>
                                     </div>
                                 </div>
                             </div>
-                            
                         </div>
                     </form>
                 </div>
@@ -362,99 +425,296 @@
         </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script>
-        function validateForm() {
-          clearErrorMessages();
-          const name = document.getElementsByName('productName')[0].value;
-          const description = document.getElementsByName('description')[0].value;
-          const price = document.getElementsByName('regularPrice')[0].value;
-          const saleprice = document.getElementsByName('salePrice')[0].value;
-          const category = document.getElementsByName('category')[0].value;
-          const images = document.getElementById('input0')
-          let isValid = true
-          if (name.trim() === "") {
-              displayErrorMessage('productName-error', 'Please enter a product name.');
-              isValid = false;
-          } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
-              displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
-              isValid = false;
-          }
+        // Store cropper instances
+        const cropperInstances = {};
+
+        function addNewImageUpload() {
+            const imageCount = document.querySelectorAll('.input-upload').length;
             
-          if (description.trim() === "") {
-              displayErrorMessage('description-error', 'Please enter a product description.');
-              isValid = false;
-          } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
-              displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
-              isValid = false;
-          }
-         
-          if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-              displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-              isValid = false;
-          }
-  
-          if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
-              displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
-              isValid = false;
-          }
-          if (parseFloat(price) <= parseFloat(saleprice)) {
-              displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
-              isValid = false;
-          }
-         
-          if (images && images.files.length === 0) {
-              displayErrorMessage("image-error",'Please select an image.');
-              isValid = false;
-          }
-          return isValid;
-      }
+            // Limit to 3 images
+            if (imageCount >= 3) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Maximum Images Reached',
+                    text: 'You can only add up to 3 images per product.'
+                });
+                return;
+            }
+            
+            const newIndex = imageCount;
+            
+            const newUploadDiv = document.createElement('div');
+            newUploadDiv.className = 'input-upload';
+            newUploadDiv.innerHTML = `
+                <img src="/assets/imgs/theme/upload.svg" id="croppedImg${newIndex}" alt="">
+                <div class="image-preview-container" id="preview${newIndex}">
+                    <img id="imgView${newIndex}" src="" alt="">
+                </div>
+                <input class="form-control" type="file" name="images" id="input${newIndex}"
+                       accept="image/png, image/jpeg, image/jpg"
+                       onchange="viewImage(event, '${newIndex}')">
+                <div id="image-error" class="error-message"></div>
+                <button type="button" id="saveButton${newIndex}" class="btn-sm btn-primary">Save</button>
+                <input type="hidden" name="croppedImages" id="croppedImage${newIndex}">
+                <button type="button" onclick="removeImageUpload(this)" class="delete-image-btn">×</button>
+            `;
+            
+            document.querySelector('.card-body').insertBefore(newUploadDiv, document.querySelector('.mb-3'));
+            
+            // Add event listener for the new save button
+            document.getElementById(`saveButton${newIndex}`).addEventListener('click', function() {
+                saveCroppedImage(newIndex);
+            });
+            
+            // Hide the add button if we've reached 3 images
+            if (imageCount + 1 >= 3) {
+                document.getElementById('addImageBtn').style.display = 'none';
+            }
+        }
+        
+        function removeImageUpload(button) {
+            const uploadDiv = button.closest('.input-upload');
+            uploadDiv.remove();
+            
+            // Show the add button again
+            document.getElementById('addImageBtn').style.display = 'block';
+        }
 
-      function displayErrorMessage(elementId, message) {
-          var errorElement = document.getElementById(elementId);
-          if (errorElement) {
-              errorElement.innerText = message;
-              errorElement.style.display = "block";
-          }
-      }
-  
-      function clearErrorMessages() {
-          const errorElements = document.getElementsByClassName('error-message');
-          Array.from(errorElements).forEach(element => {
-              element.innerText = '';
-          });
-          const errorMessage = document.getElementById('errorMessage');
-      }
+        function viewImage(event, index) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-      function deleteSingleImage(imageId,productId){
-        $.ajax({
-            url:"/admin/deleteImage",
-            method:'post',
-            data:{imageNameToServer:imageId,productIdToServer:productId},
-            success:((response)=>{
-                if(response.status===true){
-                    window.location.reload()
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const image = document.getElementById('imgView' + index);
+                const preview = document.getElementById('preview' + index);
+                const croppedImg = document.getElementById('croppedImg' + index);
+                
+                // Hide cropped image and show preview
+                croppedImg.style.display = 'none';
+                preview.style.display = 'block';
+                
+                // Set image source
+                image.src = e.target.result;
+
+                // Wait for image to load
+                image.onload = function() {
+                    // Destroy existing cropper if it exists
+                    if (cropperInstances[index]) {
+                        cropperInstances[index].destroy();
+                    }
+
+                    // Create new cropper instance
+                    cropperInstances[index] = new Cropper(image, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        guides: true,
+                        background: false,
+                        autoCropArea: 1,
+                        zoomable: true,
+                        minCropBoxWidth: 200,
+                        minCropBoxHeight: 200,
+                        ready() {
+                            // Ensure the cropper is properly initialized
+                            this.cropper.setData({
+                                width: 440,
+                                height: 440
+                            });
+                        }
+                    });
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Add save button functionality
+        document.querySelectorAll('[id^="saveButton"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const index = this.id.replace('saveButton', '');
+                saveCroppedImage(index);
+            });
+        });
+
+        function saveCroppedImage(index) {
+            if (cropperInstances[index]) {
+                const canvas = cropperInstances[index].getCroppedCanvas({
+                    width: 440,
+                    height: 440
+                });
+                const croppedImage = document.getElementById('croppedImg' + index);
+                const preview = document.getElementById('preview' + index);
+                const hiddenInput = document.getElementById('croppedImage' + index);
+                
+                // Show cropped image and hide preview
+                croppedImage.src = canvas.toDataURL();
+                croppedImage.style.display = 'block';
+                preview.style.display = 'none';
+                
+                // Store the cropped image data
+                hiddenInput.value = canvas.toDataURL();
+                
+                // Convert canvas to blob and update file input
+                canvas.toBlob(blob => {
+                    const file = new File([blob], `cropped-${index}.jpg`, { type: 'image/jpeg' });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    document.getElementById(`input${index}`).files = dataTransfer.files;
+                });
+            }
+        }
+
+        function deleteSingleImage(imageId, productId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/admin/deleteImage",
+                        type: "POST",
+                        data: { imageNameToServer: imageId, productIdToServer: productId },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted!',
+                                    text: 'Image has been deleted.',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Failed to delete image'
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to delete image'
+                            });
+                        }
+                    });
                 }
-            })
-        })
-      }
+            });
+        }
+        function validateForm() {
+    // Clear all previous error messages
+    clearErrorMessage();
+    
+    // Get all form values
+    const productName = document.querySelector('input[name="productName"]').value;
+    const description = document.querySelector('textarea[name="description"]').value;
+    const category = document.querySelector('select[name="category"]').value;
+    const regularPrice = document.querySelector('input[name="regularPrice"]').value;
+    const salePrice = document.querySelector('input[name="salePrice"]').value;
+    const specifications= document.querySelector('textarea[name="specifications"]').value;
+    
+    let isValid = true;
+    
+    // Required fields validation
+    if (!productName) {
+        displayErrorMessage('name-error', 'Please fill product name');
+        isValid = false;
+    }
+    if (!category) {
+        displayErrorMessage('description-error', 'Please fill category');
+        isValid = false;
+    }
+    
+    if (!description) {
+        displayErrorMessage('description-error', 'Please fill description');
+        isValid = false;
+    }
+        
+    if (!specifications) {
+        displayErrorMessage('description-error', 'Please fill specifications');
+        isValid = false;
+    }
+    
+    if (!regularPrice) {
+        displayErrorMessage('regularPrice-error', 'Please fill regular price');
+        isValid = false;
+    } else if (regularPrice < 0) {
+        displayErrorMessage('regularPrice-error', 'Regular price cannot be negative');
+        isValid = false;
+    }
+    
+    if (!salePrice) {
+        displayErrorMessage('salePrice-error', 'Please fill sale price');
+        isValid = false;
+    } else if (salePrice < 0) {
+        displayErrorMessage('salePrice-error', 'Offer price cannot be negative');
+        isValid = false;
+    }
+    
+    // Price comparison validation
+    if (parseFloat(regularPrice) <= parseFloat(salePrice)) {
+        displayErrorMessage('salePrice-error', 'Regular price must be greater than sale price');
+        isValid = false;
+    }
+    
+    // Shoe size validation - at least one size needs a quantity
+    let hasValidShoeSize = false;
+    for (let i = 1; i <= 10; i++) {
+        const sizeValue = parseInt(document.querySelector(`input[name="shoeSize${i}"]`).value) || 0;
+        if (sizeValue > 0) {
+            hasValidShoeSize = true;
+            break;
+        }
+    }
+    
+    if (!hasValidShoeSize) {
+        // Since there's no specific error element for shoe sizes, use an alert
+        alert('Please add at least one shoe size quantity');
+        isValid = false;
+    }
+    
+    return isValid;
+}
+document.addEventListener('DOMContentLoaded', function() {
+    // Find the form element - use the form ID if available, otherwise select the first form
+    const form = document.getElementById('productForm') || document.querySelector('form');
+    
+    // Attach submit event listener
+    form.addEventListener('submit', function(event) {
+        // Prevent default form submission
+        event.preventDefault();
+        
+        // Run validation
+        if (validateForm()) {
+            // If validation passes, submit the form
+            this.submit();
+        }
+    });
+});
+      
+        function displayErrorMessage(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.innerText = message;
+            errorElement.style.display = "block";
+        }
 
-      function viewImage(event, index) {
-          const file = event.target.files[0];
-          if (file) {
-              const reader = new FileReader();
-              reader.onload = function(e) {
-                  document.getElementById(`imgView${index}`).src = e.target.result;
-              }
-              reader.readAsDataURL(file);
-          }
-      }
-
-      function validateAndSubmit() {
-          return validateForm();
-      }
+        function clearErrorMessage() {
+            const errorElements = document.getElementsByClassName("error-message");
+            Array.from(errorElements).forEach((element) => {
+                element.innerText = "";
+                element.style.display = "none";
+            });
+        }
+        
     </script>
 </body>
 </html>

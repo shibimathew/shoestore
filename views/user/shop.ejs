@@ -27,7 +27,23 @@
                                     <li><a href="#"><img src="assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                 </ul>
                             </li>
-                            <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
+                            <% if (locals.user) { %>
+                                <div class="dropdown">
+                                    <a href="#" class="sign-in-link"><%= locals.user.name %></a>
+                                    <div class="dropdown-content">
+                                        <a href="/userProfile">Profile</a>
+                                        <a href="/orders">Orders</a>
+                                        <a href="/logout">Logout</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <li>
+                                    <div class="d-flex gap-2">
+                                        <a href="/login" class="btn btn-sm btn-outline-primary">Login</a>
+                                        <a href="/signup" class="btn btn-sm btn-primary">Sign Up</a>
+                                    </div>
+                                </li>
+                            <% } %>
                         </ul>
                     </div>
                 </div>
@@ -41,11 +57,11 @@
                     <img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore Logo">
                 </div>
                 <div class="header-right">
-                    <div class="search-style-2">
+                    <!-- <div class="search-style-2">
                         <form action="#">
                             <input type="text" placeholder="Search for items...">
                         </form>
-                    </div>
+                    </div> -->
                     <div class="header-action-right">
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
@@ -159,11 +175,17 @@
    margin: 5px 0;
  }
  .filter-item a {
-   text-decoration: none;
    color: #333;
+   text-decoration: none;
+   padding: 8px 15px;
+   display: block;
+   transition: all 0.3s ease;
  }
- .filter-item a:hover {
-   color: #007bff;
+ .filter-item a:hover,
+ .filter-item a.active {
+   background-color: #007bff;
+   color: white;
+   border-radius: 4px;
  }
  .product-list-container {
    display: flex;
@@ -246,8 +268,10 @@
    transition: background-color 0.3s, transform 0.2s;
    text-align: center;
    font-size: 14px;
+   width: 100%;
  }
- .price-button:hover {
+ .price-button:hover,
+ .price-button.active {
    background-color: #007bff;
    color: white;
    transform: scale(1.05);
@@ -281,7 +305,8 @@
    font-size: 14px;
    width: 100%;
  }
- .sort-button:hover {
+ .sort-button:hover,
+ .sort-button.active {
    background-color: #007bff;
    color: white;
    transform: scale(1.05);
@@ -289,9 +314,35 @@
  .sort-button:active {
    transform: scale(0.95);
  }
- .sort-button.active {
-   background-color: #007bff;
-   color: white;
+ .dropdown{
+   position:relative;
+   display:inline-block;
+ }
+ .dropdown-content{
+   display: none;
+   position: absolute;
+   background-color: white;
+   min-width: 160px;
+   box-shadow: 0px 8px 16px 0px rgb(0,0,0,0,2);
+   z-index: 1000;
+   right: 0;
+ }
+ .dropdown-content a {
+   color: black;
+   padding: 12px 16px;
+   text-decoration: none;
+   display: block;
+   width: 100%;
+ }
+ .dropdown-content a:hover{
+   background-color: #f1f1f1;
+ }
+ .dropdown:hover .dropdown-content{
+   display:block;
+ }
+ .header {
+   position: relative;
+   z-index: 500;
  }
 </style>
 
@@ -313,7 +364,10 @@
          <ul>
            <% for(let i = 0; i < category.length; i++) { %>
              <li class="filter-item">
-               <a href="/filter?category=<%= category[i]._id %>"><%= category[i].name %></a>
+               <a href="/filter?category=<%= category[i]._id %>&sort=<%= currentSort || 'newest' %>" 
+                  class="<%= selectedCategory === category[i]._id.toString() ? 'active' : '' %>">
+                 <%= category[i].name %>
+               </a>
              </li>
            <% } %>
          </ul>
@@ -323,10 +377,18 @@
          <div class="filter-title">Filter by Price</div>
          <form id="price-filter-form">
            <div class="price-options">
-             <a href="/filterPrice?gt=0&lt=500"><button type="button" class="price-button">Under ₹500</button></a>
-             <a href="/filterPrice?gt=500&lt=1000"><button type="button" class="price-button">₹500 - ₹1000</button></a>
-             <a href="/filterPrice?gt=1000&lt=1500"><button type="button" class="price-button">₹1000- ₹1500</button></a>
-             <a href="/filterPrice?gt=1500&lt=20000"><button type="button" class="price-button">Above ₹1500</button></a>
+             <a href="/filterPrice?gt=0&lt=500&category=<%= selectedCategory || '' %>&sort=<%= currentSort || 'newest' %>">
+               <button type="button" class="price-button <%= priceRange && priceRange.gt === '0' && priceRange.lt === '500' ? 'active' : '' %>">Under ₹500</button>
+             </a>
+             <a href="/filterPrice?gt=500&lt=1000&category=<%= selectedCategory || '' %>&sort=<%= currentSort || 'newest' %>">
+               <button type="button" class="price-button <%= priceRange && priceRange.gt === '500' && priceRange.lt === '1000' ? 'active' : '' %>">₹500 - ₹1000</button>
+             </a>
+             <a href="/filterPrice?gt=1000&lt=1500&category=<%= selectedCategory || '' %>&sort=<%= currentSort || 'newest' %>">
+               <button type="button" class="price-button <%= priceRange && priceRange.gt === '1000' && priceRange.lt === '1500' ? 'active' : '' %>">₹1000- ₹1500</button>
+             </a>
+             <a href="/filterPrice?gt=1500&lt=20000&category=<%= selectedCategory || '' %>&sort=<%= currentSort || 'newest' %>">
+               <button type="button" class="price-button <%= priceRange && priceRange.gt === '1500' && priceRange.lt === '20000' ? 'active' : '' %>">Above ₹1500</button>
+             </a>
            </div>
          </form>
        </div>
@@ -336,11 +398,21 @@
          <div class="filter-title">Sort By</div>
          <form id="sort-form">
            <div class="sort-options">
-             <a href="/shop?sort=price_asc"><button type="button" class="sort-button">Price: Low to High</button></a>
-             <a href="/shop?sort=price_desc"><button type="button" class="sort-button">Price: High to Low</button></a>
-             <a href="/shop?sort=name_asc"><button type="button" class="sort-button">Name: A to Z</button></a>
-             <a href="/shop?sort=name_desc"><button type="button" class="sort-button">Name: Z to A</button></a>
-             <a href="/shop?sort=newest"><button type="button" class="sort-button">Newest First</button></a>
+             <a href="/shop?sort=price_asc&category=<%= selectedCategory || '' %>">
+               <button type="button" class="sort-button <%= currentSort === 'price_asc' ? 'active' : '' %>">Price: Low to High</button>
+             </a>
+             <a href="/shop?sort=price_desc&category=<%= selectedCategory || '' %>">
+               <button type="button" class="sort-button <%= currentSort === 'price_desc' ? 'active' : '' %>">Price: High to Low</button>
+             </a>
+             <a href="/shop?sort=name_asc&category=<%= selectedCategory || '' %>">
+               <button type="button" class="sort-button <%= currentSort === 'name_asc' ? 'active' : '' %>">Name: A to Z</button>
+             </a>
+             <a href="/shop?sort=name_desc&category=<%= selectedCategory || '' %>">
+               <button type="button" class="sort-button <%= currentSort === 'name_desc' ? 'active' : '' %>">Name: Z to A</button>
+             </a>
+             <a href="/shop?sort=newest&category=<%= selectedCategory || '' %>">
+               <button type="button" class="sort-button <%= currentSort === 'newest' ? 'active' : '' %>">Newest First</button>
+             </a>
            </div>
          </form>
        </div>
