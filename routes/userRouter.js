@@ -8,20 +8,20 @@ const {userAuth,adminAuth} = require("../middleware/auth.js");
 const cartController = require('../controllers/user/cartController');
 
 // Home route
-router.get("/", userController.loadHomepage);
+router.get("/",userAuth,userController.loadHomepage);
 router.get("/home", userController.loadHomepage);
 
 // Error page
 router.get("/pageNotFound", userController.pageNotFound);
 
 // Shop routes
-router.get("/shop", userController.loadShoppingPage);
+router.get("/shop",userAuth, userController.loadShoppingPage);
 router.get("/filter", userController.filterProduct);
 router.get("/filterPrice", userController.filterByPrice);
 router.post("/search", userController.searchProducts);
 
 // Product routes
-router.get("/productDetails", productController.productDetails);
+router.get("/productDetails",userAuth, productController.productDetails);
 
 // Auth routes
 router.get("/signup", userController.loadSignup);

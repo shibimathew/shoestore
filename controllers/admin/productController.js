@@ -175,7 +175,7 @@ const editProduct = async (req, res) => {
 };
 
 const listProduct = async (req, res) => {
-    console.log("byyy")
+    // console.log("byyy")
     try {
         const productId = req.query.productId;
         await Product.findByIdAndUpdate(productId, { isListed: true });

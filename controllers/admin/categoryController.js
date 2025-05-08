@@ -63,6 +63,7 @@ const addCategory = async (req,res)=>{
             
         });
 
+        
   
         await newCategory.save();//saving the category
         
