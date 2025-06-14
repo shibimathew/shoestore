@@ -1,0 +1,231 @@
+<%- include('../partials/user/header.ejs') %>
+
+<style>
+    .order-success-container {
+        text-align: center;
+        padding: 4rem 0;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .success-icon {
+        color: #3BB77E;
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .order-number {
+        background-color: #f8f9fa;
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: 600;
+        margin: 1rem 0;
+    }
+    
+    .order-details-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .order-summary {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .order-summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+    
+    .order-summary-row:last-child {
+        margin-bottom: 0;
+        padding-top: 0.75rem;
+        border-top: 1px solid #dee2e6;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .order-summary-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .order-product {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .order-product:last-child {
+        border-bottom: none;
+    }
+    
+    .order-product-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 1rem;
+    }
+    
+    .order-product-details {
+        flex-grow: 1;
+    }
+    
+    .order-product-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .order-product-price {
+        color: #3BB77E;
+        font-weight: 600;
+    }
+    
+    .order-product-quantity {
+        margin: 0 1.5rem;
+        font-weight: 500;
+    }
+    
+    .order-product-total {
+        font-weight: 600;
+        min-width: 80px;
+        text-align: right;
+    }
+    
+    .delivery-address {
+        padding: 1rem;
+    }
+    
+    .delivery-address-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .delivery-address-details {
+        color: #6c757d;
+        line-height: 1.5;
+    }
+    
+    .action-buttons {
+        margin-top: 2rem;
+    }
+    
+    .action-btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+        text-decoration: none;
+        margin: 0 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .primary-btn {
+        background-color: #3BB77E;
+        color: white;
+    }
+    
+    .primary-btn:hover {
+        background-color: #2f9b6a;
+        color: white;
+    }
+    
+    .secondary-btn {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #dee2e6;
+    }
+    
+    .secondary-btn:hover {
+        background-color: #e9ecef;
+    }
+    
+    .estimated-delivery {
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    @media (max-width: 767.98px) {
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .action-btn {
+            margin: 0.5rem 0;
+        }
+        
+        .order-product {
+            flex-wrap: wrap;
+        }
+        
+        .order-product-quantity {
+            margin: 0.5rem 0;
+            width: 100%;
+        }
+        
+        .order-product-total {
+            width: 100%;
+            text-align: left;
+            margin-top: 0.5rem;
+        }
+    }
+</style>
+
+
+
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span> <a href="/cart">Cart</a>
+                <span></span> <a href="/checkout">Checkout</a>
+                <span></span> Order Confirmation
+            </div>
+        </div>
+    </div>
+
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="order-success-container">
+                <div class="success-icon">
+                    <i class="fi-rs-check-circle"></i>
+                </div>
+                <h2>Thank You for Your Order!</h2>
+                <p>Your order has been placed successfully and is being processed.</p>
+                <div class="order-number">
+                    <%= order.orderId %>
+                </div>
+<!--                 
+                <div class="estimated-delivery">
+                    <h5>Estimated Delivery</h5>
+                    <p><strong>Tuesday, April 29, 2025</strong></p>
+                    <p>A confirmation email has been sent to <strong><%= email %></strong></p>
+                </div> -->
+   
+                        <div class="action-buttons">
+                            <a href="/orderDetails/<%= order._id %>" class="action-btn primary-btn">Track Order</a>
+                            <a href="/shop" class="action-btn secondary-btn">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('../partials/user/footer.ejs') %>

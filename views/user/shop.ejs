@@ -1,3 +1,4 @@
+
 <%- include("../../views/partials/user/header") %>
 
 <header class="header-area header-style-1 header-height-2">
@@ -31,8 +32,8 @@
                                 <div class="dropdown">
                                     <a href="#" class="sign-in-link"><%= locals.user.name %></a>
                                     <div class="dropdown-content">
-                                        <a href="/userProfile">Profile</a>
-                                        <a href="/orders">Orders</a>
+                                        <a href="/profileinfo">Profile</a>
+                                        <!-- <a href="/orders">Orders</a> -->
                                         <a href="/logout">Logout</a>
                                     </div>
                                 </div>
@@ -65,15 +66,15 @@
                     <div class="header-action-right">
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
-                                <a href="shop-wishlist.html">
+                                <a href="/wishlist">
                                     <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg">
-                                    <span class="pro-count blue">4</span>
+                                    <!-- <span class="pro-count blue">4</span> -->
                                 </a>
                             </div>
                             <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="shop-cart.html">
+                                <a class="mini-cart-icon" href="/cart">
                                     <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count blue">2</span>
+                                    <!-- <span class="pro-count blue">2</span> -->
                                 </a>
                             </div>
                         </div>
@@ -204,6 +205,7 @@
    border-radius: 8px;
    text-align: center;
    position: relative;
+   max-height: 350px;
  }
  .product-card img {
    max-width: 100%;
@@ -344,6 +346,20 @@
    position: relative;
    z-index: 500;
  }
+
+ @media (max-width : 769px){
+   .product-card {
+   width: 180px;
+   border: 1px solid #ddd;
+   padding: 15px;
+   border-radius: 8px;
+   text-align: center;
+   position: relative;
+   max-height: 250px;
+   max-width: 200px;
+ }
+ }
+
 </style>
 
 <div class="main-container">
@@ -434,7 +450,7 @@
                </span>
              </p>
            </a>
-           <button class="add-to-cart-btn" onclick="">Add to Cart</button>
+           <!-- <button class="add-to-cart-btn" onclick="">Add to Cart</button> -->
          </div>
        <% }); %>
      </main>
@@ -473,6 +489,242 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+// Add this script to your shop page or include it in your main JS file
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle wishlist button clicks
+    document.querySelectorAll('.wishlist-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const productCard = this.closest('.product-card');
+            const productLink = productCard.querySelector('a[href*="productDetails"]');
+            const href = productLink.getAttribute('href');
+            
+            // Extract product ID from the URL
+            const urlParams = new URLSearchParams(href.split('?')[1]);
+            const productId = urlParams.get('id');
+            
+            if (!productId) {
+                showNotification('Product ID not found', 'error');
+                return;
+            }
+            
+            // Check if product is already in wishlist
+            const isInWishlist = this.classList.contains('in-wishlist');
+            
+            if (isInWishlist) {
+                removeFromWishlist(productId, this);
+            } else {
+                addToWishlist(productId, this);
+            }
+        });
+    });
+    
+    // Get current sort parameter from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentSort = urlParams.get('sort');
+    
+    // Add active class to current sort button
+    if (currentSort) {
+        const sortButton = document.querySelector(`a[href="/shop?sort=${currentSort}"] button`);
+        if (sortButton) {
+            sortButton.classList.add('active');
+        }
+    }
+    
+    // Load wishlist status for products on page load
+    loadWishlistStatus();
+});
+
+// Function to add product to wishlist
+function addToWishlist(productId, buttonElement) {
+    fetch('/wishlist/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId: productId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === 'Product added to wishlist successfully') {
+            buttonElement.classList.add('in-wishlist');
+            buttonElement.style.color = '#ff6b6b';
+            buttonElement.title = 'Remove from wishlist';
+            showNotification('Added to wishlist!', 'success');
+            updateWishlistCount(data.totalCount);
+        } else if (data.message === 'Product already in wishlist') {
+            buttonElement.classList.add('in-wishlist');
+            buttonElement.style.color = '#ff6b6b';
+            showNotification('Product already in wishlist', 'info');
+        } else {
+            showNotification(data.message || 'Error adding to wishlist', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error adding to wishlist', 'error');
+    });
+}
+
+// Function to remove product from wishlist
+function removeFromWishlist(productId, buttonElement) {
+    fetch('/wishlist/remove', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId: productId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === 'Removed from wishlist') {
+            buttonElement.classList.remove('in-wishlist');
+            buttonElement.style.color = '#ccc';
+            buttonElement.title = 'Add to wishlist';
+            showNotification('Removed from wishlist!', 'success');
+            updateWishlistCount(data.totalCount);
+        } else {
+            showNotification(data.message || 'Error removing from wishlist', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error removing from wishlist', 'error');
+    });
+}
+
+// Function to load wishlist status for all products on the page
+function loadWishlistStatus() {
+    const productCards = document.querySelectorAll('.product-card');
+    const productIds = [];
+    
+    productCards.forEach(card => {
+        const productLink = card.querySelector('a[href*="productDetails"]');
+        if (productLink) {
+            const href = productLink.getAttribute('href');
+            const urlParams = new URLSearchParams(href.split('?')[1]);
+            const productId = urlParams.get('id');
+            if (productId) {
+                productIds.push(productId);
+            }
+        }
+    });
+    
+    if (productIds.length === 0) return;
+    
+    // Fetch wishlist status for all products
+    fetch('/wishlist/status', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productIds: productIds })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.wishlistItems) {
+            data.wishlistItems.forEach(productId => {
+                const productCard = findProductCardById(productId);
+                if (productCard) {
+                    const wishlistBtn = productCard.querySelector('.wishlist-btn');
+                    if (wishlistBtn) {
+                        wishlistBtn.classList.add('in-wishlist');
+                        wishlistBtn.style.color = '#ff6b6b';
+                        wishlistBtn.title = 'Remove from wishlist';
+                    }
+                }
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error loading wishlist status:', error);
+    });
+}
+
+// Helper function to find product card by ID
+function findProductCardById(productId) {
+    const productCards = document.querySelectorAll('.product-card');
+    for (let card of productCards) {
+        const productLink = card.querySelector('a[href*="productDetails"]');
+        if (productLink) {
+            const href = productLink.getAttribute('href');
+            const urlParams = new URLSearchParams(href.split('?')[1]);
+            const id = urlParams.get('id');
+            if (id === productId) {
+                return card;
+            }
+        }
+    }
+    return null;
+}
+
+// Function to show notifications
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    // Style the notification
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 4px;
+        color: white;
+        font-weight: 500;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+    `;
+    
+    // Set background color based on type
+    switch(type) {
+        case 'success':
+            notification.style.backgroundColor = '#28a745';
+            break;
+        case 'error':
+            notification.style.backgroundColor = '#dc3545';
+            break;
+        case 'info':
+            notification.style.backgroundColor = '#17a2b8';
+            break;
+        default:
+            notification.style.backgroundColor = '#6c757d';
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Function to update wishlist count in navbar
+function updateWishlistCount(count) {
+    const wishlistCountElement = document.querySelector('.wishlist-count');
+    if (wishlistCountElement) {
+        wishlistCountElement.textContent = count;
+    }
+}
 </script>
 
 <%- include("../../views/partials/user/footer") %>

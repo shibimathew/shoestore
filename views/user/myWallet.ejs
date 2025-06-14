@@ -1,0 +1,805 @@
+<%- include('../partials/user/header.ejs') %>
+
+<!-- Add Material Icons font -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+    .breadcrumb a,
+    .breadcrumb span {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .breadcrumb .separator {
+        margin: 0 8px;
+        color: #999;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .card-header {
+        padding: 1rem 1.25rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .card-header h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .dropdown{
+        position:relative;
+        display:inline-block;
+    }
+    .dropdown-content{
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgb(0,0,0,0,2);
+        z-index: 1000;
+        right: 0;
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+    }
+    .dropdown-content a:hover{
+        background-color: #f1f1f1;
+    }
+    .dropdown:hover .dropdown-content{
+        display:block;
+    }
+    .header{
+        position: relative;
+        z-index: 500;
+    }
+
+    /* Dashboard menu styles */
+    .dashboard-menu .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: #666;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-menu .nav-link i {
+        margin-right: 10px;
+        font-size: 20px;
+    }
+
+    .dashboard-menu .nav-link:hover,
+    .dashboard-menu .nav-link.active {
+        background-color: #f8f9fa;
+        color: #3BB77E;
+    }
+
+    /* Wallet specific styles - Made smaller and better aligned */
+    .wallet-balance-card {
+        background: linear-gradient(135deg, #3BB77E 0%, #2a9d8f 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 25px rgba(59, 183, 126, 0.25);
+    }
+
+    .wallet-balance-card .balance-amount {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 0.3rem;
+    }
+
+    .wallet-balance-card .balance-label {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        margin-bottom: 1rem;
+    }
+
+    .transaction-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .transaction-card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+
+    .transaction-card .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .transaction-card .card-body {
+        padding: 1rem;
+    }
+
+    .transaction-type {
+        font-weight: 600;
+        color: #3BB77E;
+    }
+
+    .transaction-date {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .transaction-status {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .transaction-status.refunded {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .transaction-status.completed {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .transaction-status.failed {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .transaction-amount {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .transaction-amount.credit {
+        color: #28a745;
+    }
+
+    .transaction-amount.debit {
+        color: #dc3545;
+    }
+
+    .transaction-details {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #dee2e6;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .transaction-order-id {
+        font-weight: 600;
+        color: #3BB77E;
+    }
+
+    .transaction-id {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .no-transactions {
+        text-align: center;
+        padding: 3rem 2rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+
+    .no-transactions i {
+        font-size: 3rem;
+        color: #dee2e6;
+        margin-bottom: 1rem;
+    }
+
+    .no-transactions p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+
+    .stats-row {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 1rem;
+        opacity: 0.9;
+    }
+
+    .stats-row .stat-item {
+        text-align: center;
+        flex: 1;
+    }
+
+    .stats-row .stat-value {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+
+    .stats-row .stat-label {
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+
+    /* Pagination styles */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 2rem;
+        gap: 1rem;
+    }
+
+    .pagination {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .pagination button {
+        padding: 0.5rem 1rem;
+        border: 1px solid #dee2e6;
+        background: white;
+        color: #6c757d;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .pagination button:hover:not(:disabled) {
+        background-color: #3BB77E;
+        color: white;
+        border-color: #3BB77E;
+    }
+
+    .pagination button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .pagination button.active {
+        background-color: #3BB77E;
+        color: white;
+        border-color: #3BB77E;
+    }
+
+    .page-info {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+        .stats-row {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .wallet-balance-card {
+            padding: 1rem;
+        }
+        
+        .wallet-balance-card .balance-amount {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<header class="header-area header-style-1 header-height-2">
+    <div class="header-top header-top-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info">
+                        <ul>
+                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
+                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-4">
+                    <div class="text-center">
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info header-info-right">
+                        <ul>
+                            <li>
+                                <a class="language-dropdown-active" href="#"> 
+                                    <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
+                                </a>
+                                <ul class="language-dropdown">
+                                    <li><a href="#"><img src="assets/imgs/theme/flag-fr.png" alt="">Français</a></li>
+                                    <li><a href="#"><img src="assets/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
+                                    <li><a href="#"><img src="assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
+                                </ul>
+                            </li>
+                            <% if (typeof user !== 'undefined' && user) { %>
+                                <div class="dropdown">
+                                    <a href="#" class="sign-in-link"><%= user.name %></a>
+                                    <div class="dropdown-content">
+                                        <a href="/profileinfo">Profile</a>
+                                        <a href="/logout">Logout</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="header-wrap">
+                <div class="logo logo-width-1">
+                   <!-- <img src="/assets/imgs/theme/shoestore-logo.svg" alt="logo"> -->
+                </div>
+                <div class="header-right">
+                    <div class="search-style-2">
+                        <!-- <form action="/search" method="get">
+                            <input type="text" placeholder="Search for items..." name="query">
+                        </form> -->
+                    </div>
+                    <div class="header-action-right">
+                        <div class="header-action-2">
+                            <div class="header-action-icon-2">
+                                <a href="/wishlist">
+                                    <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg">
+                                </a>
+                            </div>
+                            <div class="header-action-icon-2">
+                                <a class="mini-cart-icon" href="/cart">
+                                    <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-bottom header-bottom-bg-color sticky-bar">
+        <div class="container">
+            <div class="header-wrap header-space-between position-relative">
+                <div class="logo logo-width-1 d-block d-lg-none">
+                    <a href="/"><img src="/assets/imgs/theme/shoestore-logo.svg" alt="logo"></a>
+                </div>
+                <div class="header-nav d-none d-lg-flex">
+                    <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
+                        <nav>
+                            <ul>
+                                <li><a href="/">Home</a></li>
+                                <li><a href="/about">About</a></li>
+                                <li><a href="/shop">Shop</a></li>
+                                <li class="position-static"><a href="/offers">Deals</a>
+                                    <ul class="mega-menu">
+                                    </ul>
+                                </li>
+                                <li><a href="/contact">Contact</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="hotline d-none d-lg-block">
+                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                </div>   
+                <div class="header-action-icon-2 d-block d-lg-none">
+                    <div class="burger-icon burger-icon-white">
+                        <span class="burger-icon-top"><span></span><span></span><span></span></span>
+                        <span class="burger-icon-mid"><span></span><span></span><span></span></span>
+                        <span class="burger-icon-bottom"><span></span><span></span><span></span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="mobile-header-active mobile-header-wrapper-style perfect-scrollbar">
+    <div class="mobile-header-wrapper-inner">
+        <div class="mobile-header-content-area">
+            <div class="perfect-scroll">
+                <div class="mobile-menu-wrap mobile-header-border">
+                    <nav>
+                        <ul class="mobile-menu font-heading">
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/about">About</a></li>
+                            <li><a href="/shop">Shop</a></li>
+                            <li><a href="/offers">Deals</a></li>
+                            <li><a href="/contact">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="mobile-account">
+                    <h6 class="mb-10px">My Account</h6>
+                    <ul class="mobile-menu font-heading">
+                        <li><a href="/profileinfo">Profile</a></li>
+                        <li><a href="/myorders">My Orders</a></li>
+                        <li><a href="/addresses">My Addresses</a></li>
+                        <li><a href="/wishlist">Wishlist</a></li>
+                        <li><a href="/wallet">My Wallet</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span> My Wallet
+            </div>
+        </div>
+    </div>
+
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="dashboard-menu">
+                        <ul class="nav flex-column" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/profileinfo">
+                                    <i class="fi-rs-user-check"></i> Personal Information
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/myorders">
+                                    <i class="fi-rs-shopping-cart"></i> My Orders
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/myAddresses">
+                                    <i class="fi-rs-marker"></i> My Addresses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/wishlist">
+                                    <i class="fi-rs-heart"></i> Wishlist
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/wallet">
+                                    <i class="fi-rs-credit-card"></i> My Wallet
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/notifications">
+                                    <i class="fi-rs-bell"></i> Notifications
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/security">
+                                    <i class="fi-rs-shield-check"></i> Security Settings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/help">
+                                    <i class="fi-rs-help"></i> Help Center
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout">
+                                    <i class="fi-rs-exit"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <!-- Wallet Balance Card - Made smaller and better aligned -->
+                    <div class="wallet-balance-card">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="balance-label">Available Balance</div>
+                                <div class="balance-amount">₹<%= balance.toFixed(2) %></div>
+                            </div>
+                            <div>
+                                <i class="fi-rs-credit-card" style="font-size: 2.5rem; opacity: 0.6;"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <div class="stat-value"><%= transactions.filter(t => t.entryType === 'CREDIT').length %></div>
+                                <div class="stat-label">Credits</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value"><%= transactions.filter(t => t.entryType === 'DEBIT').length %></div>
+                                <div class="stat-label">Debits</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value"><%= transactions.length %></div>
+                                <div class="stat-label">Total</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transactions List -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0">Transaction History</h3>
+                            <span class="badge bg-primary rounded-pill">
+                                <%= transactions.length %> Transactions
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div id="transactions-container">
+                                <% if (transactions && transactions.length > 0) { %>
+                                    <% transactions.forEach((transaction, index) => { %>
+                                        <div class="transaction-card" data-transaction-index="<%= index %>">
+                                            <div class="card-header">
+                                                <div>
+                                                    <span class="transaction-type">
+                                                        <% if (transaction.type === 'refund') { %>
+                                                            <i class="fi-rs-refresh me-2"></i>Order Refund
+                                                        <% } else if (transaction.payment_type === 'order_payment') { %>
+                                                            <i class="fi-rs-shopping-cart me-2"></i>Order Payment
+                                                        <% } else { %>
+                                                            <i class="fi-rs-credit-card me-2"></i><%= transaction.type || 'Transaction' %>
+                                                        <% } %>
+                                                    </span>
+                                                    <span class="transaction-date ms-2">
+                                                        <%= new Date(transaction.createdAt).toLocaleDateString('en-IN', {
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        }) %>
+                                                    </span>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="transaction-amount <%= transaction.entryType === 'CREDIT' ? 'credit' : 'debit' %> me-3">
+                                                        <%= transaction.entryType === 'CREDIT' ? '+' : '-' %>₹<%= transaction.amount.toFixed(2) %>
+                                                    </span>
+                                                    <span class="transaction-status <%= transaction.status === 'completed' ? 'completed' : (transaction.status === 'pending' || transaction.type === 'refund') ? 'refunded' : 'completed' %>">
+                                                        <% if (transaction.type === 'refund' || transaction.status === 'pending') { %>
+                                                            Refunded
+                                                        <% } else { %>
+                                                            <%= transaction.status || 'Completed' %>
+                                                        <% } %>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="transaction-details">
+                                                    <% if (transaction.orderId) { %>
+                                                        <div class="mb-1">
+                                                            <i class="fi-rs-shopping-bag me-2"></i>
+                                                            <strong>Order ID:</strong> 
+                                                            <span class="transaction-order-id">#<%= transaction.orderId %></span>
+                                                        </div>
+                                                    <% } %>
+                                                    
+                                                    <% if (transaction.transactionId) { %>
+                                                        <div class="mb-1">
+                                                            <i class="fi-rs-receipt me-2"></i>
+                                                            <strong>Transaction ID:</strong> 
+                                                            <span class="transaction-id"><%= transaction.transactionId %></span>
+                                                        </div>
+                                                    <% } %>
+                                                    
+                                                    <% if (transaction.payment_type) { %>
+                                                        <div class="mb-1">
+                                                            <i class="fi-rs-credit-card me-2"></i>
+                                                            <strong>Payment Type:</strong> <%= transaction.payment_type %>
+                                                        </div>
+                                                    <% } %>
+                                                    
+                                                    <% if (transaction.type === 'refund') { %>
+                                                        <div class="text-muted">
+                                                            <i class="fi-rs-info me-2"></i>
+                                                            Amount refunded to your wallet for cancelled/returned order
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <div class="no-transactions">
+                                        <i class="fi-rs-credit-card"></i>
+                                        <h4>No Transactions Yet</h4>
+                                        <p>Your wallet transaction history will appear here once you start using your wallet for orders or receive refunds.</p>
+                                        <a href="/shop" class="btn btn-primary">Start Shopping</a>
+                                    </div>
+                                <% } %>
+                            </div>
+
+                            <!-- Pagination -->
+                            <% if (transactions && transactions.length > 3) { %>
+                                <div class="pagination-container">
+                                    <div class="page-info">
+                                        Showing <span id="showing-start">1</span>-<span id="showing-end">3</span> of <%= transactions.length %> transactions
+                                    </div>
+                                    <div class="pagination">
+                                        <button id="prev-btn" onclick="changePage(-1)" disabled>
+                                            <i class="fi-rs-angle-left"></i> Previous
+                                        </button>
+                                        <span id="page-numbers"></span>
+                                        <button id="next-btn" onclick="changePage(1)">
+                                            Next <i class="fi-rs-angle-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h4>Quick Actions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <a href="/myorders" class="btn btn-outline-primary w-100">
+                                        <i class="fi-rs-shopping-cart me-2"></i>
+                                        View Orders
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/shop" class="btn btn-outline-success w-100">
+                                        <i class="fi-rs-shopping-bag me-2"></i>
+                                        Continue Shopping
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/profileinfo" class="btn btn-outline-secondary w-100">
+                                        <i class="fi-rs-user me-2"></i>
+                                        My Profile
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-outline-info w-100" onclick="refreshPage()">
+                                        <i class="fi-rs-refresh me-2"></i>
+                                        Refresh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('../partials/user/footer.ejs') %>
+
+<script>
+let currentPage = 1;
+const itemsPerPage = 3;
+const totalTransactions = <%= transactions.length %>;
+const totalPages = Math.ceil(totalTransactions / itemsPerPage);
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize pagination if there are transactions
+    if (totalTransactions > 0) {
+        updatePagination();
+        showTransactions();
+    }
+    
+    // Add fade-in animation to visible transaction cards
+    animateVisibleCards();
+});
+
+function showTransactions() {
+    const allCards = document.querySelectorAll('.transaction-card');
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    
+    allCards.forEach((card, index) => {
+        if (index >= startIndex && index < endIndex) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Update showing info
+    const showingStart = Math.min(startIndex + 1, totalTransactions);
+    const showingEnd = Math.min(endIndex, totalTransactions);
+    
+    if (document.getElementById('showing-start')) {
+        document.getElementById('showing-start').textContent = showingStart;
+        document.getElementById('showing-end').textContent = showingEnd;
+    }
+    
+    // Animate visible cards
+    setTimeout(animateVisibleCards, 50);
+}
+
+function updatePagination() {
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const pageNumbers = document.getElementById('page-numbers');
+    
+    if (prevBtn) prevBtn.disabled = currentPage === 1;
+    if (nextBtn) nextBtn.disabled = currentPage === totalPages;
+    
+    // Generate page numbers
+    if (pageNumbers) {
+        let pagesHtml = '';
+        for (let i = 1; i <= totalPages; i++) {
+            pagesHtml += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+        }
+        pageNumbers.innerHTML = pagesHtml;
+    }
+}
+
+function changePage(direction) {
+    const newPage = currentPage + direction;
+    if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        showTransactions();
+        updatePagination();
+    }
+}
+
+function goToPage(pageNumber) {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+        currentPage = pageNumber;
+        showTransactions();
+        updatePagination();
+    }
+}
+
+function animateVisibleCards() {
+    const visibleCards = document.querySelectorAll('.transaction-card[style*="block"], .transaction-card:not([style*="none"])');
+    visibleCards.forEach((card, index) => {
+        if (card.style.display !== 'none') {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.3s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        }
+    });
+}
+
+function refreshPage() {
+    const refreshBtn = document.querySelector('button[onclick="refreshPage()"]');
+    const icon = refreshBtn.querySelector('i');
+    
+    // Add spinning animation
+    icon.style.animation = 'spin 1s linear infinite';
+    
+    // Refresh after a short delay
+    setTimeout(() => {
+        window.location.reload();
+    }, 500);
+}
+
+// Add CSS animation for refresh button
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+`;
+document.head.appendChild(style);

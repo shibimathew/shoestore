@@ -138,7 +138,7 @@ const loadSignup = async (req,res)=>{
           try{
               const {name,email,phone,password,cPassword} = req.body; //destructuring
               if(password!==cPassword){
-                console.log("workr",cPassword);
+                
                 
                   return res.render("user/signup",{message:"Passwords do not match"});
                 }
@@ -311,6 +311,7 @@ const logout = async (req,res) =>{
 }
 
 const loadShoppingPage = async (req, res) => {
+    
     try {
         const user = req.session.user||req.user||null;
        
@@ -318,7 +319,7 @@ const loadShoppingPage = async (req, res) => {
         const categories = await Category.find({isListed:true});
         const categoryIds = categories.map((category)=>category._id.toString());
         const page = parseInt(req.query.page) || 1;
-        const limit = 9;
+        const limit = 6;
         const skip = (page-1) * limit;
         
         // Get sort parameter from query
@@ -349,7 +350,7 @@ const loadShoppingPage = async (req, res) => {
         const query = {
             isListed: true,
             category: { $in: categoryIds },
-            quantity: { $gt: 0 },
+            // quantity: { $gt: 0 },
         };
 
         if (selectedCategory) {
@@ -426,7 +427,7 @@ const filterProduct = async (req, res) => {
         const query = {
             isListed: true,
             category: { $in: categoryIds },
-            quantity: { $gt: 0 },
+            // quantity: { $gt: 0 },
         };
 
         if (categoryId) {
@@ -477,7 +478,7 @@ const filterByPrice = async (req,res)=>{
         const query = {
             salePrice: {$gt: Number(gt), $lt: Number(lt)},
             isListed: true, 
-            quantity: {$gt: 0}
+            // quantity: {$gt: 0}
         };
 
         // Add category filter if provided

@@ -5,8 +5,8 @@ const {Schema} = mongoose;
 const addressSchema = new Schema({
     userId: {
         type : Schema.Types.ObjectId,
-        ref : "User"
-        required : "true"
+        ref : "User",
+        required : true
     },
     address: [{
         addressType: {
@@ -21,9 +21,9 @@ const addressSchema = new Schema({
             type : String, 
             required : true
         },
-        landMark: {
+        landmark: {
             type : String,
-            required : true
+            required : false
 
         },
         state: {
@@ -37,11 +37,19 @@ const addressSchema = new Schema({
         phone: {
             type : String,
             required : true
-        }
+        },
         altPhone: {
             type : String,
-            required : true 
-        }
+            required : false
+        },
+         addressLine1:{
+           type : String,
+            required : true  
+         },
+        addressLine2:{
+         type : String,
+            required : false 
+        },
     }]
 })
 

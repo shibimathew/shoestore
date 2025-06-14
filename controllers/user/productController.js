@@ -1,6 +1,7 @@
 const Product = require("../../models/productSchema");
 const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
+const Cart = require("../../models/cartSchema")
 
 const productDetails = async (req, res) => {
     try {
@@ -57,7 +58,10 @@ const productDetails = async (req, res) => {
         .limit(4) // Limit to 4 related products
         .populate('category')
         .lean();
+          
         
+        // Check if product is in cart (without adding to render variables yet)
+      
         res.render("user/product-details", {
             user: userData,
             product: product,
@@ -71,6 +75,7 @@ const productDetails = async (req, res) => {
                 lt: req.query.lt || ''
             },
             products: products // Changed from relatedProducts to products to match your template
+            
         });
         
     } catch (error) {
@@ -82,3 +87,6 @@ const productDetails = async (req, res) => {
 module.exports = {
     productDetails,
 }
+
+
+

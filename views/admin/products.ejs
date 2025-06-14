@@ -171,9 +171,9 @@
                                    
                                     <td><%= product.productId %></td>
                                     <td><b><%= product.productName %></b></td>
-                                    <td><%= product.category.name %></td>
+                                    <td><%= product.category?.name %></td>
                                     <td>₹<%= product.salePrice %></td>
-                                    <td><%= product.quantity %></td>
+                                    <!-- <td><%= product.quantity %></td> -->
                                     <td>
                                         <% if (product.shoeSizes) { %>
                                             <% 

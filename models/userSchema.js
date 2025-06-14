@@ -7,6 +7,10 @@ const userSchema = new Schema({
         type : String,
         required : true
     },
+    profileImage : {
+        type : String,
+        required : false
+    },
     email: {
         type : String,
         required : true,
@@ -20,7 +24,10 @@ const userSchema = new Schema({
         sparse : true,// to set unique constrains since phone no is not there
         default : null
     },
-    
+    gender:{
+        type : String,
+        required : false
+    },
     googleId: {
         type : String,
         unique : true,

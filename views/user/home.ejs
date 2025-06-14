@@ -209,8 +209,8 @@
                                     <div class="dropdown">
                                         <a href="#" class="sign-in-link"><%= locals.user.name %></a>
                                         <div class="dropdown-content">
-                                            <a href="/userProfile">Profile</a>
-                                            <a href="/orders">Orders</a>
+                                            <a href="/profileinfo">Profile</a>
+                                            <!-- <a href="/orders">Orders</a> -->
                                             <!-- <a href="/wishlist">Wishlist</a> -->
                                             <a href="/logout">Logout</a>
                                         </div>
@@ -232,7 +232,7 @@
         <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
             <div class="container">
                 <div class="header-wrap">
-                    <!-- <div class="logo logo-width-1">
+                    <!-- <div class=" logo-width-1">
                        <img src="assets/imgs/theme/jaeger.png" alt="logo">
                     </div> -->
                     <div class="header-right">
@@ -251,21 +251,24 @@
                                     <option>Shoes</option>
                                     <option>Mother & Kids</option>
                                 </select> -->
-                                <input type="text" placeholder="Search for items...">
+                                <!-- <input type="text" placeholder="Search for items..."> -->
                             </form>
                         </div>
                         <div class="header-action-right">
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
-                                    <a href="shop-wishlist.html">
+                                    <a href="/wishlist">
                                         <img class="svgInject" alt="Shoestore" src="assets/imgs/theme/icons/icon-heart.svg">
-                                        <span class="pro-count blue">4</span>
+                                        <!-- <span class="pro-count blue">4</span> -->
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="shop-cart.html">
+                                    <a class="mini-cart-icon" href="/cart">
                                         <img alt="Shoestore" src="assets/imgs/theme/icons/icon-cart.svg">
-                                        <span class="pro-count blue">2</span>
+                                        <!-- <span class="pro-count blue">2</span> -->
+                                        
+                                    <!-- <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span> -->
+                                </a>
                                     </a>
 
                                 </div>
@@ -341,7 +344,7 @@
                     </div>
                 </div>
             
-                <div class="single-hero-slider single-animation-wrap">
+                <!-- <div class="single-hero-slider single-animation-wrap">
                     <div class="container">
                         <div class="row align-items-center slider-animated-1">
                             <div class="col-lg-5 col-md-6">
@@ -360,7 +363,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
             <div class="slider-arrow hero-slider-1-arrow"></div>
         </section>
@@ -417,100 +420,168 @@
                     <a href="/shop" class="view-more d-none d-md-flex">View More<i class="fi-rs-angle-double-small-right"></i></a>
                 </div>
                 <!--End nav-tabs-->
-                <div class="tab-content wow fadeIn animated" id="myTabContent">
-                    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
-                        <div class="row product-grid-4">
-                            <% if (featuredProducts && featuredProducts.length > 0) { %>
-                                <% featuredProducts.forEach(product => { %>
-                                    <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                        <div class="product-cart-wrap mb-30">
-                                            <div class="product-img-action-wrap">
-                                                <div class="product-img product-img-zoom">
-                                                    <a href="/productDetails?id=<%= product._id %>">
-                                                        <img class="default-img" src="<%=product.images[0]%>" alt="<%= product.productName %>">
-                                                    </a>
-                                                </div>
-                                                <div class="product-action-1">
-                                                    <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/addToWishlist?id=<%= product._id %>">
-                                                        <i class="fi-rs-heart"></i>
-                                                    </a>
-                                                    <a aria-label="Compare" class="action-btn hover-up" href="/shop-compare.html">
-                                                        <i class="fi-rs-shuffle"></i>
-                                                    </a>
-                                                </div>
-                                                <div class="product-badges product-badges-position product-badges-mrg">
-                                                    <span class="hot">Hot</span>
-                                                </div>
-                                            </div>
-                                            <div class="product-content-wrap">
-                                                <div class="product-category">
-                                                    <a href="/shop?category=<%= product.category._id %>"><%= product.category.name %></a>
-                                                </div>
-                                                <h2><a href="/productDetails?id=<%= product._id %>"><%= product.productName %></a></h2>
-                                                <div class="rating-result" title="90%">
-                                                    <span>
-                                                        <span>90%</span>
-                                                    </span>
-                                                </div>
-                                                <div class="product-price">
-                                                    <span>₹<%= product.salePrice %></span>
-                                                    <span class="old-price">₹<%= product.regularPrice %></span>
-                                                </div>
-                                                <div class="product-action-1 show">
-                                                    <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart?id=<%= product._id %>">
-                                                        <i class="fi-rs-shopping-bag-add"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <% }); %>
-                            <% } else { %>
-                                <div class="col-12 text-center">
-                                    <p>No products available at the moment.</p>
+               <!-- Update the wishlist button in your home.ejs -->
+<div class="tab-content wow fadeIn animated" id="myTabContent">
+    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+        <div class="row product-grid-4">
+            <% if (featuredProducts && featuredProducts.length > 0) { %>
+                <% featuredProducts.forEach(product => { %>
+                    <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                        <div class="product-cart-wrap mb-30">
+                            <div class="product-img-action-wrap">
+                                <div class="product-img product-img-zoom">
+                                    <a href="/productDetails?id=<%= product._id %>">
+                                        <img class="default-img" src="<%=product.images[0]%>" alt="<%= product.productName %>">
+                                    </a>
                                 </div>
-                            <% } %>
+                                <div class="product-action-1">
+                                    <!-- Updated wishlist button with AJAX -->
+                                    <button class="action-btn hover-up add-to-wishlist-btn" 
+                                            data-product-id="<%= product._id %>" 
+                                            aria-label="Add To Wishlist">
+                                        <i class="fi-rs-heart"></i>
+                                    </button>
+                                    <a aria-label="Compare" class="action-btn hover-up" href="/shop-compare.html">
+                                        <i class="fi-rs-shuffle"></i>
+                                    </a>
+                                </div>
+                                <div class="product-badges product-badges-position product-badges-mrg">
+                                    <span class="hot">Hot</span>
+                                </div>
+                            </div>
+                            <div class="product-content-wrap">
+                                <div class="product-category">
+                                    <a href="/shop?category=<%= product.category._id %>"><%= product.category.name %></a>
+                                </div>
+                                <h2><a href="/productDetails?id=<%= product._id %>"><%= product.productName %></a></h2>
+                                <div class="rating-result" title="90%">
+                                    <span>
+                                        <span>90%</span>
+                                    </span>
+                                </div>
+                                <div class="product-price">
+                                    <span>₹<%= product.salePrice %></span>
+                                    <span class="old-price">₹<%= product.regularPrice %></span>
+                                </div>
+                                <div class="product-action-1 show">
+                                    <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart?id=<%= product._id %>">
+                                        <i class="fi-rs-shopping-bag-add"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                        <!--End product-grid-4-->
                     </div>
+                <% }); %>
+            <% } else { %>
+                <div class="col-12 text-center">
+                    <p>No products available at the moment.</p>
                 </div>
-                <!--End tab-content-->
-            </div>
-        </section>
-
-        </section> -->
-        <section class="popular-categories section-padding mt-15 mb-25">
-            <div class="container wow fadeIn animated">
-                <h3 class="section-title mb-20"><span>Popular</span> Categories</h3>
-                <div class="carausel-6-columns-cover position-relative">
-                    <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-arrows"></div>
-                    <div class="carausel-6-columns" id="carausel-6-columns">
-                        <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="shop-grid-right.html"><img src="assets/imgs/shop/tshirt.jpeg" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">Heels</a></h5>
-                        </div>
-                        <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="shop-grid-right.html"> <img src="assets/imgs/shop/samuhelmet.jpeg" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">Flats</a></h5>
-                        </div>
-                        <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="shop-grid-right.html"><img src="assets/imgs/shop/homedec.jpeg" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">Sneakers</a></h5>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-       
-    </main>
-
-
-    <%- include('../partials/user/footer.ejs') %>
+            <% } %>
+        </div>
+        <!--End product-grid-4-->
+    </div>
+</div>
+<!--End tab-content-->
+<%- include('../partials/user/footer.ejs') %>
+<!-- Add this script at the bottom of your home.ejs file -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add to wishlist functionality
+    document.querySelectorAll('.add-to-wishlist-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            const productId = this.dataset.productId;
+            const heartIcon = this.querySelector('i');
+            
+            // Check if user is logged in (you can modify this check based on your auth system)
+            <% if (typeof user === 'undefined' || !user) { %>
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Please Login',
+                    text: 'You need to login to add items to wishlist',
+                    showCancelButton: true,
+                    confirmButtonText: 'Login',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/signup';
+                    }
+                });
+                return;
+            <% } %>
+            
+            try {
+                // Disable button during request
+                this.disabled = true;
+                
+                const response = await fetch('/wishlist/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productId: productId })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Success - change heart icon to filled/red
+                    heartIcon.style.color = '#ff6b6b';
+                    heartIcon.classList.add('fi-rs-heart-fill');
+                    heartIcon.classList.remove('fi-rs-heart');
+                    
+                    // Update wishlist count in header if exists
+                    const wishlistCountElement = document.querySelector('.header-action-icon-2 a[href="/wishlist"] .pro-count');
+                    if (wishlistCountElement) {
+                        const currentCount = parseInt(wishlistCountElement.textContent.match(/\d+/)[0]) || 0;
+                        const newCount = currentCount + 1;
+                        wishlistCountElement.textContent = `${newCount} product${newCount !== 1 ? 's' : ''}`;
+                    }
+                    
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added to Wishlist!',
+                        text: data.message || 'Product added to your wishlist',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                    
+                } else {
+                    // Handle errors (like already in wishlist)
+                    if (response.status === 400) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Already in Wishlist',
+                            text: data.message || 'This product is already in your wishlist',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
+                        });
+                    } else {
+                        throw new Error(data.message || 'Failed to add to wishlist');
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error adding to wishlist:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Something went wrong. Please try again.',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            } finally {
+                // Re-enable button
+                this.disabled = false;
+            }
+        });
+    });
+});
+</script>

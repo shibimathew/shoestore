@@ -6,6 +6,7 @@ const categoryController = require("../controllers/admin/categoryController");
 const productController = require("..//controllers/admin/productController");
 const {userAuth,adminAuth} = require("../middleware/auth");
 const upload = require('../middleware/imageUpload');
+const orderController = require("../controllers/admin/orderController")
 
 
 
@@ -43,6 +44,16 @@ router.post("/edit-product/:id", adminAuth, upload.any(), productController.edit
 router.get("/listProduct", adminAuth, productController.listProduct);
 router.get("/unlistProduct", adminAuth, productController.unlistProduct);
 router.get("/deleteProduct", adminAuth, productController.deleteProduct);
+
+
+//order management
+router.get('/orders', adminAuth, orderController.getOrderManagement);
+router.get('/orderDetails', adminAuth, orderController.getOrderDetails);
+router.get('/orderDetails/:id', adminAuth, orderController.getOrderDetails);
+router.post('/order-status', adminAuth, orderController.updateOrderStatus);
+router.get('/orderTrack/:id', adminAuth, orderController.getOrderTracking);
+router.post('/approve-return/:orderId', adminAuth, orderController.approveReturns);
+router.post('/cancel-return/:orderId', adminAuth, orderController.rejectReturns);
 
 
 module.exports = router;

@@ -791,3 +791,452 @@
 
 
 
+//mycart.ejs <!-- < <section class="mt-50 mb-50">
+//         <div class="container">
+//             <div class="row">
+//                 <div class="col-lg-8">
+//                     <div class="card">
+//                         <div class="card-header d-flex justify-content-between align-items-center">
+//                             <h4 class="mb-0">Shopping Cart</h4>
+//                             <span class="badge bg-primary"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
+//                         </div>
+//                         <div class="card-body">
+//                             <% if (items.length > 0) { %>
+//                                 <!-- Cart with items -->
+//                                 <div class="cart-with-items">
+//                                     <table class="cart-table">
+//                                         <thead>
+//                                             <tr>
+//                                                 <th>Product</th>
+//                                                 <th>Price</th>
+//                                                 <th>Size</th>
+//                                                 <th>Quantity</th>
+//                                                 <th>Total</th>
+//                                                 <th></th>
+//                                             </tr>
+//                                         </thead>
+//                                         <tbody>
+//                                             <% items.forEach(item => { %>
+//                                                 <tr class="cart-item-row" data-price="<%= item.price %>">
+//                                                     <td>
+//                                                         <div class="d-flex align-items-center">
+//                                                             <!-- <img src="<%=items.productImage %>" alt="<%= item.name %>" class="cart-item-image" onerror="this.src='/assets/imgs/shop/product-placeholder.jpg'" /> -->
+//                                                             <img src="<%= item.productImage %>" alt="<%= item.name %>" class="cart-item-image" />
+//                                                             <div class="cart-item-details">
+//                                                                 <div class="cart-item-name"><%= item.name %></div>
+                                                                
+//                                                             </div>
+//                                                         </div>
+//                                                     </td>
+//                                                     <td class="item-price">₹<%= item.price.toFixed(2) %></td>
+//                                                     <td class="item-size">
+//                                                         <%= item.variants && item.variants.size ? item.variants.size.toUpperCase() : 'N/A' %>
+//                                                     </td>
+
+//                                                     <td>
+//                                                         <div class="cart-quantity">
+//                                                             <button type="button" class="cart-quantity-btn decrease-btn" data-id="<%= item._id %>">-</button>
+//                                                             <input type="number" name="quantity" class="cart-quantity-input" value="<%= item.quantity %>" min="1" data-id="<%= item._id %>" />
+//                                                             <button type="button" class="cart-quantity-btn increase-btn" data-id="<%= item._id %>">+</button>
+//                                                         </div>
+//                                                     </td>
+//                                                     <td class="item-total">₹<%= (item.price * item.quantity).toFixed(2) %></td>
+//                                                     <td>
+//                                                         <form action="/cart/remove?_method=DELETE" method="POST">
+//                                                             <input type="hidden" name="itemId" value="<%= item._id %>" />
+//                                                             <button type="submit" class="cart-item-remove" onclick="removeFromCart('<%= item._id %>')">
+//                                                                 <i class="fi-rs-trash"></i>
+//                                                             </button>
+//                                                         </form>
+//                                                     </td>
+//                                                 </tr>
+//                                             <% }) %>
+//                                         </tbody>
+//                                     </table>
+
+                                    
+
+//                                     <div class="cart-actions mt-4 d-flex justify-content-between">
+//                                         <a href="/shop" class="cart-continue-shopping">
+//                                             <i class="fi-rs-arrow-left"></i> Continue Shopping
+//                                         </a>
+                                       
+//                                     </div>
+
+//                                     <div class="cart-coupon">
+//                                         <div class="cart-coupon-title">
+//                                             <!-- Have a Coupon? -->
+//                                         </div>
+//                                         <div class="cart-coupon-form">
+//                                             <!-- <input type="text" class="cart-coupon-input" 
+//                                             placeholder="Enter coupon code" 
+//                                             /> -->
+//                                             <button class="cart-coupon-btn">
+//                                                 <!-- Apply -->
+
+//                                             </button>
+//                                         </div>
+//                                     </div>
+//                                 </div>
+//                             <% } else { %>
+//                                 <!-- Empty cart -->
+//                                 <div class="cart-empty">
+//                                     <i class="material-icons">shopping_cart</i>
+//                                     <h3>Your cart is empty</h3>
+//                                     <p>Looks like you haven't added any items to your cart yet.</p>
+//                                     <a href="/shop" class="btn btn-fill-out">Start Shopping</a>
+//                                 </div>
+//                             <% } %>
+//                         </div>
+//                     </div>
+//                 </div>
+                
+//                 <% if (items.length > 0) { %>
+//                     <% const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0); %>
+//                     <% const shipping = 10; %>
+//                     <% const tax = subtotal * 0.05; %>
+//                     <% const total = subtotal + shipping + tax; %>
+                
+//                     <div class="col-lg-4">
+//                         <div class="card">
+//                             <div class="card-body cart-summary">
+//                                 <div class="cart-summary-title">Order Summary</div>
+//                                 <div class="cart-summary-row">
+//                                     <div class="cart-summary-label">Subtotal</div>
+//                                     <div class="cart-summary-value subtotal">₹<%= subtotal.toFixed(2) %></div>
+//                                 </div>
+//                                 <div class="cart-summary-row">
+//                                     <div class="cart-summary-label">Shipping</div>
+//                                     <div class="cart-summary-value shipping">₹<%= shipping.toFixed(2) %></div>
+//                                 </div>
+//                                 <div class="cart-summary-row">
+//                                     <div class="cart-summary-label">Tax (5%)</div>
+//                                     <div class="cart-summary-value tax">₹<%= tax.toFixed(2) %></div>
+//                                 </div>
+//                                 <div class="cart-summary-row">
+//                                     <div class="cart-summary-label">Total</div>
+//                                     <div class="cart-summary-value total">₹<%= total.toFixed(2) %></div>
+//                                 </div>
+//                                 <div class="mt-4">
+//                                     <a href="/checkout" class="cart-checkout-btn">Proceed to Checkout</a>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 <% } %>
+//             </div>
+//         </div>
+//     </section>
+// </main>
+
+// <script>
+// document.addEventListener('DOMContentLoaded', () => {
+//   const updateServer = async (id, qty) => {
+//     try {
+//       const res = await fetch(`/cart/${id}`, {
+//         method: 'PATCH',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ quantity: qty })
+//       });
+//       const json = await res.json();
+//       if (!json.success) throw new Error(json.message || 'Update failed');
+//     } catch (err) {
+//       console.error('Cart update error:', err);
+//     }
+//   };
+
+//   const updateItemTotal = id => {
+//     const row   = document.querySelector(`tr[data-price] .cart-quantity-input[data-id="${id}"]`)
+//                       .closest('tr');
+//     const price = parseFloat(row.dataset.price);
+//     const qty   = parseInt(row.querySelector('.cart-quantity-input').value, 10);
+//     row.querySelector('.item-total').textContent = '₹' + (price * qty).toFixed(2);
+//     updateCartSummary();
+//   };
+
+//   const updateCartSummary = () => {
+//     let subtotal = 0;
+//     document.querySelectorAll('.cart-table tbody tr').forEach(row => {
+//       subtotal += parseFloat(
+//         row.querySelector('.item-total')
+//            .textContent.replace('₹', '')
+//       );
+//     });
+//     const shipping = 10;
+//     const tax      = subtotal * 0.05;
+//     const total    = subtotal + shipping + tax;
+
+//     document.querySelector('.subtotal').textContent = '₹' + subtotal.toFixed(2);
+//     document.querySelector('.tax').textContent      = '₹' + tax.toFixed(2);
+//     document.querySelector('.total').textContent    = '₹' + total.toFixed(2);
+//   };
+
+//   function handleChange(e) {
+//     const btn = e.target.closest('button');
+//     let input = e.target.classList.contains('cart-quantity-input')
+//               ? e.target
+//               : document.querySelector(`.cart-quantity-input[data-id="${btn.dataset.id}"]`);
+
+//     if (btn) {
+//       const delta = btn.classList.contains('increase-btn') ? 1 : -1;
+//       let val = parseInt(input.value, 10) + delta;
+//       if (val < 1) val = 1;
+//       input.value = val;
+//     }
+
+//     const id  = input.dataset.id;
+//     const qty = parseInt(input.value, 10);
+
+//     updateItemTotal(id);
+
+//     updateServer(id, qty);
+//   }
+
+//   document.querySelectorAll(
+//     '.decrease-btn, .increase-btn, .cart-quantity-input'
+//   ).forEach(el => {
+//     el.addEventListener('click',  handleChange);
+//     el.addEventListener('change', handleChange);
+//   });
+// });
+// // Cart management functions
+// // function removeFromCart(itemId) {
+// //     // First prevent default form submission from the button's onclick
+// //     event.preventDefault();
+    
+// //     // Display confirmation dialog
+// //     Swal.fire({
+// //         title: 'Remove Item',
+// //         text: 'Are you sure you want to remove this item from your cart?',
+// //         icon: 'warning',
+// //         showCancelButton: true,
+// //         confirmButtonColor: '#3085d6',
+// //         cancelButtonColor: '#d33',
+// //         confirmButtonText: 'Yes, remove it!'
+// //     }).then((result) => {
+// //         if (result.isConfirmed) {
+// //             // Create form data
+// //             const formData = new FormData();
+// //             formData.append('itemId', itemId);
+// //             formData.append('_method', 'DELETE');
+            
+// //             // Send AJAX request
+// //             const xhr = new XMLHttpRequest();
+// //             xhr.open('POST', '/cart/remove', true);
+// //             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            
+// //             xhr.onload = function() {
+// //                 if (xhr.status === 200) {
+// //                     // Show success message
+// //                     Swal.fire({
+// //                         title: 'Removed!',
+// //                         text: 'Item has been removed from your cart.',
+// //                         icon: 'success',
+// //                         confirmButtonColor: '#3085d6'
+// //                     }).then(() => {
+// //                         // Refresh cart display without full page reload
+// //                         refreshCartDisplay();
+// //                     });
+// //                 } else {
+// //                     // Show error message
+// //                     Swal.fire({
+// //                         title: 'Error!',
+// //                         text: 'Something went wrong while removing the item.',
+// //                         icon: 'error',
+// //                         confirmButtonColor: '#3085d6'
+// //                     });
+// //                 }
+// //             };
+            
+// //             xhr.onerror = function() {
+// //                 // Show network error message
+// //                 Swal.fire({
+// //                     title: 'Error!',
+// //                     text: 'Network error. Please check your connection.',
+// //                     icon: 'error',
+// //                     confirmButtonColor: '#3085d6'
+// //                 });
+// //             };
+            
+// //             // Send the request
+// //             xhr.send(formData);
+// //         }
+// //     });
+    
+// //     // Prevent default form submission
+// //     return false;
+// // }
+// function removeFromCart(itemId) {
+//     Swal.fire({
+//         title: 'Are you sure?',
+//         text: "This item will be removed from your cart",
+//         icon: 'warning',
+//         showCancelButton: true,
+//         confirmButtonColor: '#3BB77E',
+//         cancelButtonColor: '#d33',
+//         confirmButtonText: 'Yes, remove it!'
+//     }).then((result) => {
+//         if (result.isConfirmed) {
+//             fetch('/cart/remove', {
+//                 method: 'DELETE',
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 },
+//                 body: JSON.stringify({ itemId })
+//             })
+//             .then(response => response.json())
+//             .then(data => {
+//                 if (data.success) {
+//                     Swal.fire(
+//                         'Removed!',
+//                         'Item has been removed from your cart.',
+//                         'success'
+//                     ).then(() => {
+//                         window.location.reload();
+//                     });
+//                 } else {
+//                     throw new Error(data.message || 'Failed to remove item');
+//                 }
+//             })
+//             .catch(error => {
+//                 Swal.fire(
+//                     'Error!',
+//                     error.message || 'Something went wrong',
+//                     'error'
+//                 );
+//             });
+//         }
+//     });
+// }
+// // Function to update cart quantities
+// function updateCartQuantity(itemId, newQuantity) {
+//     // Create form data
+//     const formData = new FormData();
+//     formData.append('items[' + itemId + ']', newQuantity);
+    
+//     // Send AJAX request
+//     const xhr = new XMLHttpRequest();
+//     xhr.open('POST', '/cart/update', true);
+//     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    
+//     xhr.onload = function() {
+//         if (xhr.status === 200) {
+//             // Success - update the cart display
+//             refreshCartDisplay();
+//         } else {
+//             // Show error message
+//             Swal.fire({
+//                 title: 'Error!',
+//                 text: 'Something went wrong while updating your cart.',
+//                 icon: 'error',
+//                 confirmButtonColor: '#3085d6'
+//             });
+//         }
+//     };
+    
+//     xhr.onerror = function() {
+//         // Show network error message
+//         Swal.fire({
+//             title: 'Error!',
+//             text: 'Network error. Please check your connection.',
+//             icon: 'error',
+//             confirmButtonColor: '#3085d6'
+//         });
+//     };
+    
+//     // Send the request
+//     xhr.send(formData);
+// }
+
+// // Function to refresh cart display
+// function refreshCartDisplay() {
+//     // Fetch updated cart data
+//     fetch('/cart/data', {
+//         method: 'GET',
+//         headers: {
+//             'X-Requested-With': 'XMLHttpRequest'
+//         }
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         // Update cart UI with new data
+//         updateCartUI(data);
+//     })
+//     .catch(error => {
+//         console.error('Error refreshing cart:', error);
+//         // Fallback to page reload if AJAX fails
+//         window.location.href = '/cart';
+//     });
+// }
+
+// // Update cart UI with new data
+// function updateCartUI(cartData) {
+//     // If cart data doesn't have a proper structure, reload the page
+//     if (!cartData || !cartData.items) {
+//         window.location.href = '/cart';
+//         return;
+//     }
+    
+//     // Update item displays
+//     cartData.items.forEach(item => {
+//         const itemRow = document.querySelector(`[data-item-id="${item._id}"]`);
+//         if (itemRow) {
+//             // Update quantity
+//             const quantityInput = itemRow.querySelector('.qty-val');
+//             if (quantityInput) quantityInput.value = item.quantity;
+            
+//             // Update subtotal
+//             const subtotalElement = itemRow.querySelector('.product-subtotal');
+//             if (subtotalElement) {
+//                 subtotalElement.textContent = '₹' + (item.price * item.quantity).toFixed(2);
+//             }
+//         }
+//     });
+    
+//     // Update cart summary
+//     if (cartData.totals) {
+//         const subtotalElement = document.querySelector('.cart-subtotal span');
+//         if (subtotalElement) subtotalElement.textContent = '₹' + cartData.totals.subtotal.toFixed(2);
+        
+//         const totalElement = document.querySelector('.cart-total span');
+//         if (totalElement) totalElement.textContent = '₹' + cartData.totals.total.toFixed(2);
+//     }
+    
+//     // If cart is empty, show empty cart message
+//     if (cartData.items.length === 0) {
+//         const cartTable = document.querySelector('.table-responsive');
+//         if (cartTable) {
+//             cartTable.innerHTML = '<div class="text-center p-4"><h4>Your cart is empty</h4><a href="/shop" class="btn btn-fill-out">Continue Shopping</a></div>';
+//         }
+//     }
+// }
+
+// // Initialize cart event handlers
+// document.addEventListener('DOMContentLoaded', function() {
+//     // Override all cart remove forms
+//     document.querySelectorAll('form[action^="/cart/remove"]').forEach(form => {
+//         form.addEventListener('submit', function(e) {
+//             e.preventDefault();
+//             const itemId = this.querySelector('input[name="itemId"]').value;
+//             removeFromCart(itemId);
+//         });
+//     });
+    
+//     // Handle quantity changes
+//     document.querySelectorAll('.cart-item-qty').forEach(input => {
+//         input.addEventListener('change', function() {
+//             const itemId = this.closest('[data-item-id]').getAttribute('data-item-id');
+//             const newQuantity = parseInt(this.value);
+            
+//             if (newQuantity <= 0) {
+//                 removeFromCart(itemId);
+//             } else {
+//                 updateCartQuantity(itemId, newQuantity);
+//             }
+//         });
+//     });
+// });
+// </script> --> -->
+
+
+

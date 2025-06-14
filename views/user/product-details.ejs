@@ -193,15 +193,15 @@
                         <div class="header-action-right">
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
-                                    <a href="shop-wishlist.html">
+                                    <a href="/wishlist">
                                         <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg">
-                                        <span class="pro-count blue">4</span>
+                                        <!-- <span class="pro-count blue">4</span> -->
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="shop-cart.html">
+                                    <a class="mini-cart-icon" href="/cart">
                                         <img alt="Shoestore" src="assets/imgs/theme/icons/icon-cart.svg">
-                                        <span class="pro-count blue">2</span>
+                                        <!-- <span class="pro-count blue">2</span> -->
                                     </a>
 
                                 </div>
@@ -344,12 +344,15 @@
                                             Availability: <span id="stock-count">Select a size</span>
                                         </div>
                                         <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                                        <form action="/add-to-cart" method="POST" id="addToCartForm">
-                                            <input type="hidden" name="productId" value="<%= product._id %>">
-                                            <input type="hidden" name="selectedSize" id="selectedSize">
+                                        <form id="addToCartForm">
+                                            <input type="hidden" id="productId" name="productId" value="<%= product._id %>">
+                                            <input type="hidden" id="selectedSize" name="selectedSize" id="selectedSize">
                                             <div class="product-extra-link2">
                                                 <button type="submit" class="button button-add-to-cart" disabled>Add to cart</button>
+                                                
                                             </div>
+                                              
+                                      
                                         </form>
                                     </div>
                                 </div>
@@ -709,7 +712,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="widget-about font-md mb-md-5 mb-lg-0">
                             <div class="logo logo-width-1 wow fadeIn animated">
-                                <img src="assets/imgs/theme/jaeger.png" alt="logo">
+                                <img src="/assets/imgs/theme/shoestore-logo.svg" alt="logo">
                             </div>
                             <h5 class="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated">Contact</h5>
                             <p class="wow fadeIn animated">
@@ -829,56 +832,121 @@
     <script src="./assets/js/shop.js?v=3.4"></script>
     <script>
         // Dynamic stock update based on selected size
+        // 
         document.addEventListener("DOMContentLoaded", function () {
-            const sizeOptions = document.querySelectorAll('.size-option');
-            const stockCount = document.getElementById('stock-count');
-            const addToCartBtn = document.querySelector('.button.button-add-to-cart');
-            const selectedSizeInput = document.getElementById('selectedSize');
-            let selectedSize = null;
+    // Size selection and stock update logic
+    const sizeOptions = document.querySelectorAll('.size-option');
+    const stockCount = document.getElementById('stock-count');
+    const addToCartBtn = document.querySelector('.button.button-add-to-cart');
+    const selectedSizeInput = document.getElementById('selectedSize');
+    const addToCartForm = document.getElementById('addToCartForm');
+    
+    let selectedSize = null;
 
-            sizeOptions.forEach(option => {
-                option.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Remove active class from all options
-                    sizeOptions.forEach(opt => opt.classList.remove('active'));
-                    
-                    // Add active class to selected option
-                    this.classList.add('active');
-                    
-                    const size = this.getAttribute('data-size');
-                    const stock = parseInt(this.getAttribute('data-stock'));
-                    selectedSize = size;
-                    selectedSizeInput.value = size;
-                    
-                    if (stock > 0) {
-                        stockCount.textContent = stock + ' Items in Stock';
-                        if (addToCartBtn) {
-                            addToCartBtn.disabled = false;
-                            addToCartBtn.classList.remove('disabled');
-                        }
-                    } else {
-                        stockCount.textContent = 'Out of Stock';
-                        if (addToCartBtn) {
-                            addToCartBtn.disabled = true;
-                            addToCartBtn.classList.add('disabled');
-                        }
+    // Initialize size selection handlers
+    sizeOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all options
+            sizeOptions.forEach(opt => opt.classList.remove('active'));
+            
+            // Add active class to selected option
+            this.classList.add('active');
+            
+            const size = this.getAttribute('data-size');
+            const stock = parseInt(this.getAttribute('data-stock'));
+            selectedSize = size;
+            selectedSizeInput.value = size;
+            
+            if (stock > 0) {
+                stockCount.textContent = stock + ' Items in Stock';
+                if (addToCartBtn) {
+                    addToCartBtn.disabled = false;
+                    addToCartBtn.classList.remove('disabled' );
+                }
+            } else {
+                stockCount.textContent = 'Out of Stock';
+                if (addToCartBtn) {
+                    addToCartBtn.disabled = true;
+                    addToCartBtn.classList.add('disabled');
+                }
+            }
+        });
+    });
+
+    // Form submission using SweetAlert2
+    addToCartForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        // Check if size is selected
+        if (!selectedSize) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Please Select Size',
+                text: 'You must select a size before adding to cart',
+                confirmButtonColor: '#3BB77E'
+            });
+            return;
+        }
+
+        const productId = document.getElementById('productId').value;
+        const size = selectedSize;
+
+        // Get form data
+        const formData = {
+            productId : productId,
+            selectedSize : size
+        }
+
+        console.log(formData)
+        
+        try {
+            const response = await fetch('/cart/add', {
+                method: 'POST',
+                headers : { "Content-Type" : "application/json" },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                // Show success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Added to Cart!',
+                    text: 'Product has been added to your cart successfully',
+                    confirmButtonColor: '#3BB77E',
+                    showCancelButton: true,
+                    cancelButtonText: 'Continue Shopping',
+                    confirmButtonText: 'View Cart'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/cart';
                     }
                 });
+            } else {
+                // Show error message
+                const data = await response.json();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: data.message || 'Something went wrong!',
+                    confirmButtonColor: '#3BB77E'
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong! Please try again later.',
+                confirmButtonColor: '#3BB77E'
             });
-
-            // Form submission handler
-            const addToCartForm = document.getElementById('addToCartForm');
-            addToCartForm.addEventListener('submit', function(e) {
-                if (!selectedSize) {
-                    e.preventDefault();
-                    alert('Please select a size before adding to cart');
-                }
-            });
-        });
+        }
+    });
+});
+        
     </script>
     
 
 </body>
 
-</html>  
+</html>

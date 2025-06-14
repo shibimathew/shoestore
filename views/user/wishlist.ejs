@@ -1,0 +1,594 @@
+
+<%- include('../partials/user/header.ejs') %>
+
+<!-- Add Material Icons font -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+    .breadcrumb a,
+    .breadcrumb span {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .breadcrumb .separator {
+        margin: 0 8px;
+        color: #999;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .card-header {
+        padding: 1rem 1.25rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .card-header h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .dropdown{
+        position:relative;
+        display:inline-block;
+    }
+    .dropdown-content{
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgb(0,0,0,0,2);
+        z-index: 1000;
+        right: 0;
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+    }
+    .dropdown-content a:hover{
+        background-color: #f1f1f1;
+    }
+    .dropdown:hover .dropdown-content{
+        display:block;
+    }
+    .header{
+        position: relative;
+        z-index: 500;
+    }
+
+    /* Dashboard menu styles */
+    .dashboard-menu .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: #666;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-menu .nav-link i {
+        margin-right: 10px;
+        font-size: 20px;
+    }
+
+    .dashboard-menu .nav-link:hover,
+    .dashboard-menu .nav-link.active {
+        background-color: #f8f9fa;
+        color: #3BB77E;
+    }
+
+    /* Cart styles */
+    .cart-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .cart-table th {
+        background-color: #f8f9fa;
+        padding: 0.75rem;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 1px solid #dee2e6;
+        text-align: left;
+    }
+
+    .cart-table td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .cart-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .cart-item-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .cart-item-details {
+        padding-left: 1rem;
+    }
+
+    .cart-item-name {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+        color: #333;
+    }
+
+    .cart-item-price {
+        color: #3BB77E;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .cart-item-remove {
+        color: #dc3545;
+        cursor: pointer;
+    }
+
+    .cart-quantity {
+        display: flex;
+        align-items: center;
+        width: 120px;
+    }
+
+    .cart-quantity-btn {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .cart-quantity-input {
+        width: 60px;
+        height: 30px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        margin: 0 0.5rem;
+    }
+
+    .cart-summary {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .cart-summary-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .cart-summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .cart-summary-row:last-child {
+        margin-bottom: 0;
+        padding-top: 0.75rem;
+        border-top: 1px solid #dee2e6;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .cart-summary-label {
+        color: #6c757d;
+    }
+
+    .cart-summary-value {
+        font-weight: 500;
+    }
+
+    .cart-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1.5rem;
+    }
+
+    .cart-empty {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .cart-empty i {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 1.5rem;
+    }
+
+    .cart-empty h3 {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .cart-empty p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+
+    .cart-coupon {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .cart-coupon-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .cart-coupon-form {
+        display: flex;
+    }
+
+    .cart-coupon-input {
+        flex-grow: 1;
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 4px 0 0 4px;
+    }
+
+    .cart-coupon-btn {
+        padding: 0.5rem 1rem;
+        background-color: #3BB77E;
+        color: white;
+        border: none;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+    }
+
+    .cart-update-btn {
+        padding: 0.5rem 1rem;
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .cart-checkout-btn {
+        padding: 0.75rem 1.5rem;
+        background-color: #3BB77E;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .cart-continue-shopping {
+        color: #3BB77E;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .cart-item-variant {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+
+    .cart-item-variant span {
+        font-weight: 500;
+    }
+</style>
+
+<header class="header-area header-style-1 header-height-2">
+    <div class="header-top header-top-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info">
+                        <ul>
+                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
+                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-4">
+                    <div class="text-center">
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info header-info-right">
+                        <ul>
+                            <li>
+                                <a class="language-dropdown-active" href="#"> 
+                                    <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
+                                </a>
+                                <ul class="language-dropdown">
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
+                                </ul>
+                            </li>
+                            <% if (typeof user !== 'undefined' && user) { %>
+                                <div class="dropdown">
+                                    <a href="#" class="sign-in-link"><%= user.name %></a>
+                                    <div class="dropdown-content">
+                                        <a href="/profileinfo">Profile</a>
+                                        <a href="/logout">Logout</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="header-wrap">
+                <div class="logo logo-width-1">
+                   <!-- <img src="/assets/imgs/theme/shoestore-logo.svg" alt="logo"> -->
+                </div>
+                <div class="header-right">
+                    <!-- <div class="search-style-2">
+                        <form action="/search" method="get">
+                            <input type="text" placeholder="Search for items..." name="query">
+                        </form> -->
+                    </div>
+                    <div class="header-action-right">
+<div class="header-action-2">
+                                <div class="header-action-icon-2">
+                                    <a href="/wishlist">
+                                        <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg">
+                                        <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
+
+                                    </a>
+                                </div>
+                                <div class="header-action-icon-2">
+                                    <a class="mini-cart-icon" href="/cart">
+                                        <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg">
+                                        <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
+                                    </a>
+
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-bottom header-bottom-bg-color sticky-bar">
+        <div class="container">
+            <div class="header-wrap header-space-between position-relative">
+                <div class="logo logo-width-1 d-block d-lg-none">
+                    <a href="/"><img src="/assets/imgs/theme/shoestore-logo.svg" alt="logo"></a>
+                </div>
+                <div class="header-nav d-none d-lg-flex">
+                    <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
+                        <nav>
+                            <ul>
+                                <li><a href="/">Home</a></li>
+                                <li><a href="/about">About</a></li>
+                                <li><a href="/shop">Shop</a></li>
+                                <li class="position-static"><a href="/offers">Deals</a>
+                                    <ul class="mega-menu">
+                                    </ul>
+                                </li>
+                                <li><a href="/contact">Contact</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="hotline d-none d-lg-block">
+                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                </div>   
+                <div class="header-action-icon-2 d-block d-lg-none">
+                    <div class="burger-icon burger-icon-white">
+                        <span class="burger-icon-top"><span></span><span></span><span></span></span>
+                        <span class="burger-icon-mid"><span></span><span></span><span></span></span>
+                        <span class="burger-icon-bottom"><span></span><span></span><span></span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="mobile-header-active mobile-header-wrapper-style perfect-scrollbar">
+    <div class="mobile-header-wrapper-inner">
+        <div class="mobile-header-content-area">
+            <div class="perfect-scroll">
+                <div class="mobile-menu-wrap mobile-header-border">
+                    <nav>
+                        <ul class="mobile-menu font-heading">
+                            <li><a class="active" href="/">Home</a></li>
+                            <li><a href="/about">About</a></li>
+                            <li><a href="/shop">Shop</a></li>
+                            <li><a href="/offers">Deals</a></li>
+                            <li><a href="/contact">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="mobile-account">
+                    <h6 class="mb-10px">My Account</h6>
+                    <ul class="mobile-menu font-heading">
+                        <li><a href="/profileinfo">Profile</a></li>
+                        <li><a href="/myorders">My Orders</a></li>
+                        <li><a href="/addresses">My Addresses</a></li>
+                        <li><a href="/wishlist">Wishlist</a></li>
+                        <li><a href="/wallet">My Wallet</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div
+
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html" rel="nofollow">Home</a>
+                <span></span> Shop
+                <span></span> Wishlist
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table shopping-summery text-center">
+                            <thead>
+                              <tr class="main-heading">
+                                <th colspan="2">Product</th>
+                                <th>Price</th>
+                                <!-- <th>Stock Status</th> -->
+                                <th>Action <br><span style="color: #3BB77E !important;">(visit product to add to cart!)</span></th>
+                                <th>Remove</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% if (products.length === 0) { %>
+                                <tr>
+                                  <td colspan="6">Your wishlist is empty.</td>
+                                </tr>
+                              <% } else { %>
+                                <% products.forEach(product => { %>
+                                  <tr>
+                                    <td class="image product-thumbnail">
+                                      <img src="<%= product.images[0] %>" 
+                                           alt="<%= product.productName %>">
+                                    </td>
+                                    <td class="product-des product-name">
+                                      <h5 class="product-name">
+                                        <a href="/productDetails?id=<%= product._id %>">
+                                          <%= product.productName %>
+                                        </a>
+                                      </h5>
+                                    </td>
+                                    <td class="price">
+                                      ₹<%= product.salePrice.toFixed(2) %>
+                                    </td>
+                                    <!-- <td class="text-center">
+                                      <% if (product.countInStock > 0) { %>
+                                        <span class="color3 font-weight-bold">In Stock</span>
+                                      <% } else { %>
+                                        <span class="text-danger font-weight-bold">Out of stock</span>
+                                      <% } %>
+                                    </td> -->
+                                    <td class="text-right">
+                                        <a href="/productDetails?id=<%= product._id %>">
+                                          <button class="btn btn-sm">
+                                            <i class="fi-rs-shopping-bag-add mr-5"></i>Add to cart
+                                          </button>
+                                        </a>
+                                       
+                                    </td>
+                                    <td class="action">
+                                        <form class="remove-wishlist-form" method="POST" data-product-id="<%= product._id %>">
+                                          <button type="submit" class="btn btn-sm">
+                                            <i class="fi-rs-trash"></i>
+                                          </button>
+                                        </form>
+                                      </td>
+                                      
+                                  </tr>
+                                <% }) %>
+                              <% } %>
+                            </tbody>
+                          </table>
+                          
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<%- include('../partials/user/footer.ejs') %>
+
+<script>
+    document.querySelectorAll('.remove-wishlist-form').forEach(form => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+  
+        const productId = form.dataset.productId;
+  
+        const confirmed = await Swal.fire({
+          title: 'Are you sure?',
+          text: "Do you want to remove this from your wishlist?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, remove it!',
+          cancelButtonText: 'Cancel'
+        });
+  
+        if (confirmed.isConfirmed) {
+          try {
+            const response = await fetch('/wishlist/remove', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ productId })
+            });
+  
+            const data = await response.json();
+  
+            if (response.status === 200) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Removed!',
+                text: data.message || 'Product removed from wishlist.',
+                timer: 2000,
+                showConfirmButton: false
+              }).then(() => {
+                location.reload(); 
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'Something went wrong.'
+              });
+            }
+  
+          } catch (err) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Server Error',
+              text: err.message || 'Internal error occurred.'
+            });
+          }
+        }
+      });
+    });
+  </script>
+  

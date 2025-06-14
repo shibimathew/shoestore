@@ -15,9 +15,7 @@ const userAuth = async (req, res, next) => {
                         if (err) console.error("Error destroying session:", err);
                         res.redirect("/login?message=Your account has been blocked. Please contact support.");
                     });
-                }
-           
-          
+                }   
     } else {
         res.redirect("/login");
     }
@@ -38,7 +36,28 @@ const adminAuth = (req,res,next)=>{
    }
 }
 
+
+const blockedAuth = async (req, res, next) => {
+    const user = req.session.user || req.user || null;
+    if (user) {
+        const _id = user._id || user.googleId
+        const userData = await User.findOne({_id : _id}) || await User.findOne({googleId:_id})
+           
+                if(!userData || !userData?.isBlocked){
+                    next();
+                } else {
+                    req.session.destroy((err) => {
+                        if (err) console.error("Error destroying session:", err);
+                        res.redirect("/login?message=Your account has been blocked. Please contact support.");
+                    });
+                }   
+    } else {
+        res.redirect("/login");
+    }
+};
+
 module.exports = {
     userAuth,
-    adminAuth
+    adminAuth,
+    blockedAuth
 };

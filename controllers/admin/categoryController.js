@@ -44,10 +44,17 @@ const addCategory = async (req,res)=>{
         }
 
       
-        const existingCategory = await Category.findOne({name: name.trim()});
-        if(existingCategory){
-            return res.status(400).json({error: "Category already exists"});
-        }
+        // const existingCategory = await Category.findOne({name: name.trim()});
+        // if(existingCategory){
+        //     return res.status(400).json({error: "Category already exists"});
+        // }
+        const existingCategory = await Category.findOne({ 
+          name: { $regex: new RegExp(`^${name.trim()}$`, 'i') } 
+         });
+
+         if (existingCategory) {
+         return res.status(400).json({ error: "Category already exists" });
+         }
 
         const generateCategoryId = () => {
             return `CAT-${nanoid(10)}`;
@@ -141,15 +148,21 @@ const editCategory = async (req, res) => {
         }
 
        
-        const existingCategory = await Category.findOne({
-            name: categoryName.trim(),
-            _id: { $ne: categoryId }
+        // const existingCategory = await Category.findOne({
+        //     name: categoryName.trim(),
+        //     _id: { $ne: categoryId }
+        // });
+
+        // if (existingCategory) {
+        //     return res.status(400).json({ error: "Category name already exists" });
+        // }
+        const existingCategory = await Category.findOne({ 
+        name: { $regex: new RegExp(`^${name.trim()}$`, 'i') } 
         });
 
-        if (existingCategory) {
-            return res.status(400).json({ error: "Category name already exists" });
-        }
-
+       if (existingCategory) {
+       return res.status(400).json({ error: "Category already exists" });
+       }
       
         const updatedCategory = await Category.findByIdAndUpdate(
             categoryId,

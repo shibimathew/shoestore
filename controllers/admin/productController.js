@@ -50,14 +50,31 @@ const getProductAdd = async (req, res) => {
     }
 };
 
-const addProduct = async (req, res) => {
-    try {
-        const { productName, description, longDescription, specifications, regularPrice, salePrice, category, brand, color, status } = req.body;
-        // console.log(req.body)
-        // console.log(req.files)
-        const images = req.files.map(file => file.path);
 
-        // Process shoe sizes
+const addProduct = async (req, res) => {
+    console.log(req.body);
+  
+    try {
+        
+        const { productName, description, longDescription, specifications, regularPrice, salePrice, category, brand, color, status } = req.body;
+       
+        const images = req.files.map(file => file.path);
+        // const products=await products.find({productName})
+        // if(products==productName){
+        //     res.render("/productadd",{message:"product already exists"})
+        // }
+        const existingProduct = await Product.findOne({ 
+       productName: { $regex: new RegExp(`^${productName.trim()}$`, 'i') }
+       });
+
+      if (existingProduct) {
+      const categories = await Category.find({ isListed: true });
+      return res.render('admin/productadd', { 
+        message: "Product with this name already exists",
+        categories,
+        formData: req.body // Pass back the form data
+      });
+      }
         const shoeSizes = new Map();
         for (let i = 1; i <= 10; i++) {
             const sizeKey = `shoeSize${i}`;
@@ -70,7 +87,6 @@ const addProduct = async (req, res) => {
         
                   const productId = generateProductId()
 
-        console.log(req.body);
         const newProduct = new Product({
             productId,
             productName,
