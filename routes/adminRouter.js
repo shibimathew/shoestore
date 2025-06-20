@@ -7,6 +7,8 @@ const productController = require("..//controllers/admin/productController");
 const {userAuth,adminAuth} = require("../middleware/auth");
 const upload = require('../middleware/imageUpload');
 const orderController = require("../controllers/admin/orderController")
+const couponController = require("../controllers/admin/couponController")
+const salesController = require("../controllers/admin/salesController")
 
 
 
@@ -54,6 +56,19 @@ router.post('/order-status', adminAuth, orderController.updateOrderStatus);
 router.get('/orderTrack/:id', adminAuth, orderController.getOrderTracking);
 router.post('/approve-return/:orderId', adminAuth, orderController.approveReturns);
 router.post('/cancel-return/:orderId', adminAuth, orderController.rejectReturns);
+
+router.get('/sales', adminAuth, salesController.loadSalesReport);
+router.post('/sales/filter', adminAuth, salesController.updateSales);
+router.post('/generate-report', adminAuth, salesController.generateReport);
+
+
+// Coupon management
+router.get('/coupons', adminAuth, couponController.loadCouponManagement);
+router.post('/coupons', adminAuth, couponController.addCoupon);
+router.post('/coupons/update', adminAuth, couponController.updateCoupon);
+router.get('/coupons/activate/:id', adminAuth, couponController.activateCoupon);
+router.get('/coupons/deactivate/:id', adminAuth, couponController.deactivateCoupon);
+router.get('/coupons/delete/:id', adminAuth, couponController.deleteCoupon);
 
 
 module.exports = router;
