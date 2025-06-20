@@ -102,11 +102,13 @@ router.delete('/cart/remove', userAuth, cartController.removeFromCart);
 // checout routes
 router.get('/checkout', userAuth, checkoutController.getCheckoutPage);
 router.post('/checkout', userAuth, checkoutController.placeOrder); 
+router.post('/create-razorpay-order',userAuth, checkoutController.createRazorpayOrder);
+router.get('/payment-failed',userAuth) // need to add controller after creating the payment failed page
 
 // order success & failure routes
 router.get('/order-success',userAuth, checkoutController.loadOrderSuccess);
 router.get('/order-failure', userAuth,checkoutController.loadOrderFailurePage);
-
+router.get('/wallet-balance', userAuth,checkoutController.getWalletBalance);
 
 router.get('/myOrders', userAuth, orderController.getMyOrdersPage);
 router.get('/orderDetails/:id', userAuth, orderController.getOrderDetails);

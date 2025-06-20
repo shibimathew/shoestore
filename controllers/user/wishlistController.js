@@ -267,7 +267,7 @@ const addToWishlist = async (req, res) => {
         
         if (existing) {
             return res.status(400).json({ 
-                message: 'Product with this size already in wishlist',
+                message: 'Product already in wishlist',
                 totalCount: wishlist.products.length 
             });
         }
