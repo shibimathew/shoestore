@@ -443,12 +443,16 @@
             <a href="/productDetails?id=<%= product.id || product._id %>">
              <img src="<%= product.images[0] %>" alt="<%= product.productName %>" />
              <h4><%= product.productName %></h4>
-             <p>
-               Price: ₹<%= Number(product.salePrice).toLocaleString('en-IN') %>
-               <span class="text-muted">
-                 <strike>₹<%= Number(product.regularPrice).toLocaleString('en-IN') %></strike>
-               </span>
-             </p>
+          <p>
+  <% let price = product.salePrice 
+    let productOffer = product.productOffer
+    let salePrice = price - (price * (productOffer/100))
+  %>
+   Price: ₹<%= Number(salePrice).toLocaleString('en-IN') %>
+   <span class="text-muted">
+     <strike>₹<%= Number(product.regularPrice).toLocaleString('en-IN') %></strike>
+   </span>
+ </p>
            </a>
            <!-- <button class="add-to-cart-btn" onclick="">Add to Cart</button> -->
          </div>

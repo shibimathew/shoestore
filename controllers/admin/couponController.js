@@ -58,32 +58,32 @@
 
 //     await newCoupon.save();
 //     // console.log('Coupon saved:', newCoupon.code);
-    
+
 //     if (req.xhr) {
 //       return res.status(200).json({
 //         success: true,
 //         message: `Coupon ${code} created successfully!`
 //       });
 //     }
-    
+
 //     return res.redirect('/admin/coupons?success=Coupon created successfully');
 
 //   } catch (err) {
 //     console.error("Error adding coupon:", err);
-    
+
 //     let errorMessage = 'Error adding coupon';
 //     if (err.code === 11000) {
 //       const field = Object.keys(err.keyValue)[0];
 //       errorMessage = `${field} already exists`;
 //     }
-    
+
 //     if (req.xhr) {
 //       return res.status(400).json({
 //         success: false,
 //         message: errorMessage
 //       });
 //     }
-    
+
 //     return res.redirect(`/admin/coupons?error=${encodeURIComponent(errorMessage)}`);
 //   }
 // };
@@ -135,32 +135,32 @@
 //     }
 
 //     // console.log('Coupon updated:', updatedCoupon.code);
-    
+
 //     if (req.xhr) {
 //       return res.json({
 //         success: true,
 //         message: `Coupon ${code} updated successfully!`
 //       });
 //     }
-    
+
 //     return res.redirect('/admin/coupons?success=Coupon updated successfully');
 
 //   } catch (err) {
 //     console.error('Error updating coupon:', err);
-    
+
 //     let errorMessage = 'Error updating coupon';
 //     if (err.code === 11000) {
 //       const field = Object.keys(err.keyValue)[0];
 //       errorMessage = `${field} already exists`;
 //     }
-    
+
 //     if (req.xhr) {
 //       return res.status(400).json({
 //         success: false,
 //         message: errorMessage
 //       });
 //     }
-    
+
 //     return res.redirect(`/admin/coupons?error=${encodeURIComponent(errorMessage)}`);
 //   }
 // };
@@ -181,7 +181,7 @@
 //           message: 'Coupon not found'
 //         });
 //       }
-      
+
 //       return res.redirect('/admin/coupons?error=Coupon not found');
 //     }
 
@@ -191,18 +191,18 @@
 //         message: `Coupon ${updatedCoupon.code} activated successfully!`
 //       });
 //     }
-    
+
 //     return res.redirect('/admin/coupons?success=Coupon activated successfully');
 //   } catch (err) {
 //     console.error('Error activating coupon:', err);
-    
+
 //     if (req.xhr) {
 //       return res.status(500).json({
 //         success: false,
 //         message: 'Error activating coupon'
 //       });
 //     }
-    
+
 //     return res.redirect('/admin/pageerror');
 //   }
 // };
@@ -223,7 +223,7 @@
 //           message: 'Coupon not found'
 //         });
 //       }
-      
+
 //       return res.redirect('/admin/coupons?error=Coupon not found');
 //     }
 
@@ -233,18 +233,18 @@
 //         message: `Coupon ${updatedCoupon.code} deactivated successfully!`
 //       });
 //     }
-    
+
 //     return res.redirect('/admin/coupons?success=Coupon deactivated successfully');
 //   } catch (err) {
 //     console.error('Error deactivating coupon:', err);
-    
+
 //     if (req.xhr) {
 //       return res.status(500).json({
 //         success: false,
 //         message: 'Error deactivating coupon'
 //       });
 //     }
-    
+
 //     return res.redirect('/admin/pageerror');
 //   }
 // };
@@ -261,7 +261,7 @@
 //           message: 'Coupon not found'
 //         });
 //       }
-      
+
 //       return res.redirect('/admin/coupons?error=Coupon not found');
 //     }
 
@@ -271,18 +271,18 @@
 //         message: `Coupon ${deletedCoupon.code} deleted successfully!`
 //       });
 //     }
-    
+
 //     return res.redirect('/admin/coupons?success=Coupon deleted successfully');
 //   } catch (err) {
 //     console.error('Error deleting coupon:', err);
-    
+
 //     if (req.xhr) {
 //       return res.status(500).json({
 //         success: false,
 //         message: 'Error deleting coupon'
 //       });
 //     }
-    
+
 //     return res.redirect('/admin/pageerror');
 //   }
 // };
@@ -294,41 +294,41 @@
 //   activateCoupon,
 //   deactivateCoupon,
 //   deleteCoupon
-// };   
+// };
 
-const { validationResult } = require('express-validator');
-const Coupon = require('../../models/couponSchema');
+const { validationResult } = require("express-validator");
+const Coupon = require("../../models/couponSchema");
 
 const loadCouponManagement = async (req, res) => {
   try {
     const { search, success, error } = req.query;
     let query = {};
-    
+
     // If search parameter exists, create search query
     if (search && search.trim()) {
-      const searchRegex = new RegExp(search.trim(), 'i'); // Case-insensitive search
+      const searchRegex = new RegExp(search.trim(), "i"); // Case-insensitive search
       query = {
         $or: [
           { name: searchRegex },
           { code: searchRegex },
           { description: searchRegex },
-          { status: searchRegex }
-        ]
+          { status: searchRegex },
+        ],
       };
     }
-    
+
     const coupons = await Coupon.find(query).sort({ createdAt: -1 });
-    
-    return res.render('admin/couponManagement', {
+
+    return res.render("admin/couponManagement", {
       coupons,
       success: success || null,
       error: error || null,
-      searchQuery: search || '' // Always pass searchQuery, default to empty string
+      searchQuery: search || "", // Always pass searchQuery, default to empty string
     });
   } catch (err) {
-    console.error('Error loading coupons:', err);
-    return res.render('admin/pageerror', {
-      searchQuery: '' // Also pass searchQuery in error case
+    console.error("Error loading coupons:", err);
+    return res.render("admin/pageerror", {
+      searchQuery: "", // Also pass searchQuery in error case
     });
   }
 };
@@ -339,25 +339,41 @@ const addCoupon = async (req, res) => {
     if (req.xhr) {
       return res.status(400).json({
         success: false,
-        message: errors.array()[0].msg
+        message: errors.array()[0].msg,
       });
     }
-    return res.redirect(`/admin/coupons?error=${encodeURIComponent(errors.array()[0].msg)}`);
+    return res.redirect(
+      `/admin/coupons?error=${encodeURIComponent(errors.array()[0].msg)}`
+    );
   }
 
-  let { name, code, description, startDate, expiryDate, minPrice, offerPrice, usageType, status } = req.body;
+  let {
+    name,
+    code,
+    description,
+    startDate,
+    expiryDate,
+    minPrice,
+    offerPrice,
+    usageType,
+    status,
+  } = req.body;
 
-  usageType = usageType === 'single' ? 'single-use' : 'multi-use';
+  usageType = usageType === "single" ? "single-use" : "multi-use";
   status = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 
   if (new Date(expiryDate) <= new Date(startDate)) {
     if (req.xhr) {
       return res.status(400).json({
         success: false,
-        message: 'Expiry date must be after start date'
+        message: "Expiry date must be after start date",
       });
     }
-    return res.redirect(`/admin/coupons?error=${encodeURIComponent('Expiry date must be after start date')}`);
+    return res.redirect(
+      `/admin/coupons?error=${encodeURIComponent(
+        "Expiry date must be after start date"
+      )}`
+    );
   }
 
   try {
@@ -370,38 +386,39 @@ const addCoupon = async (req, res) => {
       minPrice,
       offerPrice,
       usageType,
-      status
+      status,
     });
 
     await newCoupon.save();
     // console.log('Coupon saved:', newCoupon.code);
-    
+
     if (req.xhr) {
       return res.status(200).json({
         success: true,
-        message: `Coupon ${code} created successfully!`
+        message: `Coupon ${code} created successfully!`,
       });
     }
-    
-    return res.redirect('/admin/coupons?success=Coupon created successfully');
 
+    return res.redirect("/admin/coupons?success=Coupon created successfully");
   } catch (err) {
     console.error("Error adding coupon:", err);
-    
-    let errorMessage = 'Error adding coupon';
+
+    let errorMessage = "Error adding coupon";
     if (err.code === 11000) {
       const field = Object.keys(err.keyValue)[0];
       errorMessage = `${field} already exists`;
     }
-    
+
     if (req.xhr) {
       return res.status(400).json({
         success: false,
-        message: errorMessage
+        message: errorMessage,
       });
     }
-    
-    return res.redirect(`/admin/coupons?error=${encodeURIComponent(errorMessage)}`);
+
+    return res.redirect(
+      `/admin/coupons?error=${encodeURIComponent(errorMessage)}`
+    );
   }
 };
 
@@ -412,19 +429,28 @@ const updateCoupon = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({
       success: false,
-      message: errors.array()[0].msg
+      message: errors.array()[0].msg,
     });
   }
 
   try {
-    let { name, code, description, startDate, expiryDate, minPrice, offerPrice } = req.body;
-    let usageType = req.body.editUsageType === 'single' ? 'single-use' : 'multi-use';
-    let status = req.body.editStatus === 'active' ? 'Active' : 'Inactive';
+    let {
+      name,
+      code,
+      description,
+      startDate,
+      expiryDate,
+      minPrice,
+      offerPrice,
+    } = req.body;
+    let usageType =
+      req.body.editUsageType === "single" ? "single-use" : "multi-use";
+    let status = req.body.editStatus === "active" ? "Active" : "Inactive";
 
     if (new Date(expiryDate) <= new Date(startDate)) {
       return res.status(400).json({
         success: false,
-        message: 'Expiry date must be after start date'
+        message: "Expiry date must be after start date",
       });
     }
 
@@ -439,7 +465,7 @@ const updateCoupon = async (req, res) => {
         minPrice,
         offerPrice,
         usageType,
-        status
+        status,
       },
       { new: true, runValidators: true }
     );
@@ -447,38 +473,39 @@ const updateCoupon = async (req, res) => {
     if (!updatedCoupon) {
       return res.status(404).json({
         success: false,
-        message: 'Coupon not found'
+        message: "Coupon not found",
       });
     }
 
     // console.log('Coupon updated:', updatedCoupon.code);
-    
+
     if (req.xhr) {
       return res.json({
         success: true,
-        message: `Coupon ${code} updated successfully!`
+        message: `Coupon ${code} updated successfully!`,
       });
     }
-    
-    return res.redirect('/admin/coupons?success=Coupon updated successfully');
 
+    return res.redirect("/admin/coupons?success=Coupon updated successfully");
   } catch (err) {
-    console.error('Error updating coupon:', err);
-    
-    let errorMessage = 'Error updating coupon';
+    console.error("Error updating coupon:", err);
+
+    let errorMessage = "Error updating coupon";
     if (err.code === 11000) {
       const field = Object.keys(err.keyValue)[0];
       errorMessage = `${field} already exists`;
     }
-    
+
     if (req.xhr) {
       return res.status(400).json({
         success: false,
-        message: errorMessage
+        message: errorMessage,
       });
     }
-    
-    return res.redirect(`/admin/coupons?error=${encodeURIComponent(errorMessage)}`);
+
+    return res.redirect(
+      `/admin/coupons?error=${encodeURIComponent(errorMessage)}`
+    );
   }
 };
 
@@ -487,7 +514,7 @@ const activateCoupon = async (req, res) => {
     const couponId = req.params.id;
     const updatedCoupon = await Coupon.findByIdAndUpdate(
       couponId,
-      { status: 'Active' },
+      { status: "Active" },
       { new: true }
     );
 
@@ -495,32 +522,32 @@ const activateCoupon = async (req, res) => {
       if (req.xhr) {
         return res.status(404).json({
           success: false,
-          message: 'Coupon not found'
+          message: "Coupon not found",
         });
       }
-      
-      return res.redirect('/admin/coupons?error=Coupon not found');
+
+      return res.redirect("/admin/coupons?error=Coupon not found");
     }
 
     if (req.xhr) {
       return res.json({
         success: true,
-        message: `Coupon ${updatedCoupon.code} activated successfully!`
+        message: `Coupon ${updatedCoupon.code} activated successfully!`,
       });
     }
-    
-    return res.redirect('/admin/coupons?success=Coupon activated successfully');
+
+    return res.redirect("/admin/coupons?success=Coupon activated successfully");
   } catch (err) {
-    console.error('Error activating coupon:', err);
-    
+    console.error("Error activating coupon:", err);
+
     if (req.xhr) {
       return res.status(500).json({
         success: false,
-        message: 'Error activating coupon'
+        message: "Error activating coupon",
       });
     }
-    
-    return res.redirect('/admin/pageerror');
+
+    return res.redirect("/admin/pageerror");
   }
 };
 
@@ -529,7 +556,7 @@ const deactivateCoupon = async (req, res) => {
     const couponId = req.params.id;
     const updatedCoupon = await Coupon.findByIdAndUpdate(
       couponId,
-      { status: 'Inactive' },
+      { status: "Inactive" },
       { new: true }
     );
 
@@ -537,32 +564,34 @@ const deactivateCoupon = async (req, res) => {
       if (req.xhr) {
         return res.status(404).json({
           success: false,
-          message: 'Coupon not found'
+          message: "Coupon not found",
         });
       }
-      
-      return res.redirect('/admin/coupons?error=Coupon not found');
+
+      return res.redirect("/admin/coupons?error=Coupon not found");
     }
 
     if (req.xhr) {
       return res.json({
         success: true,
-        message: `Coupon ${updatedCoupon.code} deactivated successfully!`
+        message: `Coupon ${updatedCoupon.code} deactivated successfully!`,
       });
     }
-    
-    return res.redirect('/admin/coupons?success=Coupon deactivated successfully');
+
+    return res.redirect(
+      "/admin/coupons?success=Coupon deactivated successfully"
+    );
   } catch (err) {
-    console.error('Error deactivating coupon:', err);
-    
+    console.error("Error deactivating coupon:", err);
+
     if (req.xhr) {
       return res.status(500).json({
         success: false,
-        message: 'Error deactivating coupon'
+        message: "Error deactivating coupon",
       });
     }
-    
-    return res.redirect('/admin/pageerror');
+
+    return res.redirect("/admin/pageerror");
   }
 };
 
@@ -575,32 +604,32 @@ const deleteCoupon = async (req, res) => {
       if (req.xhr) {
         return res.status(404).json({
           success: false,
-          message: 'Coupon not found'
+          message: "Coupon not found",
         });
       }
-      
-      return res.redirect('/admin/coupons?error=Coupon not found');
+
+      return res.redirect("/admin/coupons?error=Coupon not found");
     }
 
     if (req.xhr) {
       return res.json({
         success: true,
-        message: `Coupon ${deletedCoupon.code} deleted successfully!`
+        message: `Coupon ${deletedCoupon.code} deleted successfully!`,
       });
     }
-    
-    return res.redirect('/admin/coupons?success=Coupon deleted successfully');
+
+    return res.redirect("/admin/coupons?success=Coupon deleted successfully");
   } catch (err) {
-    console.error('Error deleting coupon:', err);
-    
+    console.error("Error deleting coupon:", err);
+
     if (req.xhr) {
       return res.status(500).json({
         success: false,
-        message: 'Error deleting coupon'
+        message: "Error deleting coupon",
       });
     }
-    
-    return res.redirect('/admin/pageerror');
+
+    return res.redirect("/admin/pageerror");
   }
 };
 
@@ -610,5 +639,5 @@ module.exports = {
   updateCoupon,
   activateCoupon,
   deactivateCoupon,
-  deleteCoupon
+  deleteCoupon,
 };

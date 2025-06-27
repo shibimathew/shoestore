@@ -157,7 +157,7 @@ const editCategory = async (req, res) => {
         //     return res.status(400).json({ error: "Category name already exists" });
         // }
         const existingCategory = await Category.findOne({ 
-        name: { $regex: new RegExp(`^${name.trim()}$`, 'i') } 
+        name: { $regex: new RegExp(`^${categoryName.trim()}$`, 'i') } 
         });
 
        if (existingCategory) {
@@ -228,6 +228,94 @@ const deleteCategory = async (req, res) => {
         return res.redirect('/admin/pageerror');
     }
 }
+const applyCategoryOffer = async (req, res) => {
+    try {
+        console.log('Apply category offer request:', req.body); // Debug log
+        
+        const { categoryId, discountPercentage } = req.body;
+
+        if (!categoryId || discountPercentage === undefined) {
+            return res.status(400).json({
+                success: false,
+                message: "Category ID and discount percentage are required"
+            });
+        }
+
+        if (discountPercentage < 0 || discountPercentage > 100) {
+            return res.status(400).json({
+                success: false,
+                message: "Discount percentage must be between 0 and 100"
+            });
+        }
+
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(404).json({
+                success: false,
+                message: "Category not found"
+            });
+        }
+
+        category.categoryOffer = discountPercentage;
+        await category.save();
+
+        console.log('Category offer applied successfully'); // Debug log
+
+        return res.status(200).json({
+            success: true,
+            message: `Category offer of ${discountPercentage}% applied successfully`
+        });
+
+    } catch (error) {
+        console.error("Error in applyCategoryOffer:", error);
+        return res.status(500).json({
+            success: false,
+            message: "An error occurred while applying category offer",
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
+
+const removeCategoryOffer = async (req, res) => {
+    try {
+        console.log('Remove category offer request:', req.body); // Debug log
+        
+        const { categoryId } = req.body;
+
+        if (!categoryId) {
+            return res.status(400).json({
+                success: false,
+                message: "Category ID is required"
+            });
+        }
+
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(404).json({
+                success: false,
+                message: "Category not found"
+            });
+        }
+
+        category.categoryOffer = 0;
+        await category.save();
+
+        console.log('Category offer removed successfully'); // Debug log
+
+        return res.status(200).json({
+            success: true,
+            message: "Category offer removed successfully"
+        });
+
+    } catch (error) {
+        console.error("Error in removeCategoryOffer:", error);
+        return res.status(500).json({
+            success: false,
+            message: "An error occurred while removing category offer",
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
 
 module.exports = {
     categoryInfo,
@@ -236,5 +324,7 @@ module.exports = {
     getUnlistCategory,
     loadEditCategory,
     editCategory,
-    deleteCategory
+    deleteCategory,
+    applyCategoryOffer,
+    removeCategoryOffer
 }

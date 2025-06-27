@@ -12,6 +12,7 @@ const salesController = require("../controllers/admin/salesController")
 
 
 
+
 router.get("/pageerror",adminController.pageerror);
 router.get("/login", adminController.loadLogin);
 router.post("/login", adminController.login);
@@ -34,6 +35,9 @@ router.get('/unlistCategory',adminAuth,categoryController.getUnlistCategory);
 router.get("/editCategory/:id", adminAuth, categoryController.loadEditCategory);
 router.post("/editCategory/:id", adminAuth, categoryController.editCategory);
 router.get("/deleteCategory", adminAuth, categoryController.deleteCategory);
+router.post('/category/apply-offer', adminAuth, categoryController.applyCategoryOffer);
+
+router.post('/category/remove-offer', adminAuth, categoryController.removeCategoryOffer);
 
 
 
@@ -48,6 +52,7 @@ router.get("/unlistProduct", adminAuth, productController.unlistProduct);
 router.get("/deleteProduct", adminAuth, productController.deleteProduct);
 
 
+
 //order management
 router.get('/orders', adminAuth, orderController.getOrderManagement);
 router.get('/orderDetails', adminAuth, orderController.getOrderDetails);
@@ -56,6 +61,9 @@ router.post('/order-status', adminAuth, orderController.updateOrderStatus);
 router.get('/orderTrack/:id', adminAuth, orderController.getOrderTracking);
 router.post('/approve-return/:orderId', adminAuth, orderController.approveReturns);
 router.post('/cancel-return/:orderId', adminAuth, orderController.rejectReturns);
+
+router.post('/products/apply-offer', productController.applyProductOffer);
+router.post('/products/remove-offer', productController.removeProductOffer);
 
 router.get('/sales', adminAuth, salesController.loadSalesReport);
 router.post('/sales/filter', adminAuth, salesController.updateSales);

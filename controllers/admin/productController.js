@@ -243,6 +243,112 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+// Add these routes to your existing product controller
+
+const applyProductOffer = async (req, res) => {
+    try {
+        const { productId, discountPercentage } = req.body;
+        
+        // Validate input
+        if (!productId || discountPercentage === undefined) {
+            return res.json({
+                success: false,
+                message: "Missing required fields"
+            });
+        }
+
+        if (discountPercentage < 0 || discountPercentage > 100) {
+            return res.json({
+                success: false,
+                message: "Discount percentage must be between 0 and 100"
+            });
+        }
+
+        // Find the product
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.json({
+                success: false,
+                message: "Product not found"
+            });
+        }
+
+        // Calculate offer price if discount > 0
+        let offerPrice = null;
+        if (discountPercentage > 0) {
+            offerPrice = product.salePrice - (product.salePrice * discountPercentage / 100);
+            offerPrice = Math.round(offerPrice * 100) / 100; // Round to 2 decimal places
+        }
+
+        // Update product with offer
+        await Product.findByIdAndUpdate(productId, {
+            productOffer: discountPercentage > 0 ? discountPercentage : 0,
+            offerPrice: offerPrice,
+            offerStartDate: discountPercentage > 0 ? new Date() : null,
+            offerEndDate: null // You can add end date functionality later
+        });
+
+        res.json({
+            success: true,
+            message: discountPercentage > 0 
+                ? `Offer of ${discountPercentage}% applied successfully` 
+                : "Offer removed successfully"
+        });
+
+    } catch (error) {
+        console.error('Error in applyProductOffer:', error);
+        res.json({
+            success: false,
+            message: "Error applying offer"
+        });
+    }
+};
+
+const removeProductOffer = async (req, res) => {
+    try {
+        const { productId } = req.body;
+        
+        if (!productId) {
+            return res.json({
+                success: false,
+                message: "Product ID is required"
+            });
+        }
+
+        // Find the product
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.json({
+                success: false,
+                message: "Product not found"
+            });
+        }
+
+        // Remove offer
+        await Product.findByIdAndUpdate(productId, {
+            productOffer: 0,
+            offerPrice: null,
+            offerStartDate: null,
+            offerEndDate: null
+        });
+
+        res.json({
+            success: true,
+            message: "Offer removed successfully"
+        });
+
+    } catch (error) {
+        console.error('Error in removeProductOffer:', error);
+        res.json({
+            success: false,
+            message: "Error removing offer"
+        });
+    }
+};
+
+
+
+
 module.exports = {
     getProducts,
     getProductAdd,
@@ -251,6 +357,10 @@ module.exports = {
     editProduct,
     listProduct,
     unlistProduct,
-    deleteProduct
-};
+    deleteProduct,
+
+    applyProductOffer,    // Add this
+    removeProductOffer   
+    
+}  
  

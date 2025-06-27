@@ -16,6 +16,54 @@
     <!-- Template CSS -->
     <link href="/assets2/css/main.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .navbar-aside {
+            width: 280px;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #fff;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .main-wrap {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+        }
+        .screen-overlay {
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+        }
+        .btn-offer {
+            background-color: #ff6b35;
+            border-color: #ff6b35;
+            color: white;
+        }
+        .btn-offer:hover {
+            background-color: #e55a2b;
+            border-color: #e55a2b;
+            color: white;
+        }
+        @media (max-width: 991px) {
+            .navbar-aside {
+                transform: translateX(-100%);
+            }
+            .main-wrap {
+                margin-left: 0;
+            }
+            .navbar-aside.show {
+                transform: translateX(0);
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -152,7 +200,7 @@
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Description</th>
-                                            
+                                            <th>Offer</th>
                                             <th>Status</th>
                                             <th class="text-end">Edit</th>
                                         </tr>
@@ -164,6 +212,13 @@
                                             <td><%= category.categoryId %></td>
                                             <td><b><%= category.name %></b></td>
                                             <td><%= category.description %></td>
+                                            <td>
+                                                <% if (category.categoryOffer && category.categoryOffer > 0) { %>
+                                                    <span class="badge bg-success"><%= category.categoryOffer %>% OFF</span>
+                                                <% } else { %>
+                                                    <span class="text-muted">No offer</span>
+                                                <% } %>
+                                            </td>
                                            
                                             <td>
                                                 <div class="d-flex align-items-center">
@@ -178,6 +233,10 @@
                                                 </div>
                                             </td>
                                             <td class="text-end">
+                                                <!-- Offer Button -->
+                                                <button class="btn btn-offer btn-sm me-2" onclick="openCategoryOfferModal('<%= category._id %>', '<%= category.name %>', '<%= category.categoryOffer %>')">
+                                                    <i class="fas fa-tags me-1"></i>Offer
+                                                </button>
                                                 <a href="/admin/editCategory/<%= category._id %>" class="btn btn-primary btn-sm me-2">
                                                     <i class="material-icons md-edit"></i> Edit
                                                 </a>
@@ -225,6 +284,43 @@
             </div>
         </section>
     </main>
+
+    <!-- Category Offer Modal -->
+    <div class="modal fade" id="categoryOfferModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-tags me-2"></i>Manage Category Offer
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <strong>Category:</strong> <span id="categoryOfferName"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryDiscountPercentage" class="form-label">Discount Percentage (%)</label>
+                        <input type="number" class="form-control" id="categoryDiscountPercentage" min="0" max="100" step="0.01">
+                        <div class="form-text">Enter 0 to remove offer</div>
+                    </div>
+                    <div class="alert alert-info" id="currentCategoryOfferInfo" style="display: none;">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Current Offer:</strong> <span id="currentCategoryOfferText"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="applyCategoryOffer()">
+                        <i class="fas fa-check me-1"></i>Apply Offer
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="removeCategoryOffer()">
+                        <i class="fas fa-times me-1"></i>Remove Offer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         function handleFormSubmit(event) {
@@ -432,7 +528,309 @@
 
             window.location.href=`/admin/category?${searchQuery}`
         })
+
+        // Category Offer Management
+        let currentCategoryId;
+        let categoryOfferModal;
+
+        // Initialize modal when DOM is loaded and Bootstrap is available
+        function initializeModal() {
+            if (typeof bootstrap !== 'undefined' && document.getElementById('categoryOfferModal')) {
+                categoryOfferModal = new bootstrap.Modal(document.getElementById('categoryOfferModal'));
+            } else {
+                // Retry after a short delay if Bootstrap is not loaded yet
+                setTimeout(initializeModal, 100);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeModal();
+            
+            // Add event listeners for modal close buttons
+            const closeButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', closeCategoryOfferModal);
+            });
+            
+            // Add event listener for backdrop click
+            const modalElement = document.getElementById('categoryOfferModal');
+            if (modalElement) {
+                modalElement.addEventListener('click', function(e) {
+                    if (e.target === modalElement) {
+                        closeCategoryOfferModal();
+                    }
+                });
+            }
+        });
+
+        function openCategoryOfferModal(categoryId, categoryName, currentOffer) {
+            // Ensure modal is initialized
+            if (!categoryOfferModal) {
+                initializeModal();
+            }
+            
+            currentCategoryId = categoryId;
+            document.getElementById('categoryOfferName').textContent = categoryName;
+            document.getElementById('categoryDiscountPercentage').value = currentOffer || '';
+            
+            const currentCategoryOfferInfo = document.getElementById('currentCategoryOfferInfo');
+            const currentCategoryOfferText = document.getElementById('currentCategoryOfferText');
+            
+            if (currentOffer && currentOffer > 0) {
+                currentCategoryOfferText.textContent = `${currentOffer}% discount active`;
+                currentCategoryOfferInfo.style.display = 'block';
+            } else {
+                currentCategoryOfferInfo.style.display = 'none';
+            }
+            
+            // Check if modal is available before showing
+            if (categoryOfferModal) {
+                categoryOfferModal.show();
+            } else {
+                // Fallback: show modal using vanilla JavaScript
+                const modalElement = document.getElementById('categoryOfferModal');
+                if (modalElement) {
+                    modalElement.style.display = 'block';
+                    modalElement.classList.add('show');
+                    document.body.classList.add('modal-open');
+                    
+                    // Add backdrop
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    backdrop.id = 'modalBackdrop';
+                    document.body.appendChild(backdrop);
+                } else {
+                    console.error('Modal element not found');
+                    alert('Modal not available. Please refresh the page.');
+                }
+            }
+        }
+
+        // Helper function to close modal with fallback support
+        function closeCategoryOfferModal() {
+            if (categoryOfferModal) {
+                categoryOfferModal.hide();
+            } else {
+                // Fallback: close modal using vanilla JavaScript
+                const modalElement = document.getElementById('categoryOfferModal');
+                if (modalElement) {
+                    modalElement.style.display = 'none';
+                    modalElement.classList.remove('show');
+                    document.body.classList.remove('modal-open');
+                    
+                    // Remove backdrop
+                    const backdrop = document.getElementById('modalBackdrop');
+                    if (backdrop) {
+                        backdrop.remove();
+                    }
+                }
+            }
+        }
+
+        async function applyCategoryOffer() {
+    const discountPercentage = document.getElementById('categoryDiscountPercentage').value;
+    
+    if (!discountPercentage || discountPercentage < 0 || discountPercentage > 100) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Input',
+            text: 'Please enter a valid discount percentage between 0 and 100'
+        });
+        return;
+    }
+
+    try {
+        console.log('=== DEBUG: Apply Category Offer ===');
+        console.log('Category ID:', currentCategoryId);
+        console.log('Discount Percentage:', discountPercentage);
+        console.log('Request URL:', '/admin/category/apply-offer');
+
+        const response = await fetch('/admin/category/apply-offer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                categoryId: currentCategoryId,
+                discountPercentage: parseFloat(discountPercentage)
+            })
+        });
+
+        console.log('Response Status:', response.status);
+        console.log('Response Status Text:', response.statusText);
+        console.log('Response URL:', response.url);
+        
+        // Get the raw response text first
+        const responseText = await response.text();
+        console.log('Raw Response (first 500 chars):', responseText.substring(0, 500));
+        
+        // Check if it's HTML (starts with <!DOCTYPE or <html)
+        if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+            console.error('ERROR: Server returned HTML instead of JSON');
+            console.error('This usually means:');
+            console.error('1. Route not found (404 page)');
+            console.error('2. Authentication failed (login redirect)');
+            console.error('3. Server error (error page)');
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Server Error',
+                html: `Server returned HTML instead of JSON.<br>
+                       Status: ${response.status}<br>
+                       Check console for details.`
+            });
+            return;
+        }
+
+        // Try to parse as JSON
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON Parse Error:', parseError);
+            console.error('Response was not valid JSON:', responseText);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Response',
+                text: 'Server returned invalid JSON response'
+            });
+            return;
+        }
+
+        console.log('Parsed JSON Result:', result);
+        
+        if (result.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: result.message,
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                closeCategoryOfferModal();
+                location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: result.message || 'Failed to apply category offer'
+            });
+        }
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Network Error!',
+            text: 'Failed to connect to server. Check your connection.'
+        });
+    }
+}
+
+async function removeCategoryOffer() {
+    const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to remove this category offer?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, remove it!'
+    });
+
+    if (!result.isConfirmed) {
+        return;
+    }
+
+    try {
+        console.log('=== DEBUG: Remove Category Offer ===');
+        console.log('Category ID:', currentCategoryId);
+        console.log('Request URL:', '/admin/category/remove-offer');
+
+        const response = await fetch('/admin/category/remove-offer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                categoryId: currentCategoryId
+            })
+        });
+
+        console.log('Response Status:', response.status);
+        console.log('Response Status Text:', response.statusText);
+        console.log('Response URL:', response.url);
+        
+        // Get the raw response text first
+        const responseText = await response.text();
+        console.log('Raw Response (first 500 chars):', responseText.substring(0, 500));
+        
+        // Check if it's HTML (starts with <!DOCTYPE or <html)
+        if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+            console.error('ERROR: Server returned HTML instead of JSON');
+            console.error('This usually means:');
+            console.error('1. Route not found (404 page)');
+            console.error('2. Authentication failed (login redirect)');
+            console.error('3. Server error (error page)');
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Server Error',
+                html: `Server returned HTML instead of JSON.<br>
+                       Status: ${response.status}<br>
+                       Check console for details.`
+            });
+            return;
+        }
+
+        // Try to parse as JSON
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON Parse Error:', parseError);
+            console.error('Response was not valid JSON:', responseText);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Response',
+                text: 'Server returned invalid JSON response'
+            });
+            return;
+        }
+
+        console.log('Parsed JSON Result:', result);
+        
+        if (result.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: result.message,
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                closeCategoryOfferModal();
+                location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: result.message || 'Failed to remove category offer'
+            });
+        }
+    } catch (error) {
+        console.error('Fetch Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Network Error!',
+            text: 'Failed to connect to server. Check your connection.'
+        });
+    }
+}
     </script>
+    
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
         

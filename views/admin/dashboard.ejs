@@ -1,31 +1,233 @@
-<!DOCTYPE HTML>
-<html lang="en">
+<%- include('../partials/admin/header.ejs') %>
+<style>
+    .wrapper {
+        display: flex;
+        width: 100%;
+        align-items: stretch;
+        overflow-x: hidden;
+    }
 
-<head>
-    <meta charset="utf-8">
-    <title>Shoestore Dashboard</title>
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta property="og:title" content="">
-    <meta property="og:type" content="">
-    <meta property="og:url" content="">
-    <meta property="og:image" content="">
-    <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="/assets2/imgs/theme/favicon.svg">
-    <!-- Template CSS -->
-    <link href="/assets2/css/main.css" rel="stylesheet"/>
-    <!-- Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    .main-wrap {
+        width: 100%;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
 
-</head>
+    .chart-container {
+        position: relative;
+        margin: auto;
+    }
 
-<body>
-    <div class="screen-overlay"></div>
+    .top-products-container {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .card {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        margin-bottom: 1rem;
+    }
+
+    .card:hover {
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    }
+
+    .navbar-aside {
+        width: 250px;
+        height: 100vh;
+        position: fixed;
+        overflow-y: auto;
+        z-index: 1030;
+        background: #fff;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .progress {
+        overflow: hidden;
+    }
+
+    canvas {
+        max-width: 100%;
+    }
+
+    .global-filter-btn.active {
+        background-color: #5a6268;
+        color: white;
+    }
+
+    /* Mobile and Tablet Responsive Styles */
+    @media (max-width: 991px) {
+        .navbar-aside {
+            transform: translateX(-100%) !important;
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #fff;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1030;
+        }
+
+        .navbar-aside.show {
+            transform: translateX(0) !important;
+        }
+
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
+        .main-wrap {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .main-header.navbar .col-nav #mobile-menu-toggle {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 1050 !important;
+        }
+
+        .main-header.navbar .col-nav {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .main-header.navbar {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .col-search {
+            flex-grow: 1;
+        }
+
+        .content-main {
+            padding: 1rem;
+        }
+
+        .row {
+            flex-direction: column;
+        }
+
+        .col-lg-3, .col-xl-8, .col-xl-4, .col-lg-12 {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .chart-container {
+            height: 250px !important;
+            min-height: 250px !important;
+        }
+
+        .top-products-container {
+            max-height: 200px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            width: 100%;
+            min-width: 600px;
+        }
+
+        .btn-group {
+            flex-wrap: wrap;
+        }
+
+        .btn-group .btn {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .content-header p {
+            font-size: 0.9rem;
+        }
+
+        .icontext .icon {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icontext .text h6 {
+            font-size: 1rem;
+        }
+
+        .icontext .text span {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .navbar-aside {
+            width: 200px;
+        }
+
+        .content-main {
+            padding: 0.5rem;
+        }
+
+        .chart-container {
+            height: 200px !important;
+            min-height: 200px !important;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+        }
+
+        .btn-group .btn {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.5rem;
+        }
+
+        .input-group input.form-control {
+            font-size: 0.9rem;
+        }
+
+        .dropdown-menu {
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            font-size: 0.8rem;
+        }
+
+        .top-products-container .font-xs {
+            font-size: 0.8rem;
+        }
+    }
+   @media (max-width: 991px) {
+  #offcanvas_aside {
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease-in-out !important;
+  }
+
+  #offcanvas_aside.show {
+    transform: translateX(0%) !important;
+  }
+
+  body.sidebar-open {
+    overflow: hidden;
+  }
+}
+</style>
+<div class="wrapper">
+    <!-- Sidebar -->
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
-            <a href="/admin/dashboard" class="brand-wrap">
-                <img src="/assets/imgs/theme/shoestore-logo.svg" class="logo" alt="Shoestore Dashboard">
+            <a href="/admin" class="brand-wrap">
+                <img src="/assets/imgs/theme/shoestore-logo.svg" class="logo" alt="Shoestore">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -34,69 +236,571 @@
         <nav>
             <ul class="menu-aside">
                 <li class="menu-item active">
-                    <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
+                    <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-shopping_bag"></i>
-                        <span class="text">Categories</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_cart"></i>
-                        <span class="text">Products</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-store"></i>
+                    <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-person"></i>
                         <span class="text">Customers</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-add_box"></i>
+                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="/admin/coupons"> <i class="icon material-icons md-monetization_on"></i>
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-store"></i>
+                        <span class="text">Category</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/coupons"> <i class="icon material-icons md-local_offer"></i>
                         <span class="text">Coupons</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="/admin/refunds"> <i class="icon material-icons md-person"></i>
-                        <span class="text">Refund/Return</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/reviews"> <i class="icon material-icons md-comment"></i>
-                        <span class="text">Reviews</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/sales"> <i class="icon material-icons md-stars"></i>
+                    <a class="menu-link" href="/admin/sales"> <i class="icon material-icons md-assessment"></i>
                         <span class="text">Sales Report</span>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/logout"> <i class="icon material-icons md-exit_to_app"></i>
-                        <span class="text">Sign Out</span>
-                    </a>
-                </li>
             </ul>
-           
-        
-            <br>
-            <br>
+            <hr>
         </nav>
     </aside>
-   
-    <script src="/assets2/js/vendors/modernizr-3.6.0.min.js"></script>
-    <script src="/assets2/js/vendors/jquery-3.6.0.min.js"></script>
-    <script src="/assets2/js/vendors/bootstrap.bundle.min.js"></script>
-    <script src="/assets2/js/vendors/perfect-scrollbar.js"></script>
-    <script src="/assets2/js/vendors/popper.min.js"></script>
-    <script src="/assets2/js/vendors/main.js"></script>
-</body>
 
-</html>
+    <!-- Main Content -->
+    <main class="main-wrap">
+        <header class="main-header navbar" style="display: flex !important; visibility: visible !important;">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light" type="button"> <i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iphone">
+                        <option value="Customer name">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav" style="display: flex !important; visibility: visible !important;">
+                <!-- Debug: Mobile menu button -->
+                <button id="mobile-menu-toggle" class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside" style="display: block !important; visibility: visible !important; opacity: 1 !important;"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="/assets/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-jp.png" alt="日本語">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-cn.png" alt="中国人">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item text-danger" href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Dashboard</h2>
+                    <p>Whole data about your business here</p>
+                </div>
+            </div>
+            
+            <!-- Global Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title">Time Filter</h5>
+                        <div class="btn-group" role="group" aria-label="Time Filter">
+                            <button type="button" class="btn btn-sm btn-outline-secondary active global-filter-btn" data-filter="weekly">Weekly</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary global-filter-btn" data-filter="monthly">Monthly</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary global-filter-btn" data-filter="yearly">Yearly</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Cards Row -->
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="card card-body mb-4">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
+                            <div class="text">
+                                <h6 class="mb-1 card-title">Revenue</h6>
+                                <span class="revenue-value">₹<%= totalRevenue.toFixed(2) %></span>
+                                <span class="text-sm">
+                                    Shipping fees are not included
+                                </span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card card-body mb-4">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
+                            <div class="text">
+                                <h6 class="mb-1 card-title">Orders</h6> 
+                                <span class="orders-value"><%= totalOrders %></span>
+                                <span class="text-sm">
+                                    Excluding orders in transit
+                                </span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card card-body mb-4">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
+                            <div class="text">
+                                <h6 class="mb-1 card-title">Products</h6> 
+                                <span class="products-value"><%= totalProducts %></span>
+                                <span class="text-sm">
+                                    In <%= totalCategories %> Categories
+                                </span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+                            
+            <!-- Charts Row -->
+            <div class="row">
+                <div class="col-xl-8 col-lg-12">
+                    <div class="card mb-4">
+                        <article class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title">Sale Statistics</h5>
+                            </div>
+                            <div class="chart-container" style="position: relative; height:300px; width:100%; min-height:300px;">
+                                <canvas id="myChart"></canvas>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-12">
+                    <div class="card mb-4">
+                        <article class="card-body">
+                            <h5 class="card-title">Best Selling Categories</h5>
+                            <div class="chart-container" style="position: relative; height:217px; width:100%; min-height:217px;">
+                                <canvas id="myChart2"></canvas>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <article class="card-body">
+                            <h5 class="card-title">Top 5 Selling Products</h5>
+                            <div class="top-products-container" id="topProductsContainer">
+                                <% if (topProducts && topProducts.length > 0) { %>
+                                    <% topProducts.forEach(product => { %>
+                                        <div class="product-progress-item">
+                                            <span class="text-muted font-xs"><%= product.productName %></span>
+                                            <div class="progress mb-3">
+                                                <div class="progress-bar" role="progressbar" style="width: <%= product.percentage %>%;"><%= product.percentage %>%</div>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <span class="text-muted">No product data available</span>
+                                <% } %>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- jQuery CDN (must be first) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap and other plugins (if you have them locally, keep them, but make sure the path is correct) -->
+<script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/assets/js/vendors/select2.min.js"></script>
+<script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+<!-- Chart.js CDN (must be before your dashboard script) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Your main JS (must come after jQuery and Chart.js) -->
+<script src="/assets/js/main.js" type="text/javascript"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded",async ()=>{
+
+$(document).ready(function() {
+    console.log('Dashboard script initializing...');
+    
+    // Wait for Chart.js to be fully loaded
+    function waitForChart() {
+        return new Promise((resolve) => {
+            if (typeof Chart !== 'undefined') {
+                resolve();
+            } else {
+                setTimeout(() => waitForChart().then(resolve), 100);
+            }
+        });
+    }
+    
+    // Initialize after Chart.js is loaded
+    waitForChart().then(() => {
+        console.log('Chart.js is available, initializing dashboard...');
+        initializeDashboard();
+    });
+    
+    function initializeDashboard() {
+        let weeklyChartData, monthlyChartData, yearlyChartData, categoryData, topProductsData;
+        let weeklyStats, monthlyStats, yearlyStats;
+
+        try {
+            weeklyChartData = JSON.parse('<%- JSON.stringify(weeklyChartData) %>' || '[]');
+            monthlyChartData = JSON.parse('<%- JSON.stringify(monthlyChartData) %>' || '[]');
+            yearlyChartData = JSON.parse('<%- JSON.stringify(yearlyChartData) %>' || '[]');
+            
+            categoryData = {
+                labels: JSON.parse('<%- JSON.stringify(categoryChartData.labels || []) %>'),
+                data: JSON.parse('<%- JSON.stringify(categoryChartData.data || []) %>')
+            };
+            
+            topProductsData = JSON.parse('<%- JSON.stringify(topProducts || []) %>');
+            
+            // Parse period-specific stats
+            weeklyStats = JSON.parse('<%- JSON.stringify(weeklyStats) %>');
+            monthlyStats = JSON.parse('<%- JSON.stringify(monthlyStats) %>');
+            yearlyStats = JSON.parse('<%- JSON.stringify(yearlyStats) %>');
+            
+            console.log('Parsed data successfully:', {
+                weeklyChartData,
+                weeklyCategoryData: categoryData,
+                weeklyTopProducts: topProductsData,
+                weeklyStats
+            });
+            
+            let salesChart = null;
+            let categoryChart = null;
+            
+            const chartData = {
+                weekly: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    data: weeklyChartData,
+                    categoryLabels: categoryData.labels,
+                    categoryData: categoryData.data,
+                    topProducts: topProductsData,
+                    stats: weeklyStats
+                },
+                monthly: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    data: monthlyChartData,
+                    categoryLabels: categoryData.labels,
+                    categoryData: categoryData.data,
+                    topProducts: topProductsData,
+                    stats: monthlyStats
+                },
+                yearly: {
+                    labels: [
+                        '<%= new Date().getFullYear() - 5 %>',
+                        '<%= new Date().getFullYear() - 4 %>',
+                        '<%= new Date().getFullYear() - 3 %>',
+                        '<%= new Date().getFullYear() - 2 %>',
+                        '<%= new Date().getFullYear() - 1 %>',
+                        '<%= new Date().getFullYear() %>'
+                    ],
+                    data: yearlyChartData,
+                    categoryLabels: categoryData.labels,
+                    categoryData: categoryData.data,
+                    topProducts: topProductsData,
+                    stats: yearlyStats
+                }
+            };
+
+            function updateAllCharts(filter) {
+                console.log('Updating charts for filter:', filter);
+                console.log('Chart data for filter:', chartData[filter]);
+                
+                updateSalesChart(filter);
+                updateCategoryChart(filter);
+                updateTopProducts(filter);
+                updateStatsCards(filter);
+            }
+            
+            function updateSalesChart(filter) {
+                const ctx = document.getElementById('myChart');
+                if (!ctx) {
+                    alert("hy shibi")
+                    console.error('Sales chart canvas not found');
+                    return;
+                }
+                
+                console.log('Updating sales chart for:', filter);
+                const context = ctx.getContext('2d');
+                
+                if (salesChart) {
+                    salesChart.destroy();
+                }
+                
+                const currentData = chartData[filter];
+                if (!currentData || !currentData.data) {
+                    console.error('No data available for filter:', filter);
+                    return;
+                }
+                
+                console.log('Sales chart data:', currentData.data);
+                
+                salesChart = new Chart(context, {
+                    type: 'line',
+                    data: {
+                        labels: currentData.labels,
+                        datasets: [{
+                            label: 'Sales',
+                            data: currentData.data,
+                            fill: true,
+                            backgroundColor: 'rgba(44, 120, 220, 0.2)',
+                            borderColor: 'rgba(44, 120, 220)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(44, 120, 220)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '₹' + value.toLocaleString();
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 500
+                        },
+                        elements: {
+                            point: {
+                                radius: 3,
+                                hoverRadius: 5
+                            }
+                        }
+                    }
+                });
+                
+                console.log('Sales chart created successfully');
+            }
+            
+            function updateCategoryChart(filter) {
+                const ctx2 = document.getElementById('myChart2');
+                if (!ctx2) {
+                    console.error('Category chart canvas not found');
+                    return;
+                }
+                
+                console.log('Updating category chart for:', filter);
+                const context2 = ctx2.getContext('2d');
+                
+                if (categoryChart) {
+                    categoryChart.destroy();
+                }
+                
+                const currentData = chartData[filter];
+                if (!currentData || !currentData.categoryLabels || currentData.categoryLabels.length === 0) {
+                    console.warn('No category data available for filter:', filter);
+                    // Show empty state
+                    context2.clearRect(0, 0, ctx2.width, ctx2.height);
+                    context2.fillStyle = '#666';
+                    context2.font = '14px Arial';
+                    context2.textAlign = 'center';
+                    context2.fillText('No category data available', ctx2.width / 2, ctx2.height / 2);
+                    return;
+                }
+                
+                console.log('Category chart data:', {
+                    labels: currentData.categoryLabels,
+                    data: currentData.categoryData
+                });
+                
+                categoryChart = new Chart(context2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: currentData.categoryLabels,
+                        datasets: [{
+                            data: currentData.categoryData,
+                            backgroundColor: [
+                                '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff',
+                                '#ff9f40', '#c9cbcf', '#66ff99', '#ff66cc', '#666699'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    boxWidth: 12,
+                                    font: {
+                                        size: 11
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 500
+                        },
+                        cutout: '70%'
+                    }
+                });
+                
+                console.log('Category chart created successfully');
+            }
+            
+            function updateTopProducts(filter) {
+                const container = document.getElementById('topProductsContainer');
+                if (!container) {
+                    console.error('Top products container not found');
+                    return;
+                }
+                
+                const products = chartData[filter].topProducts;
+                console.log('Updating top products:', products);
+                
+                if (products && products.length > 0) {
+                    let html = '';
+                    products.forEach(product => {
+                        html += `
+                        <div class="product-progress-item">
+                            <span class="text-muted font-xs">${product.productName}</span>
+                            <div class="progress mb-3">
+                                <div class="progress-bar" role="progressbar" style="width: ${product.percentage}%">${product.percentage}%</div>
+                            </div>
+                        </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<span class="text-muted">No product data available</span>';
+                }
+            }
+            
+            function updateStatsCards(filter) {
+                const stats = chartData[filter].stats;
+                console.log('Updating stats cards:', stats);
+                
+                // Update revenue
+                const revenueElement = document.querySelector('.revenue-value');
+                if (revenueElement) {
+                    revenueElement.innerHTML = '₹' + stats.revenue.toFixed(2);
+                }
+                
+                // Update orders
+                const ordersElement = document.querySelector('.orders-value');
+                if (ordersElement) {
+                    ordersElement.innerHTML = stats.orders;
+                }
+                
+                // Update products (this typically doesn't change by period, but we update it anyway)
+                const productsElement = document.querySelector('.products-value');
+                if (productsElement) {
+                    productsElement.innerHTML = stats.products;
+                }
+            }
+            
+            // Initialize with weekly data
+            console.log('Initializing charts with weekly data...');
+            updateAllCharts('weekly');
+            
+            // Filter button click handlers
+            $('.global-filter-btn').on('click', function() {
+                const filter = $(this).data('filter');
+                console.log('Filter clicked:', filter);
+                
+                $('.global-filter-btn').removeClass('active');
+                $(this).addClass('active');
+                
+                updateAllCharts(filter);
+            });
+            
+            console.log('Dashboard initialization complete');
+        } catch (error) {
+            console.error('Error initializing dashboard:', error);
+        }
+    }
+
+    // Sidebar toggle functionality
+    $('.btn-aside-minimize, #mobile-menu-toggle').on('click', function(e) {
+        e.preventDefault();
+        console.log('Toggle clicked');
+        $('#offcanvas_aside').toggleClass('show');
+        $('body').toggleClass('sidebar-open');
+    });
+
+    // Close sidebar when clicking outside on mobile
+    $(document).on('click', function(e) {
+        if (window.innerWidth <= 991 && 
+            !$(e.target).closest('#offcanvas_aside, .btn-aside-minimize, #mobile-menu-toggle').length && 
+            $('#offcanvas_aside').hasClass('show')) {
+            $('#offcanvas_aside').removeClass('show');
+            $('body').removeClass('sidebar-open');
+        }
+    });
+});
+
+// Additional initialization for mobile menu
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleBtn = document.querySelector('#mobile-menu-toggle');
+    const sidebar = document.querySelector('#offcanvas_aside');
+
+    toggleBtn?.addEventListener('click', function (e) {
+        e.preventDefault();
+        console.log('Mobile toggle clicked');
+        sidebar.classList.toggle('show');
+        document.body.classList.toggle('sidebar-open');
+    });
+
+    document.addEventListener('click', function (e) {
+        if (window.innerWidth <= 991 &&
+            !e.target.closest('#offcanvas_aside') &&
+            !e.target.closest('#mobile-menu-toggle')) {
+            sidebar.classList.remove('show');
+            document.body.classList.remove('sidebar-open');
+        }
+    });
+});
+})
+
+</script>

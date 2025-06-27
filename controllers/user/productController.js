@@ -3,9 +3,10 @@ const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 const Cart = require("../../models/cartSchema")
 
+
 const productDetails = async (req, res) => {
     try {
-        const user = req.session.user||req.user||null;
+        const user = req.session.user || req.user || null;
         const userData = user ? await User.findById(user._id) : null;
         const productId = req.query.id;
         
@@ -24,7 +25,28 @@ const productDetails = async (req, res) => {
         const categoryId = findCategory._id;
         const categoryOffer = findCategory.categoryOffer || 0;
         const productOffer = product.productOffer || 0;
-        const totalOffer = categoryOffer + productOffer;
+        
+        // Apply the higher offer between category and product offer
+        const appliedOffer = Math.max(categoryOffer, productOffer);
+        
+        // Calculate the final price based on the applied offer
+        let finalPrice = product.salePrice;
+        let offerType = null;
+        
+        if (appliedOffer > 0) {
+            finalPrice = product.salePrice - (product.salePrice * appliedOffer / 100);
+            finalPrice = Math.round(finalPrice * 100) / 100; // Round to 2 decimal places
+            
+            // Determine which offer is being applied
+            if (categoryOffer > productOffer) {
+                offerType = 'category';
+            } else if (productOffer > categoryOffer) {
+                offerType = 'product';
+            } else if (categoryOffer === productOffer && categoryOffer > 0) {
+                offerType = 'both'; // Same offer percentage
+            }
+        }
+        
         const sort = req.query.sort || 'newest';
         
         // Initialize shoeSizes if it doesn't exist
@@ -49,8 +71,8 @@ const productDetails = async (req, res) => {
             product.specifications = "";
         }
         
-        // Get related products from same category
-        const products = await Product.find({
+        // Get related products from same category with their offers calculated
+        const relatedProducts = await Product.find({
             category: categoryId,
             _id: { $ne: productId }, // Exclude current product
             isBlocked: { $ne: true } // Only show products that aren't blocked
@@ -58,15 +80,37 @@ const productDetails = async (req, res) => {
         .limit(4) // Limit to 4 related products
         .populate('category')
         .lean();
-          
         
-        // Check if product is in cart (without adding to render variables yet)
-      
+        // Calculate offers for related products too
+        const productsWithOffers = relatedProducts.map(relProduct => {
+            const relCategoryOffer = relProduct.category?.categoryOffer || 0;
+            const relProductOffer = relProduct.productOffer || 0;
+            const relAppliedOffer = Math.max(relCategoryOffer, relProductOffer);
+            
+            let relFinalPrice = relProduct.salePrice;
+            if (relAppliedOffer > 0) {
+                relFinalPrice = relProduct.salePrice - (relProduct.salePrice * relAppliedOffer / 100);
+                relFinalPrice = Math.round(relFinalPrice * 100) / 100;
+            }
+            
+            return {
+                ...relProduct,
+                appliedOffer: relAppliedOffer,
+                finalPrice: relFinalPrice,
+                categoryOffer: relCategoryOffer,
+                productOffer: relProductOffer
+            };
+        });
+        
         res.render("user/product-details", {
             user: userData,
             product: product,
             quantity: product.quantity || 0,
-            totalOffer: totalOffer,
+            categoryOffer: categoryOffer,
+            productOffer: productOffer,
+            appliedOffer: appliedOffer,
+            finalPrice: finalPrice,
+            offerType: offerType, // 'category', 'product', 'both', or null
             category: findCategory,
             selectedCategory: categoryId,
             currentSort: sort,
@@ -74,8 +118,7 @@ const productDetails = async (req, res) => {
                 gt: req.query.gt || '',
                 lt: req.query.lt || ''
             },
-            products: products // Changed from relatedProducts to products to match your template
-            
+            products: productsWithOffers // Related products with calculated offers
         });
         
     } catch (error) {
@@ -87,6 +130,3 @@ const productDetails = async (req, res) => {
 module.exports = {
     productDetails,
 }
-
-
-

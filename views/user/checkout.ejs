@@ -853,7 +853,9 @@
                       <% }) %>
                     </div>
                   </div>
-                </div>
+                </div> 
+                
+                
           
                <!-- Payment Methods Section -->
                 <div class="checkout-section">
@@ -924,6 +926,19 @@
           
                 <div class="card">
                   <div class="card-body checkout-summary">
+                    <!--Coupon area-->
+                    <div class="coupon-section">
+                      <div class="coupon-input">
+                        <input type="text" id="couponCode" placeholder="Enter coupon code" />
+                        <button type="button" id="applyCouponBtn">Apply</button>
+                     </div>
+                      <div class="coupon-dropdown" id="couponDropdown">
+                        <!-- Available coupons will be loaded here -->
+                      </div>
+                      <div class="coupon-invalid" id="couponInvalid"></div>
+                      <div class="coupon-valid" id="couponValid"></div>
+                    </div>
+
                     <div class="checkout-summary-title">Order Summary</div>
                     <div class="checkout-summary-row">
                       <span>Subtotal</span>
@@ -937,14 +952,21 @@
                       <span>Tax (5%)</span>
                       <span>₹<%= tax.toFixed(2) %></span>
                     </div>
+                    <div class="checkout-summary-row coupon-summary-row" id="couponDiscountRow" style="display: none;">
+                      <!--Coupon discount-->
+                    <span>Coupon Discount</span>
+                    <span id="couponDiscountAmount">-₹0.00</span>
+                    </div>
                     <div class="checkout-summary-row">
                       <strong>Total</strong>
-                      <strong>₹<%= totalAmount %></strong>
+                     <strong class="total-amount">₹<%= totalAmount %></strong>
                     </div>
                     <button type="submit" class="btn place-order-btn mt-4" id="placeOrderBtn">Place Order</button>
                   </div>
                 </div>
               </div>
+
+
             </div>
           
             <input type="hidden" id="totalAmount" name="totalAmount" value="<%= totalAmount %>" />
@@ -992,6 +1014,112 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load wallet balance on page load
   loadWalletBalance();
+
+  // Coupon functionality
+let appliedCoupon = null;
+let couponDiscount = 0;
+
+// Load available coupons
+async function loadAvailableCoupons() {
+  try {
+    const response = await fetch('/available-coupons');
+    const data = await response.json();
+    if (data.success) {
+      displayCoupons(data.coupons);
+    }
+  } catch (error) {
+    console.error('Error loading coupons:', error);
+  }
+}
+
+function displayCoupons(coupons) {
+  const dropdown = document.getElementById('couponDropdown');
+  dropdown.innerHTML = '';
+  
+  coupons.forEach(coupon => {
+    const couponItem = document.createElement('div');
+    couponItem.className = 'coupon-item';
+    couponItem.innerHTML = `
+      <span class="coupon-code">${coupon.code}</span>
+      <div class="coupon-description">${coupon.description}</div>
+    `;
+    couponItem.addEventListener('click', () => {
+      document.getElementById('couponCode').value = coupon.code;
+      dropdown.classList.remove('active');
+    });
+    dropdown.appendChild(couponItem);
+  });
+}
+
+// Apply coupon
+async function applyCoupon() {
+  const couponCode = document.getElementById('couponCode').value.trim();
+  if (!couponCode) return;
+
+  try {
+    const subtotal = parseFloat(document.querySelector('.checkout-summary-row span:last-child').textContent.replace('₹', ''));
+    
+    const response = await fetch('/apply-coupon', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ couponCode, subtotal })
+    });
+
+    const data = await response.json();
+    
+    if (data.success) {
+      appliedCoupon = data.coupon;
+      couponDiscount = data.discount;
+      
+      document.getElementById('couponValid').textContent = `Coupon applied! You saved ₹${couponDiscount.toFixed(2)}`;
+      document.getElementById('couponValid').style.display = 'block';
+      document.getElementById('couponInvalid').style.display = 'none';
+      
+      updateOrderSummary();
+    } else {
+      document.getElementById('couponInvalid').textContent = data.message;
+      document.getElementById('couponInvalid').style.display = 'block';
+      document.getElementById('couponValid').style.display = 'none';
+    }
+  } catch (error) {
+    console.error('Error applying coupon:', error);
+  }
+}
+
+function updateOrderSummary() {
+  const discountRow = document.getElementById('couponDiscountRow');
+  const discountAmount = document.getElementById('couponDiscountAmount');
+  const totalRow = document.querySelector('.total-amount');
+  
+  if (couponDiscount > 0) {
+    discountRow.style.display = 'flex';
+    discountAmount.textContent = `-₹${couponDiscount.toFixed(2)}`;
+    
+    // Fix: Remove ₹ symbol before parsing
+    const currentTotal = parseFloat(
+      document.querySelector('.total-amount').textContent.replace('₹', '')
+    );
+
+    const newTotal = Number((currentTotal - couponDiscount).toFixed(2));
+    
+    // Fix: Add ₹ symbol back when displaying
+    document.querySelector('.total-amount').innerHTML = `₹${newTotal}`;
+  }
+}
+
+// Event listeners for coupon functionality
+document.getElementById('applyCouponBtn').addEventListener('click', applyCoupon);
+document.getElementById('couponCode').addEventListener('focus', () => {
+  document.getElementById('couponDropdown').classList.add('active');
+});
+document.getElementById('couponCode').addEventListener('blur', (e) => {
+  setTimeout(() => {
+    document.getElementById('couponDropdown').classList.remove('active');
+  }, 200);
+});
+
+// Load coupons on page load
+loadAvailableCoupons();
 
   // Address card selection
   const addressCards = document.querySelectorAll('.address-card');
@@ -1127,11 +1255,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // Process Order Function
   async function processOrder(paymentMethod, selectedAddress, paymentData = {}) {
     try {
-      const formData = {
-        paymentMethod,
-        selectedAddress,
-        ...paymentData
-      };
+      // const formData = {
+      //   paymentMethod,
+      //   selectedAddress,
+      //   ...paymentData
+      // };
+
+const formData = {
+  paymentMethod,
+  selectedAddress,
+  appliedCoupon: appliedCoupon ? appliedCoupon._id : null,
+  couponDiscount: couponDiscount,
+  totalAmount: document.getElementById('totalAmount').value, // Ensure updated total is sent
+  ...paymentData
+};
 
       // Show loading state
       const placeOrderBtn = document.getElementById('placeOrderBtn');
@@ -1176,4 +1313,64 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+function checkCODEligibility() {
+    const totalAmount = parseFloat(document.getElementById('totalAmount').value);
+    const codMethod = document.querySelector('input[value="cod"]').closest('.payment-method');
+    const codDescription = codMethod.querySelector('.payment-method-description');
+    
+    if (totalAmount > 1000) {
+      codMethod.style.opacity = '0.6';
+      codMethod.style.pointerEvents = 'none';
+      codDescription.textContent = 'COD not available for orders above ₹1000';
+      codDescription.style.color = '#dc3545';
+      
+      // If COD is currently selected, deselect it
+      const codRadio = codMethod.querySelector('input[type="radio"]');
+      if (codRadio.checked) {
+        codRadio.checked = false;
+        codMethod.classList.remove('selected');
+      }
+    } else {
+      codMethod.style.opacity = '1';
+      codMethod.style.pointerEvents = 'auto';
+      codDescription.textContent = 'Pay with cash upon delivery';
+      codDescription.style.color = '';
+    }
+  }
+  checkCODEligibility()
+
+  let walletBalance = 0;
+  
+  // Load wallet balance
+  async function loadWalletBalance() {
+    try {
+      const response = await fetch('/wallet-balance');
+      const data = await response.json();
+      if (data.success) {
+        walletBalance = data.balance;
+        document.getElementById('walletBalance').textContent = walletBalance.toFixed(2);
+        
+        // Update wallet payment method visibility based on balance
+        const totalAmount = parseFloat(document.getElementById('totalAmount').value);
+        const walletMethod = document.querySelector('input[value="wallet"]').closest('.payment-method');
+        const walletBalanceElement = document.getElementById('walletBalance');
+        
+        if (walletBalance < totalAmount) {
+          walletBalanceElement.style.color = '#dc3545';
+          walletMethod.style.opacity = '0.6';
+          walletMethod.title = 'Insufficient wallet balance';
+        
+        } else {
+          walletBalanceElement.style.color = '#28a745';
+          walletMethod.style.opacity = '1';
+          walletMethod.title = '';
+        }
+      }
+    } catch (error) {
+      console.error('Error loading wallet balance:', error);
+      document.getElementById('walletBalance').textContent = '0.00';
+    }
+  }
+loadWalletBalance()
 </script> 

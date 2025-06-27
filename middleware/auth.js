@@ -24,7 +24,7 @@ const userAuth = async (req, res, next) => {
 const adminAuth = (req,res,next)=>{
    try {
     const admin = req.session.admin;
-    console.log(admin)
+    console.log("hyyyy"+admin)
     if(admin){
         next()
     }else{
