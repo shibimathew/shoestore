@@ -25,10 +25,11 @@ const categorySchema = new mongoose.Schema({
    
     categoryOffer: {
         type:Number,
+    
         default: null,
     },
     createdAt: {
-        type:Date,
+        type:Date,ll
         default:Date.now
     }
 })

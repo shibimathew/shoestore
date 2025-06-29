@@ -446,7 +446,9 @@
           <p>
   <% let price = product.salePrice 
     let productOffer = product.productOffer
-    let salePrice = price - (price * (productOffer/100))
+     let categoryOffer =Number(product.category.categoryOffer)
+     let offer=Math.max(productOffer,categoryOffer)
+    let salePrice = price - (price * (offer/100))
   %>
    Price: ₹<%= Number(salePrice).toLocaleString('en-IN') %>
    <span class="text-muted">

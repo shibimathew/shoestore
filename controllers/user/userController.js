@@ -358,6 +358,7 @@ const loadShoppingPage = async (req, res) => {
         }
 
         const products = await Product.find(query)
+            .populate("category")
             .sort(sortOption)
             .skip(skip)
             .limit(limit);
@@ -365,7 +366,6 @@ const loadShoppingPage = async (req, res) => {
         const totalProducts = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalProducts/limit);
         const categoriesWithIds = categories.map(category => ({_id:category._id, name:category.name}));
-
         console.log(req.session.user || req.user)
 
         res.render('user/shop', {
@@ -435,6 +435,7 @@ const filterProduct = async (req, res) => {
         }
 
         const products = await Product.find(query)
+            .populate("category")
             .sort(sortOption)
             .skip(skip)
             .limit(limit);
@@ -508,6 +509,7 @@ const filterByPrice = async (req,res)=>{
         }
 
         let findProducts = await Product.find(query)
+            .populate("category")
             .sort(sortOption)
             .lean();
 
@@ -569,6 +571,7 @@ const searchProducts = async (req, res) => {
             );
         } else {
             products = await Product.find(query)
+                .populate("category")
                 .lean()
                 .sort({ createdOn: -1 });
         }
@@ -669,7 +672,9 @@ const productFilter = async (req, res) => {
         }
         
         // Get categories for sidebar
-        const categories = await Category.find({ isListed: true }).lean();
+        const categories = await Category.find({ isListed: true })
+        .populate("category")
+        .lean();
         
         // Pagination
         const itemsPerPage = 6;

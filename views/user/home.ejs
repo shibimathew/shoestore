@@ -459,10 +459,27 @@
                                         <span>90%</span>
                                     </span>
                                 </div>
-                                <div class="product-price">
+                                <!-- <div class="product-price">
+
                                     <span>₹<%= product.salePrice %></span>
                                     <span class="old-price">₹<%= product.regularPrice %></span>
-                                </div>
+                                </div> -->
+                                <div class="product-price primary-color">
+  <% 
+    let regularPrice = product.salePrice;
+    let productOffer = product.productOffer || 0;
+    let categoryOffer = Number(product.category.categoryOffer)
+    let Offer = Math.max(productOffer,categoryOffer)
+    let salePrice = regularPrice - (regularPrice * (Offer/100));
+  %>
+  <ins><span class="text-brand">₹<%= Number(salePrice).toLocaleString('en-IN') %></span></ins>
+  <% if (productOffer > 0) { %>
+    <ins><span class="old-price font-md ml-15">₹<%= Number(regularPrice).toLocaleString('en-IN') %></span></ins>
+    <span class="save-price font-md color3 ml-15">
+      <%= productOffer %>% Off
+    </span>
+  <% } %>
+</div>
                                 <div class="product-action-1 show">
                                     <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart?id=<%= product._id %>">
                                         <i class="fi-rs-shopping-bag-add"></i>

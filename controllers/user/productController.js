@@ -26,18 +26,15 @@ const productDetails = async (req, res) => {
         const categoryOffer = findCategory.categoryOffer || 0;
         const productOffer = product.productOffer || 0;
         
-        // Apply the higher offer between category and product offer
         const appliedOffer = Math.max(categoryOffer, productOffer);
-        
-        // Calculate the final price based on the applied offer
+    
         let finalPrice = product.salePrice;
         let offerType = null;
         
         if (appliedOffer > 0) {
             finalPrice = product.salePrice - (product.salePrice * appliedOffer / 100);
             finalPrice = Math.round(finalPrice * 100) / 100; // Round to 2 decimal places
-            
-            // Determine which offer is being applied
+          
             if (categoryOffer > productOffer) {
                 offerType = 'category';
             } else if (productOffer > categoryOffer) {

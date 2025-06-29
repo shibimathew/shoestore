@@ -6,13 +6,13 @@ const customerInfo = async (req, res) => {
     if (req.query.search) {
       search = req.query.search;
     }
-    let page = 1; // pagination
+    let page = 1;
     if (req.query.page) {
       page = req.query.page;
     }
     const limit = 3;
 
-    // Get dashboard statistics
+    // dashboard statistics
     const totalCustomers = await User.countDocuments({ isAdmin: false });
     const activeCustomers = await User.countDocuments({
       isAdmin: false,

@@ -66,7 +66,7 @@ const getDateRanges = () => {
     };
   };
   
-  // Helper function to calculate stats for a specific time period
+  //  function to calculate stats for a specific time period
   const calculatePeriodStats = async (startDate, endDate) => {
     try {
       // Revenue for the period - Fixed status matching

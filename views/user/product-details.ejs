@@ -315,7 +315,9 @@
   <% 
     let regularPrice = product.salePrice;
     let productOffer = product.productOffer || 0;
-    let salePrice = regularPrice - (regularPrice * (productOffer/100));
+    let categoryOffer = Number(product.category.categoryOffer)
+    let Offer = Math.max(productOffer,categoryOffer)
+    let salePrice = regularPrice - (regularPrice * (Offer/100));
   %>
   <ins><span class="text-brand">₹<%= Number(salePrice).toLocaleString('en-IN') %></span></ins>
   <% if (productOffer > 0) { %>
@@ -650,7 +652,12 @@
                                                             </div>
                                                             <div class="product-price">
                                                                 <% 
-                                                                const salePrice = products[i].salePrice || (products[i].price - (products[i].price * ((products[i].productOffer || 0) + (products[i].category ? (products[i].category.categoryOffer || 0) : 0)) / 100)); 
+                                                                
+                                                                const productOffer = products[i].productOffer
+                                                                const categoryOffer = Number(products[i].category.categoryOffer)
+                                                                const Offer = Math.max(productOffer,categoryOffer)   
+                                                                const salePrice = products[i].salePrice-(products[i].salePrice * (Offer/100));
+                                                                                                                             <!-- const salePrice = products[i].salePrice || (products[i].price - (products[i].price * ((products[i].productOffer || 0) + (products[i].category ? (products[i].category.categoryOffer || 0) : 0)) / 100));  -->
                                                                 const regularPrice = products[i].regularPrice || products[i].price;
                                                                 %>
                                                                 <span>₹<%= salePrice.toFixed(2) %></span>
