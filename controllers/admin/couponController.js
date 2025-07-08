@@ -4,9 +4,9 @@ const Coupon = require("../../models/couponSchema");
 const loadCouponManagement = async (req, res) => {
   try {
     const { search, success, error } = req.query;
-    let query = {}
+    let query = {};
     if (search && search.trim()) {
-      const searchRegex = new RegExp(search.trim(), "i"); 
+      const searchRegex = new RegExp(search.trim(), "i");
       query = {
         $or: [
           { name: searchRegex },
@@ -16,9 +16,7 @@ const loadCouponManagement = async (req, res) => {
         ],
       };
     }
-
     const coupons = await Coupon.find(query).sort({ createdAt: -1 });
-
     return res.render("admin/couponManagement", {
       coupons,
       success: success || null,
@@ -133,17 +131,8 @@ const updateCoupon = async (req, res) => {
   }
 
   try {
-    let {
-      name,
-      code,
-      description,
-      startDate,
-      expiryDate,
-      minPrice,
-      offerPrice,
-    } = req.body;
-    let usageType =
-      req.body.editUsageType === "single" ? "single-use" : "multi-use";
+    let {name,code,description,startDate,expiryDate, minPrice,offerPrice,} = req.body;
+    let usageType =req.body.editUsageType === "single" ? "single-use" : "multi-use";
     let status = req.body.editStatus === "active" ? "Active" : "Inactive";
 
     if (new Date(expiryDate) <= new Date(startDate)) {

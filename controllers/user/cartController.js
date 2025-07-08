@@ -7,25 +7,18 @@ const Wishlist = require('../../models/wishlistSchema');
 
 const addToCart = async (req, res) => {
   try {
-    // Check if req.user exists, if not try to get userId from session
     const userId = req.user?._id || req.session?.user;
-    
     if (!userId) {
       return res.status(401).json({ success: false, message: 'User not authenticated' });
     }
-    
     const { productId, quantity = 1, selectedSize } = req.body;
     const variants = { size: selectedSize };
-    
     const product = await Product.findOne({_id: productId});
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
-
     const normalizedSize = (variants.size || '').toLowerCase();
     const sizesObj = product.shoeSizes; 
-    
-    // Check if the size exists and has stock
     if (!sizesObj.has(normalizedSize) || sizesObj.get(normalizedSize) <= 0) {
       return res.status(400).json({ success: false, message: 'Please select a valid product size.' });
     }
@@ -74,8 +67,6 @@ const addToCart = async (req, res) => {
       { userId },
       { $pull: { products: { productId } } }
     );
-    
-    // Only update user if we have a valid user object
     if (req.user) {
       await User.findByIdAndUpdate(userId, { $addToSet: { cart: cart._id } });
     }
@@ -96,7 +87,6 @@ const addToCart = async (req, res) => {
 
 const getCartPage = async (req, res) => {
   try {
-    // Check if req.user exists, if not try to get userId from session
     const userId = req.user?._id || req.session?.user;
         
     if (!userId) {
@@ -113,7 +103,7 @@ const getCartPage = async (req, res) => {
     // Filter out null productId entries (products that were filtered out by populate match)
     const items = cart?.items?.filter(item => item.productId !== null) || [];
 
-    return res.render('user/myCart', { items, user: req.user });
+    return res.render('user/myCart', { items,  user: req.session?.user || req.user});
   } catch (err) {
     console.error(err);
     return res.status(500).send('Server error');
@@ -123,7 +113,6 @@ const getCartPage = async (req, res) => {
 
 const removeFromCart = async (req, res) => {
   try {
-    // Check if req.user exists, if not try to get userId from session
     const userId = req.user?._id || req.session?.user;
     
     if (!userId) {
@@ -179,15 +168,11 @@ const removeFromCart = async (req, res) => {
 
 const updateCart = async (req, res) => {
   try {
-    // Check if req.user exists, if not try to get userId from session
     const userId = req.user?._id || req.session?.user;
-    
     if (!userId) {
       return res.status(401).json({ message: 'User not authenticated' });
     }
-    
     const items = req.body.items; 
-
     const cart = await Cart.findOne({ userId });
     if (!cart) {
       return res.status(404).json({ message: 'Cart not found' });
@@ -215,7 +200,6 @@ const updateCart = async (req, res) => {
 };
 const updateCartItem = async (req, res) => {
   try {
-    // Check authentication
     const userId = req.user?._id || req.session?.user;
     
     if (!userId) {
@@ -225,43 +209,31 @@ const updateCartItem = async (req, res) => {
     const { itemId } = req.params;
     let quantity = parseInt(req.body.quantity, 10);
 
-    // Validate quantity
     if (isNaN(quantity) || quantity < 1) {
       return res.status(400).json({ success: false, message: 'Invalid quantity' });
     }
-
-    // Find cart
     const cart = await Cart.findOne({ userId });
     if (!cart) {
       return res.status(404).json({ success: false, message: 'Cart not found' });
     }
-
-    // Find cart item
     const item = cart.items.id(itemId);
     if (!item) {
       return res.status(404).json({ success: false, message: 'Item not found in cart' });
     }
-
-    // Get product and check stock
     const product = await Product.findById(item.productId);
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
     const sizeKey = item.variants.size.toLowerCase();
-    
-    // Check stock based on your product schema structure
     let stockAvailable = 0;
-    
-    // If using shoeSizes Map (as in addToCart)
+  
     if (product.shoeSizes && product.shoeSizes.has(sizeKey)) {
       stockAvailable = product.shoeSizes.get(sizeKey);
     }
-    // If using variant.size object (as in your corrected version)
     else if (product.variant && product.variant.size && product.variant.size[sizeKey]) {
       stockAvailable = product.variant.size[sizeKey];
     }
-    // If using sizes array
     else if (product.sizes) {
       const sizeObj = product.sizes.find(s => s.size.toLowerCase() === sizeKey);
       stockAvailable = sizeObj ? sizeObj.quantity : 0;
@@ -274,8 +246,6 @@ const updateCartItem = async (req, res) => {
         message: `Only ${stockAvailable} items available for size ${sizeKey.toUpperCase()}.`
       });
     }
-
-    // Update quantity
     item.quantity = quantity;
     await cart.save();
 

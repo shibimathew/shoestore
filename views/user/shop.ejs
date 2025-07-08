@@ -1,115 +1,6 @@
 
 <%- include("../../views/partials/user/header") %>
 
-<header class="header-area header-style-1 header-height-2">
-    <div class="header-top header-top-ptb-1 d-none d-lg-block">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-xl-3 col-lg-4">
-                    <div class="header-info">
-                        <ul>
-                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
-                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xl-6 col-lg-4">
-                    <div class="text-center">
-                    </div>
-                </div>
-                <div class="col-xl-3 col-lg-4">
-                    <div class="header-info header-info-right">
-                        <ul>
-                            <li>
-                                <a class="language-dropdown-active" href="#"> <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i></a>
-                                <ul class="language-dropdown">
-                                    <li><a href="#"><img src="assets/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                    <li><a href="#"><img src="assets/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                    <li><a href="#"><img src="assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
-                                </ul>
-                            </li>
-                            <% if (locals.user) { %>
-                                <div class="dropdown">
-                                    <a href="#" class="sign-in-link"><%= locals.user.name %></a>
-                                    <div class="dropdown-content">
-                                        <a href="/profileinfo">Profile</a>
-                                        <!-- <a href="/orders">Orders</a> -->
-                                        <a href="/logout">Logout</a>
-                                    </div>
-                                </div>
-                            <% } else { %>
-                                <li>
-                                    <div class="d-flex gap-2">
-                                        <a href="/login" class="btn btn-sm btn-outline-primary">Login</a>
-                                        <a href="/signup" class="btn btn-sm btn-primary">Sign Up</a>
-                                    </div>
-                                </li>
-                            <% } %>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
-        <div class="container">
-            <div class="header-wrap">
-                <div class="logo logo-width-1">
-                    <img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore Logo">
-                </div>
-                <div class="header-right">
-                    <!-- <div class="search-style-2">
-                        <form action="#">
-                            <input type="text" placeholder="Search for items...">
-                        </form>
-                    </div> -->
-                    <div class="header-action-right">
-                        <div class="header-action-2">
-                            <div class="header-action-icon-2">
-                                <a href="/wishlist">
-                                    <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg">
-                                    <!-- <span class="pro-count blue">4</span> -->
-                                </a>
-                            </div>
-                            <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg">
-                                    <!-- <span class="pro-count blue">2</span> -->
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="header-bottom header-bottom-bg-color sticky-bar">
-        <div class="container">
-            <div class="header-wrap header-space-between position-relative">
-                <div class="logo logo-width-1 d-block d-lg-none">
-                    <a href="/home"><img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore Logo"></a>
-                </div>
-                <div class="header-nav d-none d-lg-flex">
-                    <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
-                        <nav>
-                            <ul>
-                                <li><a href="/home">Home</a></li>
-                                <li><a href="#">About</a></li>
-                                <li><a class="active" href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="#">Deals</a></li>
-                                <li><a href="page-contact.html">Contact</a></li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-                <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
-                </div>   
-            </div>
-        </div>
-    </div>
-</header>
-
 <style>
  .main-container {
    max-width: 1200px;
@@ -187,6 +78,24 @@
    background-color: #007bff;
    color: white;
    border-radius: 4px;
+ }
+ .reset-btn {
+  width: 100%;
+   background-color: #05c605;
+   color: #ffffff;
+   font-size: medium;
+   text-decoration: none;
+   padding: 8px 15px;
+   display: block;
+   transition: all 0.3s ease;
+   border-radius: 10px;
+ }
+ .reset-btn a:hover,
+ .reset-btn a.active{
+    background-color: #05c605;
+   color: white;
+   border-radius: 4px;
+   border-radius: 10px;
  }
  .product-list-container {
    display: flex;
@@ -359,8 +268,151 @@
    max-width: 200px;
  }
  }
+ .reset-filter {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 20px;
+}
 
-</style>
+.reset-button {
+  padding: 8px 15px; /* Reduced from 12px 20px to match search button */
+  background-color: #1e918b; /* Changed to match search button color */
+  color: white;
+  border: 1px solid #1e918b; /* Updated border color to match */
+  border-radius: 15px; /* Reduced from 30px to make it smaller and match search button */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-size: 14px; /* Same as search button */
+  width: 20%;
+  font-weight: 500;
+}
+
+.reset-button:hover {
+  background-color: #0056b3; /* Match search button hover color */
+  border-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.reset-button:active {
+  transform: scale(0.95);
+}
+
+.reset-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(30, 145, 139, 0.25); /* Updated to match new color */
+}
+</style>  
+<header class="header-area header-style-1 header-height-2">
+    <div class="header-top header-top-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info">
+                        <ul>
+                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
+                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-4">
+                    <div class="text-center">
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info header-info-right">
+                        <ul>
+                            <li>
+                                <a class="language-dropdown-active" href="#"> <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i></a>
+                                <ul class="language-dropdown">
+                                    <li><a href="#"><img src="assets/imgs/theme/flag-fr.png" alt="">Français</a></li>
+                                    <li><a href="#"><img src="assets/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
+                                    <li><a href="#"><img src="assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
+                                </ul>
+                            </li>
+                            <% if (locals.user) { %>
+                                <div class="dropdown">
+                                    <a href="#" class="sign-in-link"><%= locals.user.name %></a>
+                                    <div class="dropdown-content">
+                                        <a href="/profileinfo">Profile</a>
+                                        <!-- <a href="/orders">Orders</a> -->
+                                        <a href="/logout">Logout</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <li>
+                                    <div class="d-flex gap-2">
+                                        <a href="/login" class="btn btn-sm btn-outline-primary">Login</a>
+                                        <a href="/signup" class="btn btn-sm btn-primary">Sign Up</a>
+                                    </div>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="header-wrap">
+                <div class="logo logo-width-1">
+                    <img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore Logo">
+                </div>
+                <div class="header-right">
+                    <!-- <div class="search-style-2">
+                        <form action="#">
+                            <input type="text" placeholder="Search for items...">
+                        </form>
+                    </div> -->
+                    <div class="header-action-right">
+                        <div class="header-action-2">
+                            <div class="header-action-icon-2">
+                                <a href="/wishlist">
+                                    <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg">
+                                    <!-- <span class="pro-count blue">4</span> -->
+                                </a>
+                            </div>
+                            <div class="header-action-icon-2">
+                                <a class="mini-cart-icon" href="/cart">
+                                    <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg">
+                                    <!-- <span class="pro-count blue">2</span> -->
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-bottom header-bottom-bg-color sticky-bar">
+        <div class="container">
+            <div class="header-wrap header-space-between position-relative">
+                <div class="logo logo-width-1 d-block d-lg-none">
+                    <a href="/home"><img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore Logo"></a>
+                </div>
+                <div class="header-nav d-none d-lg-flex">
+                    <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
+                        <nav>
+                            <ul>
+                                <li><a href="/home">Home</a></li>
+                                <!-- <li><a href="#">About</a></li> -->
+                                <li><a class="active" href="/shop">Shop</a></li>
+                                <!-- <li class="position-static"><a href="#">Deals</a></li>
+                                <li><a href="page-contact.html">Contact</a></li> -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <!-- <div class="hotline d-none d-lg-block">
+                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                </div>    -->
+            </div>
+        </div>
+    </div>
+</header>
+
 
 <div class="main-container">
  <section class="shop-page container">
@@ -375,6 +427,11 @@
   
    <div class="product-list-container">
      <aside class="sidebar">
+      <li class="reset-btn">
+               <a style="color: white;" href="/shop" >
+                Reset filters
+               </a>
+             </li>
        <div class="filter-section">
          <div class="filter-title">Categories</div>
          <ul>
@@ -431,7 +488,7 @@
              </a>
            </div>
          </form>
-       </div>
+       </div> 
      </aside>
 
      <main class="product-grid">
@@ -476,8 +533,22 @@
        <a class="btn" href="/shop?page=<%= currentPage + 1 %>">Next</a>
      <% } %>
    </div>
+   </div> <!-- End of sort-filter div -->
+     
+     <!-- ADD THE RESET BUTTON HERE -->
+     <div class="reset-filter">
+       <div class="filter-title">Reset Filters</div>
+       <a href="/shop" id="reset-filters-btn">
+         <button type="button" class="reset-button">
+           🔄 Reset All Filters
+         </button>
+       </a>
+     </div>
+     
+     </aside> <!-- End of sidebar -->
  </section>
 </div>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 
@@ -730,7 +801,37 @@ function updateWishlistCount(count) {
     if (wishlistCountElement) {
         wishlistCountElement.textContent = count;
     }
+
 }
+document.addEventListener('DOMContentLoaded', function() {
+    // Reset filters confirmation
+    const resetButton = document.getElementById('reset-filters-btn');
+    if (resetButton) {
+        resetButton.addEventListener('click', function(e) {
+            // Optional: Add confirmation dialog
+            const hasFilters = window.location.search.length > 0;
+            
+            if (hasFilters) {
+                const confirmed = confirm('Are you sure you want to reset all filters?');
+                if (!confirmed) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            
+            // Show loading state
+            const button = this.querySelector('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '🔄 Resetting...';
+            button.disabled = true;
+            
+            // Optional: Add small delay for better UX
+            setTimeout(() => {
+                window.location.href = '/shop';
+            }, 500);
+        });
+    }
+});
 </script>
 
 <%- include("../../views/partials/user/footer") %>

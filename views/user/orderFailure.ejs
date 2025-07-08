@@ -1,4 +1,4 @@
-<%- include('../partials/userL/header.ejs') %>
+<%- include('../partials/user/header.ejs') %>
 
 <style>
     .order-success-container {
@@ -198,12 +198,17 @@
     <section class="mt-50 mb-50">
         <div class="container">
             <div class="order-failure-container">
-                <div class="failure-icon">
+                <!-- <div class="failure-icon">
                     <i class="fi-rs-x-circle"></i>
-                </div>
+                </div> -->
                 <h2>Order Processing Failed</h2>
                 <p>We're sorry, but there was an issue processing your order.</p>
                 <div class="error-message">
+                    <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                        <%= errorMessage %>
+                    <% } else { %>
+                        Payment processing failed. Please try again.
+                    <% } %>
                 </div>
                 
                 <div class="error-details">
@@ -219,15 +224,16 @@
                 
                 <div class="row mt-4">
                     <div class="col-lg-8 mx-auto">
+                        <% if (order && order.orderItems && order.orderItems.length > 0) { %>
                         <div class="card order-details-card">
-                            <div class="card-header">
+                            <!-- <div class="card-header">
                                 <h4>Order Details</h4>
                             </div>
                             <% order.orderItems.forEach(item => { %>
-                            <div class="card-body">
+                            <div class="card-body"> -->
                                 <!-- Order Products - Static Example -->
-                                <div class="order-product">
-                                    <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" class="order-product-image">
+                                <!-- <div class="order-product">
+                                      <img src="<%= item.productImage %>" style="width:20%" alt="<%= item.product?.productName || 'Product' %>" onerror="this.src='/assets/imgs/shop/product-placeholder.jpg'" />
                                     <div class="order-product-details">
                                         <div class="order-product-name"><%= item.product.productName %></div>
                                         <div class="order-product-price">₹<%= item.price %></div>
@@ -235,10 +241,21 @@
                                     <div class="order-product-quantity">Qty: <%= item.quantity %></div>
                                     <div class="order-product-total">₹<%= (item.price * item.quantity).toFixed(2) %></div>
                                 </div>
-                           </div>
+                           </div> -->
                            <% }) %>
                         </div>
-                                  
+                        <% } else { %>
+                        <div class="card order-details-card">
+                            <div class="card-header">
+                                <h4>Payment Information</h4>
+                            </div>
+                            <div class="card-body">
+                                <p>Your payment could not be processed successfully. No order was created.</p>
+                                <p><strong>Payment Method:</strong> <%= paymentMethod %></p>
+                                <p><strong>Status:</strong> <span style="color: #e53935;">Failed</span></p>
+                            </div>
+                        </div>
+                        <% } %>
 
                         <!-- What to do next section -->
                         <div class="what-next">
@@ -254,7 +271,7 @@
                         <div class="action-buttons">
                             <a href="/checkout" class="action-btn primary-btn">Try Again</a>
                             <a href="/cart" class="action-btn secondary-btn">Return to Cart</a>
-                            <a href="/contact" class="action-btn outline-btn">Contact Support</a>
+                            <!-- <a href="/contact" class="action-btn outline-btn">Contact Support</a> -->
                         </div>
                     </div>
                 </div>
@@ -395,4 +412,4 @@
 
 
 
-<%- include('../partials/userL/footer.ejs') %>
+<%- include('../partials/user/footer.ejs') %>

@@ -24,7 +24,8 @@ const getMyOrdersPage = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .populate('orderItems.product')
-      .populate('address.addressDocId');
+      .populate('address.addressDocId')
+      .populate('appliedCoupon');
 
     res.render("user/myOrders", {
       orders,
@@ -48,7 +49,8 @@ const getOrderDetails = async (req, res) => {
             .populate('userId')
             .populate('orderItems.product')             
             .populate('address.addressDocId')
-            .populate('address.addressDetailId');
+            .populate('address.addressDetailId')
+            .populate('appliedCoupon');
 
         if (!order) {
             return res.status(404).render('notFound');
@@ -313,7 +315,7 @@ const returnFullOrder = async (req, res) => {
         doc.fontSize(14).text('Order Items');
         doc.moveDown();
 
-        // Create table header
+       
         const tableTop = doc.y;
         doc.fontSize(12)
             .text('Item', 50, tableTop)
@@ -325,7 +327,6 @@ const returnFullOrder = async (req, res) => {
         doc.moveDown();
         let yPos = doc.y;
 
-        // Add items
        
       if (Array.isArray(order.orderItems)) {
             order.orderItems.forEach(item => {
@@ -347,7 +348,6 @@ const returnFullOrder = async (req, res) => {
         doc.moveDown();
         yPos += 20;
 
-        // Add total
         const subtotal = order.totalAmount || 0;
         const shippingCharge = order.shippingCharge || 0;
         const couponDiscount = order.couponDiscount || 0;
@@ -371,13 +371,13 @@ const returnFullOrder = async (req, res) => {
             .text('Total:', 350, yPos)
             .text(`₹${total.toFixed(2)}`, 480, yPos);
 
-        // Add footer
+     
         doc.fontSize(10)
             .text('Thank you for shopping with us!', 50, doc.page.height - 50, {
                 align: 'center'
             });
 
-        // Finalize the PDF
+      
         doc.end();
 
     } catch (error) {

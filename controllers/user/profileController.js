@@ -58,9 +58,6 @@ const sendVerificationEmail = async (email,otp)=>{
         return false;
     }
 }
-
-
-
 const securePassword = async (password)=>{
     try {
         const passwordHash = await bcrypt.hash(password,10);

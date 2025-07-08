@@ -230,9 +230,8 @@
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="/about">About</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="/offers">Deals</a>
+                             
                                     <ul class="mega-menu">
                                     </ul>
                                 </li>
@@ -264,10 +263,7 @@
                     <nav>
                         <ul class="mobile-menu font-heading">
                             <li><a class="active" href="/">Home</a></li>
-                            <li><a href="/about">About</a></li>
                             <li><a href="/shop">Shop</a></li>
-                            <li><a href="/offers">Deals</a></li>
-                            <li><a href="/contact">Contact</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -329,18 +325,8 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/notifications">
-                                    <i class="fi-rs-bell"></i> Notifications
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" href="/security">
                                     <i class="fi-rs-shield-check"></i> Security Settings
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/help">
-                                    <i class="fi-rs-help"></i> Help Center
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -359,9 +345,18 @@
                         </div>
                         <div class="card-body">
                            
-                            
+                                                       <% if (!addresses || addresses.length === 0) { %>
+  <div class="no-addresses text-center">
+    <i class="material-icons">location_off</i>
+    <h3>No addresses added</h3>
+    <p>You haven't added any addresses yet. Start by adding one now.</p>
+    <a href="/addAddresses" class="btn btn-fill-out">Add Address</a>
+  </div>
+<% } else { %>
 
-                            <div class="address-card">                               
+                            <div class="address-card">  
+     
+                             
                                 <% addresses.forEach((addr, index) => { %>
                                     <div class="card">
                                       <div class="card-header">
@@ -391,7 +386,9 @@
                                       </div>
                                     </div>
                                   <% }) %>
-                            </div>                            
+                            </div> 
+                              
+<% } %>                           
                         </div>
                     </div>
                 </div>

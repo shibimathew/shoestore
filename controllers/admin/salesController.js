@@ -6,7 +6,7 @@ const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
 const csv = require('fast-csv'); 
 const Product = require('../../models/productSchema');
-
+const Coupon = require("../../models/couponSchema");
 const getDateRange = (filterType) => {
   const now = moment();
   let startDate, endDate;
@@ -51,7 +51,7 @@ const processOrdersData = (orders) => {
 
   orders.forEach(order => {
     totalRevenue += order.totalAmount;
-    if (order.couponDiscount) totalDiscount += order.couponDiscount;
+    if (order.discount) totalDiscount += order.discount;
   });
 
   const salesByDay = {};
@@ -122,7 +122,8 @@ const loadSalesReport = async (req, res) => {
     }).populate('orderItems.product')
       .populate('orderItems.product')
       .populate('userId', 'name')                           
-      .populate('address.addressDocId');     
+      .populate('address.addressDocId')
+      .populate('appliedCoupon');     
 
     const totalCount    = allOrders.length;
     const totalPages    = Math.ceil(totalCount / limit);
@@ -136,6 +137,8 @@ const loadSalesReport = async (req, res) => {
     .populate('orderItems.product')
     .populate('userId', 'name')
     .populate('address.addressDocId')
+        .populate('appliedCoupon');
+    
 
     const dashboardData = processOrdersData(allOrders);
 
@@ -172,6 +175,17 @@ const updateSales = async (req, res) => {
 const generatePDFReport = (reportData) => {
     return new Promise((resolve, reject) => {
         try {
+            // DEBUG: Log the first order to see available fields
+            if (reportData.orders && reportData.orders.length > 0) {
+                console.log('=== DEBUG: Sample Order Data ===');
+                console.log('Full order object:', JSON.stringify(reportData.orders[0], null, 2));
+                console.log('Available fields:', Object.keys(reportData.orders[0]));
+                console.log('Discount field:', reportData.orders[0].discount);
+                console.log('CouponDiscount field:', reportData.orders[0].couponDiscount);
+                console.log('Applied coupon:', reportData.orders[0].appliedCoupon);
+                console.log('================================');
+            }
+
             const uploadDir = path.join(__dirname, '../../public/reports');
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir, { recursive: true });
@@ -207,21 +221,32 @@ const generatePDFReport = (reportData) => {
             
             const tableTop = doc.y;
             const tableLeft = 50;
-            const colWidths = [80, 100, 100, 80, 80, 85];
+            const colWidths = [70, 80, 80, 80, 70, 80];
             
-            doc.fontSize(10).text('Order ID', tableLeft, tableTop);
+            let currentX = tableLeft;
             
-            doc.text('Date', tableLeft + colWidths[0] + colWidths[1], tableTop);
-            doc.text('Amount', tableLeft + colWidths[0] + colWidths[1] + colWidths[2], tableTop);
-            doc.text('Status', tableLeft + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3], tableTop);
-            doc.text('Payment', tableLeft + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4], tableTop);
+            doc.fontSize(10).text('Order ID', currentX, tableTop);
+            currentX += colWidths[0];
+            
+            doc.text('Date', currentX, tableTop);
+            currentX += colWidths[1];
+            
+            doc.text('Amount', currentX, tableTop);
+            currentX += colWidths[2];
+            
+            doc.text('Discount', currentX, tableTop);
+            currentX += colWidths[3];
+            
+            doc.text('Status', currentX, tableTop);
+            currentX += colWidths[4];
+            
+            doc.text('Payment', currentX, tableTop);
             
             doc.moveTo(tableLeft, tableTop + 15)
                .lineTo(tableLeft + colWidths.reduce((a, b) => a + b, 0), tableTop + 15)
                .stroke();
             
             let rowTop = tableTop + 20;
-            
             const ordersToShow = reportData.orders.slice(0, 20);
             
             ordersToShow.forEach((order, i) => {
@@ -230,11 +255,43 @@ const generatePDFReport = (reportData) => {
                     rowTop = 50;
                 }
                 
-                doc.fontSize(9).text(order.orderId, tableLeft, rowTop, { width: colWidths[0] });
-                doc.fontSize(9).text(order.date, tableLeft + colWidths[0] + colWidths[1], rowTop, { width: colWidths[2] });
-                doc.fontSize(9).text(`INR ${order.totalAmount.toFixed(2)}`, tableLeft + colWidths[0] + colWidths[1] + colWidths[2], rowTop, { width: colWidths[3] });
-                doc.fontSize(9).text(order.status, tableLeft + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3], rowTop, { width: colWidths[4] });
-                doc.fontSize(9).text(order.paymentMethod, tableLeft + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4], rowTop, { width: colWidths[5] });
+                let currentX = tableLeft;
+                
+                doc.fontSize(9).text(order.orderId, currentX, rowTop, { width: colWidths[0] });
+                currentX += colWidths[0];
+                
+                doc.fontSize(9).text(order.date, currentX, rowTop, { width: colWidths[1] });
+                currentX += colWidths[1];
+                
+                doc.fontSize(9).text(`INR ${order.totalAmount.toFixed(2)}`, currentX, rowTop, { width: colWidths[2] });
+                currentX += colWidths[2];
+                
+                // TRY MULTIPLE POSSIBLE DISCOUNT FIELD NAMES
+                let discountAmount = 0;
+                console.log(order)
+                // Check various possible field names for discount
+                if (order.discount && order.discount > 0) {
+                    discountAmount = order.discount;
+                } else if (order.couponDiscount && order.couponDiscount > 0) {
+                    discountAmount = order.couponDiscount;
+                } else if (order.appliedCoupon && typeof order.appliedCoupon === 'object' && order.appliedCoupon.discount) {
+                    discountAmount = order.appliedCoupon.discount;
+                } else if (order.coupon && order.coupon.discount) {
+                    discountAmount = order.coupon.discount;
+                }
+                
+                // DEBUG: Log what we're using for each order (remove this after debugging)
+                if (i < 3) { // Only log first 3 orders to avoid spam
+                    console.log(`Order ${order.orderId}: discount=${order.discount}, couponDiscount=${order.couponDiscount}, using=${discountAmount}`);
+                }
+                
+                doc.fontSize(9).text(`INR ${discountAmount.toFixed(2)}`, currentX, rowTop, { width: colWidths[3] });
+                currentX += colWidths[3];
+                
+                doc.fontSize(9).text(order.status, currentX, rowTop, { width: colWidths[4] });
+                currentX += colWidths[4];
+                
+                doc.fontSize(9).text(order.paymentMethod, currentX, rowTop, { width: colWidths[5] });
                 
                 rowTop += 20;
             });
@@ -322,16 +379,20 @@ const generateExcelReport = (reportData) => {
             summarySheet.getCell('A4').font = { size: 12, bold: true };
             
             summarySheet.getCell('A5').value = 'Total Orders:';
-            summarySheet.getCell('B5').value = reportData.totalOrders;
+            summarySheet.mergeCells('C5:D5')
+            summarySheet.getCell('C5').value = reportData.totalOrders;
             
             summarySheet.getCell('A6').value = 'Total Revenue:';
-            summarySheet.getCell('B6').value = reportData.totalRevenue;
-            summarySheet.getCell('B6').numFmt = '₹#,##0.00';
+            summarySheet.mergeCells('C6:D6')
+            summarySheet.getCell('C6').value = reportData.totalRevenue;
+            summarySheet.getCell('C6').numFmt = '₹#,#####0.00';
+            
             
             if (reportData.totalDiscount) {
                 summarySheet.getCell('A7').value = 'Total Discount:';
-                summarySheet.getCell('B7').value = reportData.totalDiscount;
-                summarySheet.getCell('B7').numFmt = '₹#,##0.00';
+                summarySheet.mergeCells('C7:D7')
+                summarySheet.getCell('C7').value = reportData.totalDiscount;
+                summarySheet.getCell('C7').numFmt = '₹#,##0.00';
             }
             
             const ordersSheet = workbook.addWorksheet('Orders');
@@ -341,6 +402,7 @@ const generateExcelReport = (reportData) => {
                 
                 { header: 'Date', key: 'date', width: 20 },
                 { header: 'Amount', key: 'amount', width: 15 },
+                { header: 'Discount', key: 'discount', width: 15 },
                 { header: 'Status', key: 'status', width: 15 },
                 { header: 'Payment Method', key: 'paymentMethod', width: 15 },
                 { header: 'Payment Status', key: 'paymentStatus', width: 15 }
@@ -356,7 +418,8 @@ const generateExcelReport = (reportData) => {
                     amount: order.totalAmount,
                     status: order.status,
                     paymentMethod: order.paymentMethod,
-                    paymentStatus: order.paymentStatus
+                    paymentStatus: order.paymentStatus,
+                    discount:order.discount
                 });
             });
             
@@ -441,6 +504,7 @@ const generateReport = async (req, res) => {
             },
             totalOrders: orders.length,
             totalRevenue: orders.reduce((sum, order) => sum + order.totalAmount, 0),
+            totalDiscount : orders.reduce((sum,order)=> sum + order.discount ,0),
             orders: orders.map(order => ({
                 orderId: order.orderId,
                 customer: order.userId ? `${order.userId.firstName} ${order.userId.lastName}` : 'Unknown',
@@ -448,15 +512,17 @@ const generateReport = async (req, res) => {
                 totalAmount: order.totalAmount,
                 status: order.status,
                 paymentMethod: order.paymentMethod,
-                paymentStatus: order.paymentStatus
+                paymentStatus: order.paymentStatus,
+                discount : order.discount
             }))
         };
         
         if (includeDiscount === 'true') {
-            reportData.totalDiscount = orders.reduce((sum, order) => sum + (order.couponDiscount || 0), 0);
+            // reportData.totalDiscount = orders.reduce((sum, order) => sum + (order.couponDiscount || 0), 0);
             reportData.couponsUsed = {};
             
             orders.forEach(order => {
+            
                 if (order.couponCode) {
                     if (!reportData.couponsUsed[order.couponCode]) {
                         reportData.couponsUsed[order.couponCode] = {
@@ -469,8 +535,9 @@ const generateReport = async (req, res) => {
                     reportData.couponsUsed[order.couponCode].totalDiscount += order.couponDiscount;
                     reportData.couponsUsed[order.couponCode].count += 1;
                 }
+                //  reportData.discount = order?.discount
             });
-            
+           
             reportData.couponsUsed = Object.values(reportData.couponsUsed);
         }
         

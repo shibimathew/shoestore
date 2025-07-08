@@ -9,6 +9,13 @@ const Cart = require("../../models/cartSchema.js")
 
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const isValidCategoryId = (categoryId) => {
+    return categoryId && 
+           typeof categoryId === 'string' && 
+           categoryId.trim() !== '' && 
+           categoryId.trim() !== ' ' &&
+           categoryId.match(/^[0-9a-fA-F]{24}$/);
+};
 
 const pageNotFound = async(req,res)=>{
     try{
@@ -73,7 +80,7 @@ const loadHomepage = async (req, res) => {
         .limit(8)
         .populate('category');
         
-        // Get cart if user is logged in
+      
         let cart = null;
         let items = [];
         if (userId) {
@@ -143,10 +150,10 @@ const loadSignup = async (req,res)=>{
                   return res.render("user/signup",{message:"Passwords do not match"});
                 }
                 
-                // Check if user already exists
+               
                 const findUser = await User.findOne({email});
                 if(findUser){
-                    // Check if this is a Google-authenticated user
+                    
                     if(findUser.googleId) {
                         return res.render("user/signup",{message:"This email is already registered with Google. Please use Google login instead."});
                     } else {
@@ -159,6 +166,7 @@ const loadSignup = async (req,res)=>{
                 if(!emailSent){
                     return res.json("email-error")
                 }
+               
                 req.session.userOtp=otp;
                 req.session.userData={name,phone,email,password};
 
@@ -189,7 +197,7 @@ const verifyOtp = async(req,res)=>{
         if(otp===req.session.userOtp){
             const user=req.session.userData
             
-            // Check if user already exists (in case they registered while OTP was being sent)
+        
             const existingUser = await User.findOne({email: user.email});
             if(existingUser) {
                 return res.status(400).json({
@@ -207,7 +215,8 @@ const verifyOtp = async(req,res)=>{
                 password:passwordHash
             })
             await saveUserData.save();
-            req.session.user = saveUserData._id;
+             req.session.user = saveUserData;
+           // req.session.user = saveUserData._id;
             res.json({success:true,redirectUrl:"/"})
         }else{
             res.status(400).json({success:false,message:"Invalid Otp, Please try again"})
@@ -249,7 +258,7 @@ const resendOtp = async (req,res)=>{
 const loadLogin = async (req,res)=>{
     try {
         if(!req.session.user){
-            // Check if there's a message in the query parameters
+          
             const message = req.query.message || null;
             return res.render('user/login', { message });
         }else{
@@ -540,21 +549,20 @@ const filterByPrice = async (req,res)=>{
         res.redirect("/pageNotFound");
     }
 }
-
 const searchProducts = async (req, res) => {
     try {
         const user = req.session.user;
         const userData = user ? await User.findOne({ _id: user }) : null;
-        const searchQuery = req.body.query?.trim() || '';
+        const searchQuery = req.body.query?.trim() || req.query.search?.trim() || '';
 
         // Fetch categories
         const categories = await Category.find({ isListed: true }).lean();
         const categoryIds = categories.map(category => category._id.toString());
 
-        // Base query conditions
+        // Build base query
         const query = {
             isListed: true,
-            quantity: { $gt: 0 },
+            // quantity: { $gt: 0 }, // Uncomment if you want to exclude out-of-stock items
             category: { $in: categoryIds }
         };
 
@@ -563,18 +571,34 @@ const searchProducts = async (req, res) => {
             query.productName = { $regex: searchQuery, $options: 'i' };
         }
 
-        // Handle filtered products from session if they exist
-        let products = [];
-        if (req.session.filteredProducts?.length > 0 && searchQuery) {
-            products = req.session.filteredProducts.filter(product =>
-                product.productName.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-        } else {
-            products = await Product.find(query)
-                .populate("category")
-                .lean()
-                .sort({ createdOn: -1 });
+        // Get sort parameter
+        const sort = req.query.sort || 'newest';
+        let sortOption = {};
+        switch(sort) {
+            case 'price_asc':
+                sortOption = { salePrice: 1 };
+                break;
+            case 'price_desc':
+                sortOption = { salePrice: -1 };
+                break;
+            case 'name_asc':
+                sortOption = { productName: 1 };
+                break;
+            case 'name_desc':
+                sortOption = { productName: -1 };
+                break;
+            case 'newest':
+            default:
+                // Using createdAt from timestamps: true
+                sortOption = { createdAt: -1 };
+                break;
         }
+
+        // Execute search with proper population and sorting
+        const products = await Product.find(query)
+            .populate("category")
+            .sort(sortOption)
+            .lean();
 
         // Pagination
         const itemsPerPage = 6;
@@ -583,11 +607,9 @@ const searchProducts = async (req, res) => {
         const endIndex = startIndex + itemsPerPage;
         const totalPages = Math.ceil(products.length / itemsPerPage);
         const currentProducts = products.slice(startIndex, endIndex);
-        const currentSort = req.query.sort || "newest";
-        const selectedCategory = req.query.selectedCategory || " ";
-        const priceRange = req.query.priceRange || "";
 
-
+        // Clear any existing filtered products from session to avoid conflicts
+        delete req.session.filteredProducts;
 
         // Render response
         res.render("user/shop", {
@@ -596,10 +618,13 @@ const searchProducts = async (req, res) => {
             category: categories,
             totalPages,
             currentPage,
-            currentSort,
+            currentSort: sort,
             searchQuery,
-            selectedCategory,
-            priceRange,   
+            selectedCategory: req.query.category || '',
+            priceRange: {
+                gt: req.query.gt || '',
+                lt: req.query.lt || ''
+            },
             count: products.length,
         });
 
@@ -609,6 +634,186 @@ const searchProducts = async (req, res) => {
     }
 };
 
+// const searchProducts = async (req, res) => {
+//     try {
+//         const user = req.session.user;
+//         const userData = user ? await User.findOne({ _id: user }) : null;
+//         const searchQuery = req.body.query?.trim() || '';
+
+//         // Fetch categories
+//         const categories = await Category.find({ isListed: true }).lean();
+//         const categoryIds = categories.map(category => category._id.toString());
+
+//         // Base query conditions
+//         const query = {
+//             isListed: true,
+//             quantity: { $gt: 0 },
+//             category: { $in: categoryIds }
+//         };
+
+//         // Add search term if provided
+//         if (searchQuery) {
+//             query.productName = { $regex: searchQuery, $options: 'i' };
+//         }
+
+//         // Handle filtered products from session if they exist
+//         let products = [];
+//         if (req.session.filteredProducts?.length > 0 && searchQuery) {
+//             products = req.session.filteredProducts.filter(product =>
+//                 product.productName.toLowerCase().includes(searchQuery.toLowerCase())
+//             );
+//         } else {
+//             products = await Product.find(query)
+//                 .populate("category")
+//                 .lean()
+//                 .sort({ createdOn: -1 });
+//         }
+
+//         // Pagination
+//         const itemsPerPage = 6;
+//         const currentPage = parseInt(req.query.page) || 1;
+//         const startIndex = (currentPage - 1) * itemsPerPage;
+//         const endIndex = startIndex + itemsPerPage;
+//         const totalPages = Math.ceil(products.length / itemsPerPage);
+//         const currentProducts = products.slice(startIndex, endIndex);
+//         const currentSort = req.query.sort || "newest";
+//         const selectedCategory = req.query.selectedCategory || " ";
+//         const priceRange = req.query.priceRange || "";
+
+
+
+//         // Render response
+//         res.render("user/shop", {
+//             user: userData,
+//             products: currentProducts,
+//             category: categories,
+//             totalPages,
+//             currentPage,
+//             currentSort,
+//             searchQuery,
+//             selectedCategory,
+//             priceRange,   
+//             count: products.length,
+//         });
+
+//     } catch (error) {
+//         console.error("Search Error:", error);
+//         res.redirect("/pageNotFound");
+//     }
+// };
+
+// const productFilter = async (req, res) => {
+//     try {
+//         const user = req.session.user;
+//         const category = req.query.category;
+//         const priceMin = req.query.gt || req.query.min;
+//         const priceMax = req.query.lt || req.query.max;
+//         const searchQuery = req.body.query?.trim() || req.query.search?.trim() || '';
+//         const sortBy = req.query.sort || 'newest'; // default sort by newest
+        
+//         // Build query object
+//         const query = {
+//             isListed: true,
+//             quantity: { $gt: 0 }
+//         };
+        
+//         // Apply category filter
+//         if (category) {
+//             const findCategory = await Category.findOne({ _id: category });
+//             if (findCategory) {
+//                 query.category = findCategory._id;
+//             }
+//         }
+        
+//         // Apply price filter
+//         if (priceMin || priceMax) {
+//             query.salePrice = {};
+//             if (priceMin) query.salePrice.$gte = Number(priceMin);
+//             if (priceMax) query.salePrice.$lte = Number(priceMax);
+//         }
+        
+//         // Apply search filter
+//         if (searchQuery) {
+//             query.productName = { $regex: searchQuery, $options: 'i' };
+//         }
+        
+//         // Fetch products based on query
+//         let findProducts = await Product.find(query).lean();
+        
+//         // Apply sorting
+//         switch (sortBy) {
+//             case 'newest':
+//                 findProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+//                 break;
+//             case 'oldest':
+//                 findProducts.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+//                 break;
+//             case 'price-low':
+//                 findProducts.sort((a, b) => a.salePrice - b.salePrice);
+//                 break;
+//             case 'price-high':
+//                 findProducts.sort((a, b) => b.salePrice - a.salePrice);
+//                 break;
+//             case 'name-asc':
+//                 findProducts.sort((a, b) => a.productName.localeCompare(b.productName));
+//                 break;
+//             case 'name-desc':
+//                 findProducts.sort((a, b) => b.productName.localeCompare(a.productName));
+//                 break;
+//             default:
+//                 findProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+//         }
+        
+//         // Get categories for sidebar
+//         const categories = await Category.find({ isListed: true })
+//         .populate("category")
+//         .lean();
+        
+//         // Pagination
+//         const itemsPerPage = 6;
+//         const currentPage = parseInt(req.query.page) || 1;
+//         const startIndex = (currentPage - 1) * itemsPerPage;
+//         const endIndex = startIndex + itemsPerPage;
+//         const totalPages = Math.ceil(findProducts.length / itemsPerPage);
+//         const currentProducts = findProducts.slice(startIndex, endIndex);
+        
+//         // Save search history if user is logged in
+//         let userData = null;
+//         if (user) {
+//             userData = await User.findOne({ _id: user });
+//             if (userData && category) {
+//                 const searchEntry = {
+//                     category: category,
+//                     searchedOn: new Date(),
+//                 };
+//                 userData.searchHistory.push(searchEntry);
+//                 await userData.save();
+//             }
+//         }
+        
+//         // Save filtered products in session
+//         req.session.filteredProducts = currentProducts;
+        
+//         // Render shop page with filters applied
+//         res.render("user/shop", {
+//             user: userData,
+//             products: currentProducts,
+//             category: categories,
+//             totalPages,
+//             currentPage,
+//             selectedCategory: category || null,
+//             selectedSort: sortBy,
+//             priceMin: priceMin || '',
+//             priceMax: priceMax || '',
+//             searchQuery: searchQuery || '',
+//             count: findProducts.length
+//         });
+        
+//     } catch (error) {
+//         console.error("Filter Error:", error);
+//         res.redirect("/pageNotFound");
+//     }
+// };
 const productFilter = async (req, res) => {
     try {
         const user = req.session.user;
@@ -616,20 +821,17 @@ const productFilter = async (req, res) => {
         const priceMin = req.query.gt || req.query.min;
         const priceMax = req.query.lt || req.query.max;
         const searchQuery = req.body.query?.trim() || req.query.search?.trim() || '';
-        const sortBy = req.query.sort || 'newest'; // default sort by newest
+        const sortBy = req.query.sort || 'newest';
         
         // Build query object
         const query = {
             isListed: true,
-            quantity: { $gt: 0 }
+            // quantity: { $gt: 0 } // Uncomment if you want to exclude out-of-stock items
         };
         
-        // Apply category filter
-        if (category) {
-            const findCategory = await Category.findOne({ _id: category });
-            if (findCategory) {
-                query.category = findCategory._id;
-            }
+        // Apply category filter with validation
+        if (isValidCategoryId(category)) {
+            query.category = category;
         }
         
         // Apply price filter
@@ -644,37 +846,43 @@ const productFilter = async (req, res) => {
             query.productName = { $regex: searchQuery, $options: 'i' };
         }
         
-        // Fetch products based on query
-        let findProducts = await Product.find(query).lean();
-        
-        // Apply sorting
+        // Define sort options
+        let sortOption = {};
         switch (sortBy) {
             case 'newest':
-                findProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                sortOption = { createdAt: -1 };
                 break;
             case 'oldest':
-                findProducts.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                sortOption = { createdAt: 1 };
                 break;
             case 'price-low':
-                findProducts.sort((a, b) => a.salePrice - b.salePrice);
+            case 'price_asc':
+                sortOption = { salePrice: 1 };
                 break;
             case 'price-high':
-                findProducts.sort((a, b) => b.salePrice - a.salePrice);
+            case 'price_desc':
+                sortOption = { salePrice: -1 };
                 break;
             case 'name-asc':
-                findProducts.sort((a, b) => a.productName.localeCompare(b.productName));
+            case 'name_asc':
+                sortOption = { productName: 1 };
                 break;
             case 'name-desc':
-                findProducts.sort((a, b) => b.productName.localeCompare(a.productName));
+            case 'name_desc':
+                sortOption = { productName: -1 };
                 break;
             default:
-                findProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                sortOption = { createdAt: -1 };
         }
         
+        // Fetch products with proper sorting and population
+        const findProducts = await Product.find(query)
+            .populate("category")
+            .sort(sortOption)
+            .lean();
+        
         // Get categories for sidebar
-        const categories = await Category.find({ isListed: true })
-        .populate("category")
-        .lean();
+        const categories = await Category.find({ isListed: true }).lean();
         
         // Pagination
         const itemsPerPage = 6;
@@ -698,8 +906,8 @@ const productFilter = async (req, res) => {
             }
         }
         
-        // Save filtered products in session
-        req.session.filteredProducts = currentProducts;
+        // Clear session filtered products to avoid conflicts
+        delete req.session.filteredProducts;
         
         // Render shop page with filters applied
         res.render("user/shop", {
@@ -708,10 +916,12 @@ const productFilter = async (req, res) => {
             category: categories,
             totalPages,
             currentPage,
-            selectedCategory: category || null,
-            selectedSort: sortBy,
-            priceMin: priceMin || '',
-            priceMax: priceMax || '',
+            selectedCategory: category || '',
+            currentSort: sortBy,
+            priceRange: {
+                gt: priceMin || '',
+                lt: priceMax || ''
+            },
             searchQuery: searchQuery || '',
             count: findProducts.length
         });
@@ -721,6 +931,7 @@ const productFilter = async (req, res) => {
         res.redirect("/pageNotFound");
     }
 };
+
 
 
 const googleFunctiion = async (req, res, next)=>{
@@ -741,14 +952,12 @@ const googleFunctiion = async (req, res, next)=>{
             }
         }
         
-        // Log in the user if everything is fine
         req.login(user, function(err) {
             if (err) {
                 console.error("Session login error:", err);
                 return res.redirect('/login?error=login-failed');
             }
-            
-            // Store user in session
+        
             req.session.user = {
                 _id: user._id,
                 name: user.name,

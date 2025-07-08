@@ -10,7 +10,7 @@ const customerInfo = async (req, res) => {
     if (req.query.page) {
       page = req.query.page;
     }
-    const limit = 3;
+    const limit = 8;
 
     // dashboard statistics
     const totalCustomers = await User.countDocuments({ isAdmin: false });

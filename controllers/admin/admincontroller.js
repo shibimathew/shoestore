@@ -39,8 +39,7 @@ const login = async (req, res) => {
 
 const getDateRanges = () => {
     const now = new Date();
-  
-    // Weekly range (current week - Monday to Sunday)
+
     const startOfWeek = new Date(now);
     startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Monday
     startOfWeek.setHours(0, 0, 0, 0);
@@ -49,12 +48,10 @@ const getDateRanges = () => {
     endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday
     endOfWeek.setHours(23, 59, 59, 999);
   
-    // Monthly range (current month)
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
     endOfMonth.setHours(23, 59, 59, 999);
-  
-    // Yearly range (current year)
+
     const startOfYear = new Date(now.getFullYear(), 0, 1);
     const endOfYear = new Date(now.getFullYear(), 11, 31);
     endOfYear.setHours(23, 59, 59, 999);
@@ -66,7 +63,7 @@ const getDateRanges = () => {
     };
   };
   
-  //  function to calculate stats for a specific time period
+  // to calculate stats for a specific time period
   const calculatePeriodStats = async (startDate, endDate) => {
     try {
       // Revenue for the period - Fixed status matching
@@ -93,7 +90,7 @@ const getDateRanges = () => {
         createdAt: { $gte: startDate, $lte: endDate },
       });
   
-      // Products and categories (these don't change by time period)
+      // Products and categories ( don't change by time period)
       const products = await Product.countDocuments();
       const categories = await Category.countDocuments();
   
@@ -114,7 +111,7 @@ const getDateRanges = () => {
     }
   };
 
-  // Helper function to get best selling categories for a period
+
 const getBestSellingCategoriesForPeriod = async (startDate, endDate) => {
   try {
     console.log(`Fetching categories for period: ${startDate} to ${endDate}`);
@@ -170,8 +167,7 @@ const getBestSellingCategoriesForPeriod = async (startDate, endDate) => {
     ]);
 
     console.log(`Found ${categories.length} categories for period`);
-    
-    // Ensure we always return valid data
+  
     const result = {
       labels: categories.length > 0 ? categories.map(cat => cat.categoryName || 'Unknown') : [],
       data: categories.length > 0 ? categories.map(cat => cat.totalSales || 0) : []
@@ -186,8 +182,6 @@ const getBestSellingCategoriesForPeriod = async (startDate, endDate) => {
   }
 };
 
-
- // Helper function to get top products for a period
 const getTopProductsForPeriod = async (startDate, endDate) => {
   try {
     console.log(`Fetching top products for period: ${startDate} to ${endDate}`);
@@ -229,7 +223,7 @@ const getTopProductsForPeriod = async (startDate, endDate) => {
         },
       },
       { $sort: { totalQuantity: -1 } },
-      { $limit: 5 },
+      { $limit: 10 },
     ]);
 
     console.log(`Found ${products.length} top products for period`);
@@ -504,7 +498,6 @@ const getTopProductsForPeriod = async (startDate, endDate) => {
         weeklyStats,
         monthlyStats,
         yearlyStats,
-        // Add period-specific data
         weeklyCategoryData,
         monthlyCategoryData,
         yearlyCategoryData,

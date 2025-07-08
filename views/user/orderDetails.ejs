@@ -473,13 +473,8 @@
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="/about">About</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="/offers">Deals</a>
-                                    <ul class="mega-menu">
-                                    </ul>
-                                </li>
-                                <li><a href="/contact">Contact</a></li>
+        
                             </ul>
                         </nav>
                     </div>
@@ -572,19 +567,10 @@
                                     <i class="fi-rs-credit-card"></i> My Wallet
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/notifications">
-                                    <i class="fi-rs-bell"></i> Notifications
-                                </a>
-                            </li>
+                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/security">
                                     <i class="fi-rs-shield-check"></i> Security Settings
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/help">
-                                    <i class="fi-rs-help"></i> Help Center
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -645,13 +631,22 @@
                     
                         <div class="card-body">
                             <% 
-                            let subtotal = 0; 
-                            order.orderItems.forEach(item => {
-                                subtotal += item.product.salePrice * item.quantity;
-                            });
-                            let tax = 0.05 * subtotal; // 5% tax
-                            let deliveryCharge = 41;
-                            let total = subtotal + tax + deliveryCharge;
+                            // Use the actual order data from database instead of recalculating
+                            let subtotal = order.subTotal || 0;
+                            let tax = order.tax || 0;
+                            let deliveryCharge = order.deliveryCharge || 41;
+                            let discount = order.discount || order.couponDiscount || 0;
+                            let total = order.totalAmount || 0;
+                            
+                            // If order data is not available, calculate as fallback
+                            if (!order.subTotal) {
+                                subtotal = 0;
+                                order.orderItems.forEach(item => {
+                                    subtotal += (item.product?.salePrice || item.price || 0) * item.quantity;
+                                });
+                                tax = 0.05 * subtotal;
+                                total = subtotal + tax + deliveryCharge - discount;
+                            }
                             %>
                     
                             <div class="order-items">
@@ -744,6 +739,23 @@
                                     <div class="order-summary-label">Tax (5%)</div>
                                     <div class="order-summary-value">₹<%= tax.toFixed(2) %></div>
                                 </div>
+                                <% if (discount > 0) { %>
+                                <div class="order-summary-row">
+                                    <div class="order-summary-label">Coupon Discount</div>
+                                    <div class="order-summary-value" style="color: #3BB77E;">-₹<%= discount.toFixed(2) %></div>
+                                </div>
+                                <% if (order.appliedCoupon || order.couponCode) { %>
+                                <div class="order-summary-row" style="font-size: 0.9rem; color: #6c757d;">
+                                    <div class="order-summary-label">Coupon Used</div>
+                                    <div class="order-summary-value">
+                                        <%= order.appliedCoupon?.code || order.couponCode || 'N/A' %>
+                                        <% if (order.appliedCoupon?.name) { %>
+                                            <br><small>(<%= order.appliedCoupon.name %>)</small>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <% } %>
+                                <% } %>
                                 <div class="order-summary-row">
                                     <div class="order-summary-label">Total</div>
                                     <div class="order-summary-value">₹<%= total.toFixed(2) %></div>
@@ -1026,7 +1038,7 @@
         </div>
         <style>
             .return-panel {
-              max-width: 1460px;        /* adjust this to your sidebar’s inner width */
+              max-width: 1460px;        /* adjust this to your sidebar's inner width */
               font-size: 0.85rem;
               padding-left: 450px;     /* gently shrink everything to help it fit */
             }

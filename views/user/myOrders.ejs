@@ -309,13 +309,8 @@
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="/about">About</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="/offers">Deals</a>
-                                    <ul class="mega-menu">
-                                    </ul>
-                                </li>
-                                <li><a href="/contact">Contact</a></li>
+
                             </ul>
                         </nav>
                     </div>
@@ -343,10 +338,7 @@
                     <nav>
                         <ul class="mobile-menu font-heading">
                             <li><a class="active" href="/">Home</a></li>
-                            <li><a href="/about">About</a></li>
                             <li><a href="/shop">Shop</a></li>
-                            <li><a href="/offers">Deals</a></li>
-                            <li><a href="/contact">Contact</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -407,21 +399,13 @@
                                     <i class="fi-rs-credit-card"></i> My Wallet
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/notifications">
-                                    <i class="fi-rs-bell"></i> Notifications
-                                </a>
-                            </li>
+                           
                             <li class="nav-item">
                                 <a class="nav-link" href="/security">
                                     <i class="fi-rs-shield-check"></i> Security Settings
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/help">
-                                    <i class="fi-rs-help"></i> Help Center
-                                </a>
-                            </li>
+                           
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">
                                     <i class="fi-rs-exit"></i> Logout
@@ -436,6 +420,7 @@
                             <h3 class="mb-0">My Orders</h3>
                         </div>
                         <div class="card-body">
+                          <% if (orders && orders.length > 0) { %>
                             <!-- Sample Orders - In a real application, these would be dynamically generated -->
                             <% orders.forEach(order => { %>
                             <div class="order-card">
@@ -479,7 +464,19 @@
                                         <% }) %>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <div class="order-total">Total: ₹<%= order.totalAmount.toFixed(2) %></div>
+                                        <div class="order-total">
+                                            <% if (order.discount > 0 || order.couponDiscount > 0) { %>
+                                                <div>Total: ₹<%= order.totalAmount.toFixed(2) %></div>
+                                                <div style="font-size: 0.85rem; color: #3BB77E;">
+                                                    Coupon applied: -₹<%= (order.discount || order.couponDiscount || 0).toFixed(2) %>
+                                                    <% if (order.appliedCoupon?.code || order.couponCode) { %>
+                                                        <br><small>(<%= order.appliedCoupon?.code || order.couponCode %>)</small>
+                                                    <% } %>
+                                                </div>
+                                            <% } else { %>
+                                                Total: ₹<%= order.totalAmount.toFixed(2) %>
+                                            <% } %>
+                                        </div>
                                         <div class="order-actions">
                                             <a href="/orderDetails/<%= order._id %>" class="btn btn-sm btn-outline-primary">View Details</a>
                                         </div>
@@ -487,6 +484,18 @@
                                 </div>
                             </div>
                             <%})%>
+                                    
+    <% } else { %>
+        <!-- No orders -->
+        <div class="cart-empty">
+            <i class="material-icons">shopping_bag</i>
+            <h3>No orders yet</h3>
+            <p>You haven't placed any orders yet. Start shopping to see your orders here!</p>
+            <a href="/shop" class="btn btn-fill-out">Continue Shopping</a>
+        </div>
+    <% } %>
+</div>
+
 
                             
 

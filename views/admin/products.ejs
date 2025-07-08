@@ -67,6 +67,22 @@
             border-color: #117a8b;
             color: white;
         }
+        .search-results-info {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #007bff;
+        }
+        .search-results-info .btn-outline-secondary {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+        }
+        .search-results-info .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
     </style>
 </head>
 
@@ -82,60 +98,49 @@
             </div>
         </div>
         <nav>
-            <ul class="menu-aside">
-                <li class="menu-item">
+             <ul class="menu-aside">
+                <li class="menu-item active">
                     <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-shopping_bag"></i>
-                        <span class="text">Categories</span>
-                    </a>
-                </li>
-                <li class="menu-item active">
-                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_cart"></i>
-                        <span class="text">Products</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-store"></i>
+                    <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-person"></i>
                         <span class="text">Customers</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-add_box"></i>
+                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="/admin/coupons"> <i class="icon material-icons md-monetization_on"></i>
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-store"></i>
+                        <span class="text">Category</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/coupons"> <i class="icon material-icons md-local_offer"></i>
                         <span class="text">Coupons</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
-                        <span class="text">Refund/Return</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/reviews"> <i class="icon material-icons md-comment"></i>
-                        <span class="text">Reviews</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/Sales"> <i class="icon material-icons md-stars"></i>
+                    <a class="menu-link" href="/admin/sales"> <i class="icon material-icons md-assessment"></i>
                         <span class="text">Sales Report</span>
                     </a>
                 </li>
-                <li class="menu-item">
+                  <li class="menu-item">
                     <a class="menu-link" href="/admin/logout"> <i class="icon material-icons md-exit_to_app"></i>
                         <span class="text">Sign Out</span>
                     </a>
                 </li>
             </ul>
-            <br>
-            <br>
+           
         </nav>
     </aside>
     <main class="main-wrap">
@@ -143,7 +148,7 @@
             <div class="col-search">
                 <form class="searchform" id="searchform">
                     <div class="input-group">
-                        <input list="search_terms" type="text" id="searchQuery" name="searchQuery" class="form-control" placeholder="Search...">
+                        <input list="search_terms" type="text" id="searchQuery" name="search" class="form-control" placeholder="Search products by name, description, or brand..." value="<%= searchQuery || '' %>">
                         <button class="btn btn-light bg" type="submit"> <i class="material-icons md-search"></i></button>
                     </div>
                 </form>
@@ -155,6 +160,15 @@
                 <div>
                     <h2 class="content-title card-title">Products</h2>
                     <p>Manage your products</p>
+                    <% if (searchQuery && searchQuery.trim()) { %>
+                        <div class="search-results-info">
+                            <small class="text-muted">
+                                <i class="material-icons md-search" style="font-size: 16px; vertical-align: middle;"></i>
+                                Search results for "<%= searchQuery %>" - <%= totalProducts %> product(s) found
+                                <a href="/admin/products" class="btn btn-sm btn-outline-secondary ms-2">Clear Search</a>
+                            </small>
+                        </div>
+                    <% } %>
                 </div>
                 <div>
                     <a href="/admin/addProducts" class="btn btn-primary">
@@ -284,7 +298,7 @@
                     <ul class="pagination justify-content-center">
                         <% if (currentPage > 1) { %>
                             <li class="page-item">
-                                <a class="page-link" href="/admin/products?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                <a class="page-link" href="/admin/products?page=<%= currentPage - 1 %><%= searchQuery ? '&search=' + encodeURIComponent(searchQuery) : '' %>" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
@@ -292,13 +306,13 @@
                         
                         <% for(let i = 1; i <= totalPages; i++) { %>
                             <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                <a class="page-link" href="/admin/products?page=<%= i %>"><%= i %></a>
+                                <a class="page-link" href="/admin/products?page=<%= i %><%= searchQuery ? '&search=' + encodeURIComponent(searchQuery) : '' %>"><%= i %></a>
                             </li>
                         <% } %>
                         
                         <% if (currentPage < totalPages) { %>
                             <li class="page-item">
-                                <a class="page-link" href="/admin/products?page=<%= currentPage + 1 %>" aria-label="Next">
+                                <a class="page-link" href="/admin/products?page=<%= currentPage + 1 %><%= searchQuery ? '&search=' + encodeURIComponent(searchQuery) : '' %>" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
@@ -306,7 +320,13 @@
                     </ul>
                 </nav>
                 <div class="text-center mt-2">
-                    <small class="text-muted">Showing <%= (currentPage - 1) * 10 + 1 %> to <%= Math.min(currentPage * 10, totalProducts) %> of <%= totalProducts %> products</small>
+                    <small class="text-muted">
+                        <% if (totalProducts > 0) { %>
+                            Showing <%= (currentPage - 1) * 10 + 1 %> to <%= Math.min(currentPage * 10, totalProducts) %> of <%= totalProducts %> products
+                        <% } else { %>
+                            No products found
+                        <% } %>
+                    </small>
                 </div>
             </div>
         </section>
@@ -458,8 +478,26 @@
         if (searchForm) {
             searchForm.addEventListener("submit", function(e) {
                 e.preventDefault();
-                const searchQuery = document.getElementById("searchQuery").value;
-                window.location.href = `/admin/products?search=${encodeURIComponent(searchQuery)}`;
+                const searchQuery = document.getElementById("searchQuery").value.trim();
+                
+                if (searchQuery === '') {
+                    // If search is empty, go to first page without search
+                    window.location.href = '/admin/products';
+                } else {
+                    // Encode the search query properly
+                    const encodedQuery = encodeURIComponent(searchQuery);
+                    window.location.href = `/admin/products?search=${encodedQuery}`;
+                }
+            });
+        }
+
+        // Add real-time search suggestions (optional enhancement)
+        const searchInput = document.getElementById('searchQuery');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                // You can add real-time search suggestions here if needed
+                // For now, we'll just ensure the input is properly handled
             });
         }
 

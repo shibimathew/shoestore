@@ -10,9 +10,9 @@
             </div>
         </div>
         <nav>
-            <ul class="menu-aside">
-                <li class="menu-item ">
-                    <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
+          <ul class="menu-aside">
+                <li class="menu-item active">
+                    <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
@@ -26,59 +26,48 @@
                         <span class="text">Products</span>
                     </a>
                 </li>
-                <li class="menu-item active">
+                <li class="menu-item">
                     <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
-                    </a>                    
+                    </a>
                 </li>
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-store"></i>
                         <span class="text">Category</span>
                     </a>
-                    
                 </li>
-                
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
-                        <span class="text">Transactions</span>
-                    </a>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
-                        <span class="text">Account</span>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/coupons"> <i class="icon material-icons md-local_offer"></i>
+                        <span class="text">Coupons</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href=""> <i class="icon material-icons md-comment"></i>
-                        <span class="text">Reviews</span>
+                    <a class="menu-link" href="/admin/sales"> <i class="icon material-icons md-assessment"></i>
+                        <span class="text">Sales Report</span>
                     </a>
                 </li>
-                <!-- <li class="menu-item">
-                    <a class="menu-link" href=""> <i class="icon material-icons md-stars"></i>
-                        <span class="text">Brands</span> </a>
-                </li> -->
-                <li class="menu-item">
-                    <a class="menu-link" disabled href="#"> <i class="icon material-icons md-pie_chart"></i>
-                        <span class="text">Statistics</span>
+                  <li class="menu-item">
+                    <a class="menu-link" href="/admin/logout"> <i class="icon material-icons md-exit_to_app"></i>
+                        <span class="text">Sign Out</span>
                     </a>
                 </li>
             </ul>
             <hr>
             <ul class="menu-aside">
                 <li class="menu-item has-submenu">
-                    <a class="menu-link" href="#"> <i class="icon material-icons md-settings"></i>
+                    <!-- <a class="menu-link" href="#"> <i class="icon material-icons md-settings"></i>
                         <span class="text">Settings</span>
-                    </a>
+                    </a> -->
                     <!-- <div class="submenu">
                         <a href="page-settings-1.html">Setting sample 1</a>
                         <a href="page-settings-2.html">Setting sample 2</a>
                     </div> -->
                 </li>
-                <li class="menu-item">
+                <!-- <li class="menu-item">
                     <a class="menu-link" href=""> <i class="icon material-icons md-local_offer"></i>
                         <span class="text"> Starter page </span>
                     </a>
-                </li>
+                </li> -->
             </ul>
             <br>
             <br>
@@ -86,12 +75,12 @@
     </aside>
 
     <main class="main-wrap">
-        <header class="main-header navbar">
+        <!-- <header class="main-header navbar">
             <div class="col-search">
                 <form class="searchform">
                     <div class="input-group">
-                        <!-- <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button> -->
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
                     </div>
                     
                 </form>
@@ -134,20 +123,18 @@
                     </li>
                 </ul>
             </div>
-        </header>
+        </header> -->
         <section class="content-main">
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Order List </h2>
                     <!-- <p>Lorem ipsum dolor sit amet.</p> -->
                 </div>
-                <!-- <div>
-                    <input type="text" placeholder="Search order ID" class="form-control bg-white">
-                </div> -->
+                
             </div>
             <div class="card mb-4">
                 <header class="card-header">
-                    <!-- <div class="row gx-3">
+                    <div class="row gx-3">
                         <form method="GET" action="<%= baseUrl %>" class="d-flex col-lg-4 col-md-6 me-auto">
                             <input
                               type="text"
@@ -155,7 +142,7 @@
                               placeholder="Search by Order ID, Name, or Email"
                               class="form-control me-2"
                               value="<%= typeof search !== 'undefined' ? search : '' %>"
-                            /> -->
+                            />
                             
                           </form>
                           
@@ -253,18 +240,7 @@
               
               
         </section>
-        
-        <footer class="main-footer font-xs">
-            <div class="row pb-30 pt-15">
-                <div class="col-sm-6">
-                    <script>
-                    document.write(new Date().getFullYear())
-                    </script> © JaegerKulture
-                </div>
-
-            </div>
-        </footer>
-        
+      
     </main>
 
 <%- include('../partials/admin/footer.ejs') %>

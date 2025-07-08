@@ -20,7 +20,6 @@ const productDetails = async (req, res) => {
             return res.redirect("/pageNotFound");
         }
         
-        // Ensure we have valid data for all required fields
         const findCategory = product.category || {};
         const categoryId = findCategory._id;
         const categoryOffer = findCategory.categoryOffer || 0;
@@ -33,20 +32,19 @@ const productDetails = async (req, res) => {
         
         if (appliedOffer > 0) {
             finalPrice = product.salePrice - (product.salePrice * appliedOffer / 100);
-            finalPrice = Math.round(finalPrice * 100) / 100; // Round to 2 decimal places
+            finalPrice = Math.round(finalPrice * 100) / 100; 
           
             if (categoryOffer > productOffer) {
                 offerType = 'category';
             } else if (productOffer > categoryOffer) {
                 offerType = 'product';
             } else if (categoryOffer === productOffer && categoryOffer > 0) {
-                offerType = 'both'; // Same offer percentage
+                offerType = 'both'; 
             }
         }
         
         const sort = req.query.sort || 'newest';
-        
-        // Initialize shoeSizes if it doesn't exist
+    
         if (!product.shoeSizes) {
             product.shoeSizes = new Map();
             for (let i = 1; i <= 10; i++) {

@@ -4,14 +4,12 @@ const Refund = require("../../models/refundSchema");
 const Wallet = require("../../models/walletSchema");
 const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
-
 const getOrderManagement = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
     const search = req.query.search?.trim();
-
     let query = {};
 
     if (search) {

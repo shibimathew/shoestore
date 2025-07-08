@@ -2,43 +2,57 @@ const mongoose = require('mongoose');
 const Wallet = require('../../models/walletSchema');
 const Cart = require('../../models/cartSchema');
 const Wishlist = require('../../models/wishlistSchema');
-const User   = require('../../models/userSchema');
+const User = require('../../models/userSchema');
 
 const getMyWalletPage = async (req, res, next) => {
   try {
+    // Fix: Use consistent userId retrieval pattern
+    const userId = req.user?._id || req.session?.user;
+    
+    if (!userId) {
+      return res.redirect('/login');
+    }
 
-    const user = await User.findById(req.session.user);
-    const userId = req.user._id;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.redirect('/login');
+    }
 
     const transactions = await Wallet
       .find({ userId })
       .sort({ createdAt: -1 })
       .lean();
 
+    // Ensure userId is a valid ObjectId
+    const userObjectId = mongoose.Types.ObjectId.isValid(userId) 
+      ? new mongoose.Types.ObjectId(userId) 
+      : userId;
+
     const agg = await Wallet.aggregate([
-      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+      { $match: { userId: userObjectId } },
       { $group: {
           _id: '$userId',
           credits: { $sum: { $cond: [ { $eq: ['$entryType','CREDIT'] }, '$amount', 0 ] } },
           debits:  { $sum: { $cond: [ { $eq: ['$entryType','DEBIT']  }, '$amount', 0 ] } }
       }}
     ]);
+    
     const balance = (agg[0]?.credits || 0) - (agg[0]?.debits || 0);
 
     let cart = await Cart
                   .findOne({ userId })
                   .populate('items.productId');
-            
-                const items = cart?.items || [];
-    
-                let wishlistCount = 0;
-    
-                if (userId) {
-                    const wishlist = await Wishlist.findOne({ userId });
-                    wishlistCount = wishlist ? wishlist.products.length : 0;
-                }  
-
-
+                             
+    const items = cart?.items || [];
+                     
+    let wishlistCount = 0;
+                     
+    if (userId) {
+      const wishlist = await Wishlist.findOne({ userId });
+      wishlistCount = wishlist ? wishlist.products.length : 0;
+    }
+        
     res.render('user/myWallet', {
       balance,
       transactions,
@@ -54,7 +68,13 @@ const getMyWalletPage = async (req, res, next) => {
 
 const getWalletTransactions = async (req, res) => {
   try {
-    const userId = req.user._id;
+    // Fix: Use consistent userId retrieval pattern
+    const userId = req.user?._id || req.session?.user;
+    
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'User not authenticated' });
+    }
+
     const transactions = await Wallet
       .find({ userId })
       .sort({ createdAt: -1 });
@@ -67,7 +87,13 @@ const getWalletTransactions = async (req, res) => {
 
 const refundMoney = async (req, res) => {
   try {
-    const userId = req.user._id;
+    // Fix: Use consistent userId retrieval pattern
+    const userId = req.user?._id || req.session?.user;
+    
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'User not authenticated' });
+    }
+
     const {
       amount,
       orderId,
