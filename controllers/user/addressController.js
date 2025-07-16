@@ -282,7 +282,7 @@ const editMyAddresses = async (req, res) => {
     const makeDefault = req.body.defaultAddress === 'on';
     const addressDoc = await Address.findOne({ userId });
     if (!addressDoc) {
-      return res.redirect('/addresses?error=Address not found');
+      return res.redirect('/myAddresses?error=Address not found');
     }
     let addressDetail;
     addressDoc.address.forEach(addr => {
@@ -292,7 +292,7 @@ const editMyAddresses = async (req, res) => {
     });
     
     if (!addressDetail) {
-      return res.redirect('/addresses?error=Address not found');
+      return res.redirect('/myAddresses?error=Address not found');
     }
     addressDetail.name = name;
     addressDetail.phone = phone;
@@ -309,10 +309,10 @@ const editMyAddresses = async (req, res) => {
       addressDetail.isDefault = true;
     }
     await addressDoc.save();
-    return res.redirect('/addresses?success=Address updated');
+    return res.redirect('/myAddresses?success=Address updated');
   } catch (error) {
     console.error('Error editing address:', error);
-    return res.redirect('/addresses?error=Internal Server Error');
+    return res.redirect('/myAddresses?error=Internal Server Error');
   }
 };
 
