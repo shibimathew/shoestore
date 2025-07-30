@@ -1,6 +1,110 @@
 <%- include('../partials/admin/header.ejs') %>
 
-    <aside class="navbar-aside" id="offcanvas_aside">
+<style>
+    .navbar-aside {
+        width: 280px;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: #fff;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .main-wrap {
+        margin-left: 280px;
+        transition: all 0.3s ease;
+    }
+    .screen-overlay {
+        width: 100%;
+        height: 100%;
+        z-index: 999;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    .screen-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+    .hamburger-btn {
+        display: none;
+        position: fixed;
+        right: 18px;
+        z-index: 1100;
+        background: #fff;
+        border: none;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 10px 12px;
+        cursor: pointer;
+    }
+    .hamburger-btn .bar {
+        display: block;
+        width: 24px;
+        height: 3px;
+        margin: 4px 0;
+        background: #333;
+        border-radius: 2px;
+        transition: all 0.3s;
+    }
+    @media (max-width: 991px) {
+        .navbar-aside {
+            transform: translateX(-100%);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .navbar-aside.show {
+            transform: translateX(0);
+        }
+        .main-wrap {
+            margin-left: 0;
+        }
+        .hamburger-btn {
+            display: block;
+        }
+        .main-wrap.dimmed {
+            filter: blur(2px) grayscale(0.2) brightness(0.95);
+            pointer-events: none;
+            user-select: none;
+        }
+    }
+    /* Center pagination and make it responsive */
+    .pagination-area {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    .pagination {
+        justify-content: center !important;
+        flex-wrap: wrap;
+    }
+    @media (max-width: 600px) {
+        .pagination-area {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        .pagination {
+            font-size: 0.95rem;
+        }
+    }
+</style>
+
+<button class="hamburger-btn" id="sidebarHamburger" aria-label="Toggle sidebar" aria-controls="offcanvas_aside" aria-expanded="false">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+</button>
+<div class="screen-overlay" id="sidebarOverlay"></div>
+
+<aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="/admin" class="brand-wrap">
                 <img src="/assets/imgs/theme/shoestore-logo.svg" class="logo" alt="Evara Dashboard">
@@ -11,7 +115,7 @@
         </div>
         <nav>
           <ul class="menu-aside">
-                <li class="menu-item active">
+                <li class="menu-item ">
                     <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
@@ -26,7 +130,7 @@
                         <span class="text">Products</span>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
                     </a>
@@ -74,7 +178,7 @@
         </nav>
     </aside>
 
-    <main class="main-wrap">
+    <main class="main-wrap" id="mainWrap">
         <!-- <header class="main-header navbar">
             <div class="col-search">
                 <form class="searchform">
@@ -207,7 +311,7 @@
             </div> <!-- card end// -->
             <div class="pagination-area mt-4">
                 <nav aria-label="Page navigation">
-                  <ul class="pagination justify-content-center">
+                  <ul class="pagination">
               
                     <% if (currentPage > 1) { %>
                       <li class="page-item">
@@ -244,3 +348,45 @@
     </main>
 
 <%- include('../partials/admin/footer.ejs') %>
+
+<script>
+(function() {
+    const hamburger = document.getElementById('sidebarHamburger');
+    const screenOverlay = document.getElementById('sidebarOverlay');
+    const navbarAside = document.getElementById('offcanvas_aside');
+    const mainWrap = document.getElementById('mainWrap');
+
+    function openSidebar() {
+        navbarAside.classList.add('show');
+        screenOverlay.classList.add('active');
+        mainWrap.classList.add('dimmed');
+        hamburger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+        navbarAside.classList.remove('show');
+        screenOverlay.classList.remove('active');
+        mainWrap.classList.remove('dimmed');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+    }
+    hamburger.addEventListener('click', function() {
+        if (navbarAside.classList.contains('show')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+    screenOverlay.addEventListener('click', closeSidebar);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && navbarAside.classList.contains('show')) {
+            closeSidebar();
+        }
+    });
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+            closeSidebar();
+        }
+    });
+})();
+</script>

@@ -88,7 +88,6 @@ const addCoupon = async (req, res) => {
     });
 
     await newCoupon.save();
-    // console.log('Coupon saved:', newCoupon.code);
     if (req.xhr) {
       return res.status(200).json({
         success: true,
@@ -131,8 +130,17 @@ const updateCoupon = async (req, res) => {
   }
 
   try {
-    let {name,code,description,startDate,expiryDate, minPrice,offerPrice,} = req.body;
-    let usageType =req.body.editUsageType === "single" ? "single-use" : "multi-use";
+    let {
+      name,
+      code,
+      description,
+      startDate,
+      expiryDate,
+      minPrice,
+      offerPrice,
+    } = req.body;
+    let usageType =
+      req.body.editUsageType === "single" ? "single-use" : "multi-use";
     let status = req.body.editStatus === "active" ? "Active" : "Inactive";
 
     if (new Date(expiryDate) <= new Date(startDate)) {
@@ -164,8 +172,6 @@ const updateCoupon = async (req, res) => {
         message: "Coupon not found",
       });
     }
-
-    // console.log('Coupon updated:', updatedCoupon.code);
 
     if (req.xhr) {
       return res.json({

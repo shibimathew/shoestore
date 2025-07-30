@@ -19,14 +19,15 @@
     <style>
         .navbar-aside {
             width: 280px;
-            height: 100%;
+            height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
             background: #fff;
             z-index: 1000;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
         }
         .main-wrap {
             margin-left: 280px;
@@ -41,7 +42,227 @@
             left: 0;
             background: rgba(0,0,0,0.5);
             display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
+        .screen-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        /* Mobile Header Styles */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #fff;
+            z-index: 1100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 0 15px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .mobile-logo {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .mobile-logo img {
+            height: 35px;
+            width: auto;
+        }
+        
+        .hamburger-btn {
+            display: none;
+            position: relative;
+            background: #fff;
+            border: none;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger-btn:hover {
+            background: #f8f9fa;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        
+        .hamburger-btn .bar {
+            display: block;
+            width: 24px;
+            height: 3px;
+            margin: 4px 0;
+            background: #333;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+        
+        /* Search Form Responsive Styles */
+        .search-form {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .search-form .form-control {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-form .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        }
+        
+        .search-form .btn {
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .search-form .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        /* Pagination Center Alignment */
+        .pagination-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .pagination {
+            justify-content: center !important;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+        
+        .pagination .page-link {
+            border-radius: 6px;
+            margin: 0 2px;
+        }
+        
+        @media (max-width: 991px) {
+            .navbar-aside {
+                transform: translateX(-100%);
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            }
+            .navbar-aside.show {
+                transform: translateX(0);
+            }
+            .main-wrap {
+                margin-left: 0;
+                width: 100%;
+                margin-top: 60px; /* Space for mobile header */
+            }
+            .mobile-header {
+                display: flex;
+            }
+            .hamburger-btn {
+                display: block;
+            }
+            .main-wrap.dimmed {
+                filter: blur(2px) grayscale(0.2) brightness(0.95);
+                pointer-events: none;
+                user-select: none;
+            }
+            
+            /* Search form mobile adjustments */
+            .search-form .d-flex {
+                flex-direction: column;
+            }
+            
+            .search-form .d-flex > div {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .search-form .d-flex .d-flex {
+                flex-direction: row;
+                gap: 0.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hamburger-btn {
+                padding: 8px 10px;
+            }
+            
+            .hamburger-btn .bar {
+                width: 20px;
+                height: 2px;
+                margin: 3px 0;
+            }
+            
+            .mobile-logo img {
+                height: 30px;
+            }
+            
+            .pagination-area {
+                margin-top: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .pagination {
+                font-size: 0.9rem;
+            }
+            
+            /* Search form tablet adjustments */
+            .search-form .d-flex {
+                flex-direction: column;
+            }
+            
+            .search-form .d-flex .d-flex {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .navbar-aside {
+                width: 280px;
+            }
+            
+            .mobile-logo img {
+                height: 28px;
+            }
+            
+            .pagination-area {
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .pagination {
+                font-size: 0.85rem;
+            }
+            
+            .pagination .page-link {
+                padding: 0.375rem 0.5rem;
+            }
+            
+            /* Search form mobile adjustments */
+            .search-form .d-flex .d-flex {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .search-form .btn {
+                width: 100%;
+                margin-bottom: 0.25rem;
+            }
+        }
+        
         .btn-offer {
             background-color: #ff6b35;
             border-color: #ff6b35;
@@ -52,34 +273,66 @@
             border-color: #e55a2b;
             color: white;
         }
-        @media (max-width: 991px) {
-            .navbar-aside {
-                transform: translateX(-100%);
-            }
-            .main-wrap {
-                margin-left: 0;
-            }
-            .navbar-aside.show {
-                transform: translateX(0);
-            }
-        }
+
+        @media screen and (max-width: 768px) {
+    .input-group {
+        width: 60%;
+        font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .input-group {
+        width: 60%;
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .input-group {
+        width: 60%;
+        font-size: 13px;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .input-group {
+        width: 60%;
+        font-size: 12px;
+    }
+}
+
     </style>
 </head>
 
 <body>
-    <div class="screen-overlay"></div>
+    <!-- Mobile Header with Logo and Hamburger -->
+    <div class="mobile-header">
+        <div class="mobile-logo">
+            <img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore">
+        </div>
+        <button class="hamburger-btn" id="sidebarHamburger" aria-label="Toggle sidebar" aria-controls="offcanvas_aside" aria-expanded="false">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </div>
+
+    <!-- Overlay -->
+    <div class="screen-overlay" id="sidebarOverlay"></div>
+    
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="/admin/dashboard" class="brand-wrap">
                 <img src="/assets/imgs/theme/shoestore-logo.svg" class="logo" alt="Shoestore Dashboard">
             </a>
-            <div>
+            <!-- <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
-            </div>
+            </div> -->
         </div>
         <nav>
              <ul class="menu-aside">
-                <li class="menu-item active">
+                <li class="menu-item ">
                     <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
@@ -99,7 +352,7 @@
                         <span class="text">Orders</span>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-store"></i>
                         <span class="text">Category</span>
                     </a>
@@ -125,27 +378,31 @@
             <br>
         </nav>
     </aside>
-    <main class="main-wrap">
-        <header class="main-header navbar">
-            <div class="col-search">
-                <form id="searchform" class="searchform">
-                    <div class="input-group">
-                        <input list="search_terms" name = "searchQuery" id = "searchQuery" type="text" class="form-control" placeholder="Search...">
-                        <button class="btn btn-light bg" type="submit"> <i class="material-icons md-search"></i></button>
-                    </div>
-                   
-                </form>
-            </div>
-            
-        </header>
+    <main class="main-wrap" id="mainWrap">
         <section class="content-main">
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Categories </h2>
                     <p>Add, edit or delete a category</p>
                 </div>
-                
             </div>
+            
+            <!-- Search Form Below Navbar -->
+            <div class="card mb-4 search-form">
+                <div class="card-body">
+                    <form id="searchform" class="d-flex flex-column flex-md-row gap-3">
+                        <div class="flex-grow-1">
+                            <input list="search_terms" name="searchQuery" id="searchQuery" type="text" class="form-control" placeholder="Search categories...">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="material-icons md-search"></i> Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
             <div class="card">
                 <div class="card-body">
                     <div class="row">
@@ -243,7 +500,7 @@
                 </div>
             </div>
             <!-- Pagination -->
-            <div class="pagination-container mt-4">
+            <div class="pagination-area">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
                         <% if (currentPage > 1) { %>
@@ -312,6 +569,68 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Responsive Sidebar Toggle Functionality
+        (function() {
+            const hamburger = document.getElementById('sidebarHamburger');
+            const screenOverlay = document.getElementById('sidebarOverlay');
+            const navbarAside = document.getElementById('offcanvas_aside');
+            const mainWrap = document.getElementById('mainWrap');
+
+            function openSidebar() {
+                navbarAside.classList.add('show');
+                screenOverlay.classList.add('active');
+                mainWrap.classList.add('dimmed');
+                hamburger.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeSidebar() {
+                navbarAside.classList.remove('show');
+                screenOverlay.classList.remove('active');
+                mainWrap.classList.remove('dimmed');
+                hamburger.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+
+            // Hamburger button click
+            hamburger.addEventListener('click', function() {
+                if (navbarAside.classList.contains('show')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+
+            // Overlay click to close sidebar
+            screenOverlay.addEventListener('click', closeSidebar);
+
+            // ESC key to close sidebar
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && navbarAside.classList.contains('show')) {
+                    closeSidebar();
+                }
+            });
+
+            // Close sidebar on window resize to desktop
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 992) {
+                    closeSidebar();
+                }
+            });
+
+            // Close sidebar when clicking on menu links (mobile)
+            const menuLinks = document.querySelectorAll('.menu-aside .menu-link');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth < 992) {
+                        closeSidebar();
+                    }
+                });
+            });
+        })();
+    </script>
 
     <script>
         function handleFormSubmit(event) {
@@ -398,38 +717,9 @@
             });
         }
 
-        // function toggleCategoryStatus(categoryId, isListed) {
-        //     const url = isListed ? '/admin/listCategory' : '/admin/unlistCategory';
-        //     fetch(`${url}?id=${categoryId}`, {
-        //         method: 'GET',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     })
-        //     .then(response => {
-        //         if (!response.ok) {
-        //             throw new Error('Failed to update category status');
-        //         }
-        //         Swal.fire({
-        //             icon: 'success',
-        //             title: 'Success!',
-        //             text: `Category ${isListed ? 'listed' : 'unlisted'} successfully`,
-        //             showConfirmButton: false,
-        //             timer: 1500
-        //         }).then(()=>{
-        //             window.location.reload()
-        //         });
-        //     })
-        //     .catch(error => {
-        //         Swal.fire({
-        //             icon: 'error',
-        //             title: 'Oops...',
-        //             text: 'Failed to update category status'
-        //         });
-        //     });
-        // }
-        function toggleCategoryStatus(categoryId, isListed) {
-    // Add warning confirmation before taking action
+       
+    function toggleCategoryStatus(categoryId, isListed) {
+   
     Swal.fire({
         title: 'Are you sure?',
         text: `Do you want to ${isListed ? 'list' : 'unlist'} this category?`,

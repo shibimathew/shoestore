@@ -9,6 +9,7 @@ const accountController = require("../controllers/user/accountController");
 const addressController = require("../controllers/user/addressController");
 const checkoutController = require("../controllers/user/checkoutController");
 const orderController = require("../controllers/user/orderController");
+const placeorderController = require("../controllers/user/placeorderController");
 const walletController = require("../controllers/user/walletController");
 const wishlistController = require("../controllers/user/wishlistController");
 
@@ -17,7 +18,7 @@ const upload = require("../middleware/imageUpload");
 
 // Home route
 router.get("/", userAuth, userController.loadHomepage);
-router.get("/home", userAuth, userController.loadHomepage);
+router.get("/home", userController.loadHomepage);
 
 // Error page
 router.get("/pageNotFound", userController.pageNotFound);
@@ -120,7 +121,7 @@ router.delete("/cart/remove", userAuth, cartController.removeFromCart);
 
 // checout routes
 router.get("/checkout", userAuth, checkoutController.getCheckoutPage);
-router.post("/checkout", userAuth, checkoutController.placeOrder);
+router.post("/checkout", userAuth, placeorderController.placeOrder);
 router.post(
   "/create-razorpay-order",
   userAuth,
@@ -129,7 +130,7 @@ router.post(
 router.get("/available-coupons", userAuth, checkoutController.getCoupon);
 router.post("/apply-coupon", userAuth, checkoutController.applyCoupon);
 
-router.get("/payment-failed", userAuth); // need to add controller after creating the payment failed page
+router.get("/payment-failed", userAuth); 
 
 // order success & failure routes
 router.get("/order-success", userAuth, checkoutController.loadOrderSuccess);
@@ -140,6 +141,12 @@ router.get("/myOrders", userAuth, orderController.getMyOrdersPage);
 router.get("/orderDetails/:id", userAuth, orderController.getOrderDetails);
 
 router.post("/cancel-order/:id", userAuth, orderController.cancelOrder);
+router.post(
+  "/cancel-item/:orderId/:itemId",
+  userAuth,
+  orderController.cancelIndividualItem
+);
+
 router.post("/return-order/:id", userAuth, orderController.returnFullOrder);
 router.post("/return-items/:id", userAuth, orderController.returnSelectedItems);
 

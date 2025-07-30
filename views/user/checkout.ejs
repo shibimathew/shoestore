@@ -800,7 +800,7 @@
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info">
                         <ul>
-                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
+                            
                             <!-- <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li> -->
                         </ul>
                     </div>
@@ -816,11 +816,6 @@
                                 <a class="language-dropdown-active" href="#"> 
                                     <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
                                 </a>
-                                <ul class="language-dropdown">
-                                    <li><a href="#"><img src="asset/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                    <li><a href="#"><img src="asset/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                    <li><a href="#"><img src="asset/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
-                                </ul>
                             </li>
                             <% if (typeof user !== 'undefined' && user) { %>
                                 <div class="dropdown">
@@ -855,13 +850,15 @@
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
                                 <a href="/wishlist">
-                                    <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg">
+                                  <i class="fi-rs-heart wishlist-heart"></i>
+                                    <!-- <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg"> -->
                                     <!-- <span class="pro-count blue">0</span> -->
                                 </a>
                             </div>
                             <div class="header-action-icon-2">
                                 <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg">
+                                  <i class="fi-rs-shopping-cart"></i>
+                                    <!-- <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg"> -->
                                     <!-- <span class="pro-count blue">3</span> -->
                                 </a>
                             </div>
@@ -888,7 +885,7 @@
                     </div>
                 </div>
                 <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+
                 </div>   
                 <div class="header-action-icon-2 d-block d-lg-none">
                     <div class="burger-icon burger-icon-white">
@@ -1081,7 +1078,11 @@
                     <!--Coupon area-->
                     <div class="coupon-section">
                       <div class="coupon-input">
+                        <%if(coupon){%>
+                        <input type="text" id="couponCode" value="<%= coupon.code %>" />
+                        <%}else{%>
                         <input type="text" id="couponCode" placeholder="Enter coupon code or click to select" />
+                        <%}%>
                         <button type="button" id="applyCouponBtn">Apply</button>
                         <button type="button" id="selectCouponBtn" class="select-coupon-btn">Select Coupon</button>
                      </div>
@@ -1093,9 +1094,18 @@
                         <button type="button" id="clearSelectionBtn" class="clear-selection-btn">Clear Selection</button>
                       </div>
                       <div class="coupon-invalid" id="couponInvalid"></div>
-                      <div class="coupon-valid" id="couponValid">
+                       <%if(coupon){%>
+                      <div class="coupon-valid" id="couponValid" style="display: block;">
+                        <div class="coupon-success-message">
+                        <span>Coupon applied! You saved ₹<%=coupon.offerPrice.toFixed(2)%></span>
+                        <button type="button" class="remove-coupon-btn" onclick="window.removeCouponDiscount()">Remove</button>
+                        </div>
                         <!-- Remove coupon button will be added here dynamically -->
                       </div>
+                       <%} else {%>
+                         <div class="coupon-valid" id="couponValid">
+                         </div>
+                        <% } %>
                     </div>
 
                     <div class="checkout-summary-title">Order Summary</div>
@@ -1111,14 +1121,23 @@
                       <span>Tax (5%)</span>
                       <span>₹<%= tax.toFixed(2) %></span>
                     </div>
+                    <%if(coupon){%>
+                       <div class="checkout-summary-row coupon-summary-row" id="couponDiscountRow">
+                      <!--Coupon discount-->
+                    <span>Coupon Discount</span>
+                    <span id="couponDiscountAmount">-₹<%=coupon.offerPrice%></span>
+                    </div>
+                  <%}else{%>
                     <div class="checkout-summary-row coupon-summary-row" id="couponDiscountRow" style="display: none;">
                       <!--Coupon discount-->
                     <span>Coupon Discount</span>
                     <span id="couponDiscountAmount">-₹0.00</span>
                     </div>
+                    <%}%>
                     <div class="checkout-summary-row">
                       <strong>Total</strong>
-                     <strong class="total-amount">₹<%= totalAmount %></strong>
+                      
+                     <strong class="total-amount"><%=coupon ? totalAmount-coupon.offerPrice:totalAmount%></strong>
                     </div>
                     <button type="submit" class="btn place-order-btn mt-4" id="placeOrderBtn">Place Order</button>
                   </div>
@@ -1218,7 +1237,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Temporary function to create test coupons (remove this in production)
   async function createTestCoupons() {
-    console.log('Creating test coupons...');
+  
     try {
       const testCoupons = [
         {
@@ -1267,7 +1286,6 @@ let couponDiscount = 0;
 
 // Load available coupons
 async function loadAvailableCoupons() {
-  console.log('Loading available coupons...');
   try {
     const response = await fetch('/available-coupons');
     const data = await response.json();

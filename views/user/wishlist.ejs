@@ -4,6 +4,11 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <style>
+    /* Reset and base styles */
+    * {
+        box-sizing: border-box;
+    }
+
     .breadcrumb a,
     .breadcrumb span {
         display: inline-block;
@@ -69,6 +74,8 @@
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         padding: 0;
         margin-bottom: 2rem;
+        transition: all 0.3s ease-in-out;
+        height: fit-content;
     }
 
     .dashboard-menu .nav-link {
@@ -99,220 +106,6 @@
         text-decoration: none;
     }
 
-    /* Cart styles */
-    .cart-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        margin-bottom: 1.5rem;
-    }
-
-    .cart-table th {
-        background-color: #f8f9fa;
-        padding: 0.75rem;
-        font-weight: 600;
-        color: #333;
-        border-bottom: 1px solid #dee2e6;
-        text-align: left;
-    }
-
-    .cart-table td {
-        padding: 1rem 0.75rem;
-        vertical-align: middle;
-        border-bottom: 1px solid #dee2e6;
-    }
-
-    .cart-table tr:last-child td {
-        border-bottom: none;
-    }
-
-    .cart-item-image {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 4px;
-    }
-
-    .cart-item-details {
-        padding-left: 1rem;
-    }
-
-    .cart-item-name {
-        font-weight: 600;
-        font-size: 1rem;
-        margin-bottom: 0.25rem;
-        color: #333;
-    }
-
-    .cart-item-price {
-        color: #3BB77E;
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-    }
-
-    .cart-item-remove {
-        color: #dc3545;
-        cursor: pointer;
-    }
-
-    .cart-quantity {
-        display: flex;
-        align-items: center;
-        width: 120px;
-    }
-
-    .cart-quantity-btn {
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .cart-quantity-input {
-        width: 60px;
-        height: 30px;
-        text-align: center;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        margin: 0 0.5rem;
-    }
-
-    .cart-summary {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-top: 2rem;
-    }
-
-    .cart-summary-title {
-        font-weight: 600;
-        font-size: 1.1rem;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #dee2e6;
-    }
-
-    .cart-summary-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.75rem;
-    }
-
-    .cart-summary-row:last-child {
-        margin-bottom: 0;
-        padding-top: 0.75rem;
-        border-top: 1px solid #dee2e6;
-        font-weight: 600;
-        font-size: 1.1rem;
-    }
-
-    .cart-summary-label {
-        color: #6c757d;
-    }
-
-    .cart-summary-value {
-        font-weight: 500;
-    }
-
-    .cart-actions {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 1.5rem;
-    }
-
-    .cart-empty {
-        text-align: center;
-        padding: 3rem 1rem;
-    }
-
-    .cart-empty i {
-        font-size: 4rem;
-        color: #dee2e6;
-        margin-bottom: 1.5rem;
-    }
-
-    .cart-empty h3 {
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: #333;
-    }
-
-    .cart-empty p {
-        color: #6c757d;
-        margin-bottom: 1.5rem;
-    }
-
-    .cart-coupon {
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #dee2e6;
-    }
-
-    .cart-coupon-title {
-        font-weight: 600;
-        margin-bottom: 1rem;
-    }
-
-    .cart-coupon-form {
-        display: flex;
-    }
-
-    .cart-coupon-input {
-        flex-grow: 1;
-        padding: 0.5rem;
-        border: 1px solid #dee2e6;
-        border-radius: 4px 0 0 4px;
-    }
-
-    .cart-coupon-btn {
-        padding: 0.5rem 1rem;
-        background-color: #3BB77E;
-        color: white;
-        border: none;
-        border-radius: 0 4px 4px 0;
-        cursor: pointer;
-    }
-
-    .cart-update-btn {
-        padding: 0.5rem 1rem;
-        background-color: #f8f9fa;
-        color: #333;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .cart-checkout-btn {
-        padding: 0.75rem 1.5rem;
-        background-color: #3BB77E;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-
-    .cart-continue-shopping {
-        color: #3BB77E;
-        text-decoration: none;
-        font-weight: 500;
-    }
-
-    .cart-item-variant {
-        font-size: 0.85rem;
-        color: #6c757d;
-        margin-top: 0.25rem;
-    }
-
-    .cart-item-variant span {
-        font-weight: 500;
-    }
-
     /* Wishlist content area */
     .wishlist-content {
         background-color: #fff;
@@ -338,6 +131,481 @@
     .wishlist-content .table-responsive {
         padding: 1.25rem;
     }
+
+    /* Table Styles */
+    .shopping-summery {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .shopping-summery th {
+        background-color: #f8f9fa;
+        padding: 1rem 0.75rem;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #dee2e6;
+        text-align: left;
+    }
+
+    .shopping-summery td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .shopping-summery tr:last-child td {
+        border-bottom: none;
+    }
+
+    .shopping-summery .image img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .shopping-summery .product-name h5 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .shopping-summery .product-name a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .shopping-summery .product-name a:hover {
+        color: #3BB77E;
+    }
+
+    .shopping-summery .price {
+        font-weight: 600;
+        color: #3BB77E;
+        font-size: 1.1rem;
+    }
+
+    .shopping-summery .action .btn {
+        background-color: #3BB77E;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .shopping-summery .action .btn:hover {
+        background-color: #2d8f5f;
+    }
+
+    .shopping-summery .remove .btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .shopping-summery .remove .btn:hover {
+        background-color: #c82333;
+    }
+
+    /* Empty cart styles */
+    .cart-empty {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .cart-empty i {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 1.5rem;
+    }
+
+    .cart-empty h3 {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .cart-empty p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+
+    .cart-empty .btn {
+        background-color: #3BB77E;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .cart-empty .btn:hover {
+        background-color: #2d8f5f;
+    }
+
+    /* Responsive Sidebar Styles */
+    .sidebar-toggle {
+        display: none;
+        position: fixed;
+        top: 80px;
+        left: 20px;
+        z-index: 1001;
+        background: #3BB77E;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 14px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-toggle:hover {
+        background: #2d8f5f;
+        transform: scale(1.05);
+    }
+
+    .sidebar-toggle .hamburger {
+        width: 24px;
+        height: 3px;
+        background: white;
+        position: relative;
+        transition: all 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .sidebar-toggle .hamburger::before,
+    .sidebar-toggle .hamburger::after {
+        content: '';
+        position: absolute;
+        width: 24px;
+        height: 3px;
+        background: white;
+        transition: all 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .sidebar-toggle .hamburger::before {
+        top: -8px;
+    }
+
+    .sidebar-toggle .hamburger::after {
+        bottom: -8px;
+    }
+
+    .sidebar-toggle.active .hamburger {
+        background: transparent;
+    }
+
+    .sidebar-toggle.active .hamburger::before {
+        transform: rotate(45deg);
+        top: 0;
+    }
+
+    .sidebar-toggle.active .hamburger::after {
+        transform: rotate(-45deg);
+        bottom: 0;
+    }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+    }
+
+    /* Mobile and Tablet Responsive */
+    @media (max-width: 991px) {
+        .sidebar-toggle {
+            display: block;
+        }
+
+        .dashboard-menu {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100vh;
+            z-index: 1000;
+            margin: 0;
+            border-radius: 0;
+            overflow-y: auto;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-menu.active {
+            transform: translateX(0);
+            left: 0;
+        }
+
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 300px;
+        }
+
+        .wishlist-content {
+            margin-top: 80px;
+        }
+
+        /* Improve table responsiveness */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+
+        .shopping-summery {
+            min-width: 600px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .sidebar-toggle {
+            top: 70px;
+            left: 650px;
+            padding: 10px 12px;
+        }
+
+        .sidebar-toggle .hamburger,
+        .sidebar-toggle .hamburger::before,
+        .sidebar-toggle .hamburger::after {
+            width: 20px;
+            height: 2px;
+        }
+
+        .sidebar-toggle .hamburger::before {
+            top: -6px;
+        }
+
+        .sidebar-toggle .hamburger::after {
+            bottom: -6px;
+        }
+
+        .dashboard-menu {
+            width: 280px;
+            left: -280px;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 280px;
+        }
+
+        .wishlist-content .card-header {
+            padding: 1rem;
+        }
+
+        .wishlist-content .card-header h3 {
+            font-size: 1.25rem;
+        }
+
+        .wishlist-content .table-responsive {
+            padding: 1rem;
+        }
+
+        /* Mobile-first table design */
+        .shopping-summery {
+            display: block;
+            min-width: auto;
+        }
+
+        .shopping-summery thead {
+            display: none;
+        }
+
+        .shopping-summery tbody {
+            display: block;
+        }
+
+        .shopping-summery tr {
+            display: block;
+            margin-bottom: 1.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .shopping-summery td {
+            display: block;
+            text-align: left;
+            border: none;
+            padding: 0.75rem 0;
+            position: relative;
+        }
+
+        .shopping-summery td:not(:last-child) {
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .shopping-summery td:before {
+            content: attr(data-label);
+            font-weight: 700;
+            color: #333;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .shopping-summery td.image {
+            text-align: center;
+            border-bottom: 2px solid #dee2e6 !important;
+        }
+
+        .shopping-summery td.image:before {
+            display: none;
+        }
+
+        .shopping-summery td.image img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .shopping-summery td.product-name:before {
+            display: none;
+        }
+
+        .shopping-summery td.product-name h5 {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .shopping-summery td.price {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .shopping-summery td.action,
+        .shopping-summery td.remove {
+            text-align: center;
+            border-bottom: none !important;
+        }
+
+        .shopping-summery td.action:before,
+        .shopping-summery td.remove:before {
+            display: none;
+        }
+
+        .shopping-summery td.action .btn {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .shopping-summery td.remove .btn {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        /* Empty cart mobile styles */
+        .cart-empty {
+            padding: 2rem 1rem;
+        }
+
+        .cart-empty i {
+            font-size: 3rem;
+        }
+
+        .cart-empty h3 {
+            font-size: 1.1rem;
+        }
+
+        .cart-empty .btn {
+            width: 100%;
+            max-width: 200px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .sidebar-toggle {
+            top: 60px;
+            left: 250px;
+            padding: 8px 10px;
+        }
+
+        .dashboard-menu {
+            width: 100%;
+            left: -100%;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 0;
+        }
+
+        .wishlist-content {
+            margin-top: 60px;
+        }
+
+        .breadcrumb {
+            font-size: 0.85rem;
+        }
+
+        .shopping-summery tr {
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .shopping-summery td.image img {
+            width: 80px;
+            height: 80px;
+        }
+
+        .shopping-summery td.product-name h5 {
+            font-size: 1rem;
+        }
+
+        .shopping-summery td.price {
+            font-size: 1.1rem;
+        }
+
+        .cart-empty i {
+            font-size: 2.5rem;
+        }
+
+        .cart-empty h3 {
+            font-size: 1rem;
+        }
+    }
+
+    /* Ensure proper z-index for header */
+    .header-area {
+        z-index: 1002;
+    }
+
+    /* Fix for existing mobile menu conflict */
+    .mobile-header-active {
+        z-index: 1003;
+    }
 </style>
 
 <header class="header-area header-style-1 header-height-2">
@@ -347,8 +615,6 @@
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info">
                         <ul>
-                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
-                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
                         </ul>
                     </div>
                 </div>
@@ -402,14 +668,16 @@
 <div class="header-action-2">
                                 <div class="header-action-icon-2">
                                     <a href="/wishlist">
-                                        <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg">
+                                        <i class="fi-rs-heart wishlist-heart"></i>
+                                        <!-- <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg"> -->
                                         <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
 
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="/cart">
-                                        <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg">
+                                        <i class="fi-rs-shopping-cart"></i>
+                                        <!-- <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg"> -->
                                         <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
                                     </a>
 
@@ -438,14 +706,15 @@
                     </div>
                 </div>
                 <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                    <!-- <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p> -->
                 </div>   
                 <div class="header-action-icon-2 d-block d-lg-none">
-                    <div class="burger-icon burger-icon-white">
+                    
+                    <!-- <div class="burger-icon burger-icon-white">
                         <span class="burger-icon-top"><span></span><span></span><span></span></span>
                         <span class="burger-icon-mid"><span></span><span></span><span></span></span>
                         <span class="burger-icon-bottom"><span></span><span></span><span></span></span>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -484,6 +753,14 @@
 </div>
 
 <main class="main">
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <div class="hamburger"></div>
+    </button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
@@ -499,7 +776,7 @@
             <div class="row">
                 <!-- Dashboard Menu -->
                 <div class="col-lg-3">
-                    <div class="dashboard-menu">
+                    <div class="dashboard-menu" id="dashboardMenu">
                         <ul class="nav flex-column" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link" href="/profileinfo">
@@ -541,74 +818,63 @@
                 </div>
                 
                 <!-- Wishlist Content -->
-                <div class="col-lg-9">
+                <div class="col-lg-9 main-content" id="mainContent">
                     <div class="wishlist-content">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h3 class="mb-0">My Wishlist</h3>
                         </div>
                         <div class="table-responsive">
-                            <table class="table shopping-summery text-center">
+                            <table class="shopping-summery">
                                 <thead>
-                                  <tr class="main-heading">
-                                    <th colspan="2">Product</th>
+                                  <tr>
+                                    <th>Product</th>
+                                    <th>Product Name</th>
                                     <th>Price</th>
-                                    <!-- <th>Stock Status</th> -->
-                                    <th>Action <br><span style="color: #3BB77E !important;">(visit product to add to cart!)</span></th>
+                                    <th>Action</th>
                                     <th>Remove</th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   <% if (products.length === 0) { %>
                                     <tr>
-                                      <td colspan="6">
+                                      <td colspan="5">
                                         <div class="cart-empty">
                                           <i class="fi-rs-heart"></i>
                                           <h3>Your wishlist is empty</h3>
                                           <p>Looks like you haven't added any products to your wishlist yet.</p>
-                                          <a href="/shop" class="btn btn-primary">Start Shopping</a>
+                                          <a href="/shop" class="btn">Start Shopping</a>
                                         </div>
                                       </td>
                                     </tr>
                                   <% } else { %>
                                     <% products.forEach(product => { %>
                                       <tr>
-                                        <td class="image product-thumbnail">
+                                        <td class="image" data-label="Product">
                                           <img src="<%= product.images[0] %>" 
                                                alt="<%= product.productName %>">
                                         </td>
-                                        <td class="product-des product-name">
-                                          <h5 class="product-name">
+                                        <td class="product-name" data-label="Product Name">
+                                          <h5>
                                             <a href="/productDetails?id=<%= product._id %>">
                                               <%= product.productName %>
                                             </a>
                                           </h5>
                                         </td>
-                                        <td class="price">
+                                        <td class="price" data-label="Price">
                                           ₹<%= product.salePrice.toFixed(2) %>
                                         </td>
-                                        <!-- <td class="text-center">
-                                          <% if (product.countInStock > 0) { %>
-                                            <span class="color3 font-weight-bold">In Stock</span>
-                                          <% } else { %>
-                                            <span class="text-danger font-weight-bold">Out of stock</span>
-                                          <% } %>
-                                        </td> -->
-                                        <td class="text-right">
-                                            <a href="/productDetails?id=<%= product._id %>">
-                                              <button class="btn btn-sm">
-                                                <i class="fi-rs-shopping-bag-add mr-5"></i>Add to cart
-                                              </button>
+                                        <td class="action" data-label="Action">
+                                            <a href="/productDetails?id=<%= product._id %>" class="btn">
+                                              <i class="fi-rs-shopping-bag-add mr-5"></i>Add to cart
                                             </a>
-                                           
                                         </td>
-                                        <td class="action">
+                                        <td class="remove" data-label="Remove">
                                             <form class="remove-wishlist-form" method="POST" data-product-id="<%= product._id %>">
-                                              <button type="submit" class="btn btn-sm">
+                                              <button type="submit" class="btn">
                                                 <i class="fi-rs-trash"></i>
                                               </button>
                                             </form>
                                           </td>
-                                          
                                       </tr>
                                     <% }) %>
                                   <% } %>
@@ -627,6 +893,68 @@
 <%- include('../partials/user/footer.ejs') %>
 
 <script>
+    // Sidebar Toggle Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const dashboardMenu = document.getElementById('dashboardMenu');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const mainContent = document.getElementById('mainContent');
+        
+        function toggleSidebar() {
+            const isActive = dashboardMenu.classList.contains('active');
+            
+            if (isActive) {
+                // Close sidebar
+                dashboardMenu.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                sidebarToggle.classList.remove('active');
+                mainContent.classList.remove('sidebar-open');
+                
+                // Hide overlay after animation
+                setTimeout(() => {
+                    sidebarOverlay.style.display = 'none';
+                }, 300);
+            } else {
+                // Open sidebar
+                sidebarOverlay.style.display = 'block';
+                setTimeout(() => {
+                    sidebarOverlay.classList.add('active');
+                }, 10);
+                dashboardMenu.classList.add('active');
+                sidebarToggle.classList.add('active');
+                mainContent.classList.add('sidebar-open');
+            }
+        }
+        
+        // Toggle button click
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        
+        // Overlay click to close
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+        
+        // Close sidebar on window resize (if screen becomes large)
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 991) {
+                dashboardMenu.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                sidebarToggle.classList.remove('active');
+                mainContent.classList.remove('sidebar-open');
+                sidebarOverlay.style.display = 'none';
+            }
+        });
+        
+        // Close sidebar when clicking on a menu link (mobile)
+        const menuLinks = dashboardMenu.querySelectorAll('.nav-link');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 991) {
+                    toggleSidebar();
+                }
+            });
+        });
+    });
+
+    // Wishlist Remove Functionality
     document.querySelectorAll('.remove-wishlist-form').forEach(form => {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -682,4 +1010,5 @@
         }
       });
     });
+</script>
 </script>

@@ -296,6 +296,7 @@
     .cart-item-variant span {
         font-weight: 500;
     }
+    
 </style>
 
 <header class="header-area header-style-1 header-height-2">
@@ -305,8 +306,6 @@
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info">
                         <ul>
-                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
-                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
                         </ul>
                     </div>
                 </div>
@@ -360,13 +359,15 @@
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
                                 <a href="/wishlist">
+                                    <i class="fi-rs-heart wishlist-heart"></i>
                                     <!-- <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg">
                                     <span class="pro-count blue">0</span> -->
                                 </a>
                             </div>
                             <div class="header-action-icon-2">
                                 <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg">
+                                    <i class="fi-rs-shopping-cart"></i>
+                                    <!-- <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg"> -->
                                     <!-- <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span> -->
                                 </a>
                             </div>
@@ -393,7 +394,7 @@
                     </div>
                 </div>
                 <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                    
                 </div>   
                 <div class="header-action-icon-2 d-block d-lg-none">
                     <div class="burger-icon burger-icon-white">

@@ -2,9 +2,322 @@
     .hidden-section {
         display: none;
     }
+    
+    /* Responsive Sidebar Styles */
+    .sidebar-container {
+        position: relative;
+    }
+    
+    .navbar-aside {
+        width: 280px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: #fff;
+        z-index: 1000;
+        transition: transform 0.3s ease-in-out;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        overflow-y: auto;
+    }
+    
+    .main-wrap {
+        margin-left: 280px;
+        transition: all 0.3s ease-in-out;
+    }
+    
+    .screen-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+    
+    .screen-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+    
+    /* Mobile Header Styles */
+    .mobile-header {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: #fff;
+        z-index: 1100;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 0 15px;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .mobile-logo {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        min-width: 120px;
+    }
+    
+    .mobile-logo img {
+        height: 35px;
+        width: auto;
+        max-width: 150px;
+        object-fit: contain;
+    }
+    
+    .mobile-logo::before {
+        content: "Shoestore";
+        font-weight: bold;
+        font-size: 18px;
+        color: #333;
+        display: none;
+    }
+    
+    .mobile-logo img:not([src]), 
+    .mobile-logo img[src=""],
+    .mobile-logo img[src*="error"] {
+        display: none;
+    }
+    
+    .mobile-logo img:not([src]) + ::before,
+    .mobile-logo img[src=""] + ::before,
+    .mobile-logo img[src*="error"] + ::before {
+        display: block;
+    }
+    
+    .hamburger-btn {
+        display: none;
+        position: relative;
+        background: #fff;
+        border: none;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 1101;
+    }
+    
+    .hamburger-btn:hover {
+        background: #f8f9fa;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    
+    .hamburger-btn .bar {
+        display: block;
+        width: 24px;
+        height: 3px;
+        margin: 4px 0;
+        background: #333;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+    
+    /* Search Form Responsive Styles */
+    .search-form {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .search-form .form-control {
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        transition: border-color 0.3s ease;
+    }
+    
+    .search-form .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    }
+    
+    .search-form .btn {
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .search-form .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    /* Pagination Center Alignment */
+    .pagination-area {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .pagination {
+        justify-content: center !important;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    
+    .pagination .page-link {
+        border-radius: 6px;
+        margin: 0 2px;
+    }
+    
+    /* Responsive Media Queries */
+    @media (max-width: 991px) {
+        .navbar-aside {
+            transform: translateX(-100%);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-aside.show {
+            transform: translateX(0);
+        }
+        
+        .main-wrap {
+            margin-left: 0;
+            width: 100%;
+            margin-top: 60px; /* Space for mobile header */
+        }
+        
+        .mobile-header {
+            display: flex;
+        }
+        
+        .hamburger-btn {
+            display: block;
+        }
+        
+        .main-wrap.dimmed {
+            filter: blur(2px) grayscale(0.2) brightness(0.95);
+            pointer-events: none;
+            user-select: none;
+        }
+        
+        /* Adjust table responsiveness */
+        .table-responsive {
+            font-size: 0.9rem;
+        }
+        
+        .table-responsive th,
+        .table-responsive td {
+            padding: 0.5rem 0.25rem;
+        }
+        
+        /* Search form mobile adjustments */
+        .search-form .d-flex {
+            flex-direction: column;
+        }
+        
+        .search-form .d-flex > div {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        
+        .search-form .d-flex .d-flex {
+            flex-direction: row;
+            gap: 0.5rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            padding: 8px 10px;
+        }
+        
+        .hamburger-btn .bar {
+            width: 20px;
+            height: 2px;
+            margin: 3px 0;
+        }
+        
+        .mobile-logo img {
+            height: 30px;
+        }
+        
+        .pagination-area {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .pagination {
+            font-size: 0.9rem;
+        }
+        
+        /* Search form tablet adjustments */
+        .search-form .d-flex {
+            flex-direction: column;
+        }
+        
+        .search-form .d-flex .d-flex {
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .navbar-aside {
+            width: 280px;
+        }
+        
+        .mobile-logo img {
+            height: 28px;
+        }
+        
+        .pagination-area {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .pagination {
+            font-size: 0.85rem;
+        }
+        
+        .pagination .page-link {
+            padding: 0.375rem 0.5rem;
+        }
+        
+        /* Search form mobile adjustments */
+        .search-form .d-flex .d-flex {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .search-form .btn {
+            width: 100%;
+            margin-bottom: 0.25rem;
+        }
+    }
 </style>
+
 <%- include('../partials/admin/header.ejs') %>
 
+<!-- Mobile Header with Logo and Hamburger -->
+<div class="mobile-header">
+    <div class="mobile-logo">
+        <img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <span style="display: none; font-weight: bold; font-size: 18px; color: #333;">Shoestore</span>
+    </div>
+    <button class="hamburger-btn" id="sidebarHamburger" aria-label="Toggle sidebar" aria-controls="offcanvas_aside" aria-expanded="false">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
+</div>
+
+<!-- Overlay -->
+<div class="screen-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar Container -->
+<div class="sidebar-container">
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="/admin" class="brand-wrap">
@@ -62,103 +375,57 @@
            
         </nav>
     </aside>
-    <main class="main-wrap">
-        <header class="main-header navbar">
-            <div class="col-search">
-                
-            </div>
-            <div class="col-nav">
-                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
-                <ul class="nav">
-                    
-                    <li class="nav-item">
-                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
-                    </li>
-                   
-                </ul>
-            </div>
-        </header>
+</div>
 
+<main class="main-wrap" id="mainWrap">
         <section class="content-main">
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Sales Report</h2>
                     <p>Comprehensive overview of your sales</p>
                 </div>
-                
             </div>
 
-            
-
-<form method="GET" action="/admin/sales">
-  <div class="card mb-4">
-    <!-- <header class="card-header bg-white">
-      <h4 class="mb-0">Sales Reports</h4>
-    </header> -->
-    <div class="card-body">
-      <div class="row">
-        <!-- Date Range dropdown -->
-        <div class="col-md-3">
-          <label class="form-label">Date Range</label>
-          <select 
-            class="form-select" 
-            name="dateRange" 
-            id="dateRangeFilter" 
-            onchange="toggleCustomDates(this.value)"
-          >
-            <option value="today"      <%= dateRange==='today'      ? 'selected':'' %>>Today</option>
-            <option value="yesterday"  <%= dateRange==='yesterday'  ? 'selected':'' %>>Yesterday</option>
-            <option value="last7days"  <%= dateRange==='last7days'  ? 'selected':'' %>>Last 7 Days</option>
-            <option value="last30days" <%= dateRange==='last30days' ? 'selected':'' %>>Last 30 Days</option>
-            <option value="thisMonth"  <%= dateRange==='thisMonth'  ? 'selected':'' %>>This Month</option>
-            <option value="lastMonth"  <%= dateRange==='lastMonth'  ? 'selected':'' %>>Last Month</option>
-            <option value="custom"     <%= dateRange==='custom'     ? 'selected':'' %>>Custom</option>
-          </select>
-        </div>
-
-        <!-- Custom date inputs (only shown when dateRange==='custom') -->
-        <% if (dateRange==='custom') { %>
-        <div class="col-md-6" id="customDateFilterContainer">
-          <div class="row">
-            <div class="col-md-6">
-              <label class="form-label">From</label>
-              <input 
-                type="date" 
-                name="startDate" 
-                class="form-control" 
-                value="<%= startDate %>"
-              >
+            <!-- Search Form Below Navbar -->
+            <div class="card mb-4 search-form">
+                <div class="card-body">
+                    <form method="GET" action="/admin/sales" class="d-flex flex-column flex-md-row gap-3">
+                        <div class="flex-grow-1">
+                            <label class="form-label">Date Range</label>
+                            <select class="form-select" name="dateRange" id="dateRangeFilter" onchange="toggleCustomDates(this.value)">
+                                <option value="today" <%= dateRange==='today' ? 'selected':'' %>>Today</option>
+                                <option value="yesterday" <%= dateRange==='yesterday' ? 'selected':'' %>>Yesterday</option>
+                                <option value="last7days" <%= dateRange==='last7days' ? 'selected':'' %>>Last 7 Days</option>
+                                <option value="last30days" <%= dateRange==='last30days' ? 'selected':'' %>>Last 30 Days</option>
+                                <option value="thisMonth" <%= dateRange==='thisMonth' ? 'selected':'' %>>This Month</option>
+                                <option value="lastMonth" <%= dateRange==='lastMonth' ? 'selected':'' %>>Last Month</option>
+                                <option value="custom" <%= dateRange==='custom' ? 'selected':'' %>>Custom</option>
+                            </select>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="material-icons md-search"></i> Apply Filters
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Custom date inputs (only shown when dateRange==='custom') -->
+                    <% if (dateRange==='custom') { %>
+                    <div class="mt-3" id="customDateFilterContainer">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">From</label>
+                                <input type="date" name="startDate" class="form-control" value="<%= startDate %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">To</label>
+                                <input type="date" name="endDate" class="form-control" value="<%= endDate %>">
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
             </div>
-            <div class="col-md-6">
-              <label class="form-label">To</label>
-              <input 
-                type="date" 
-                name="endDate" 
-                class="form-control" 
-                value="<%= endDate %>"
-              >
-            </div>
-          </div>
-        </div>
-        <% } %>
-
-        <div class="col-md-3 d-flex align-items-end justify-content-end">
-          <button type="submit" class="btn btn-primary">Apply Filters</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</form>
-
-<script>
-  function toggleCustomDates(val) {
-    const c = document.getElementById('customDateFilterContainer');
-    if (c) c.style.display = (val === 'custom' ? 'block' : 'none');
-  }
-  document.addEventListener('DOMContentLoaded', () => {
-    toggleCustomDates(document.getElementById('dateRangeFilter').value);
-  });
-</script>
 
 
             <div class="row g-3">
@@ -284,20 +551,22 @@
         </table>
       </div>
     </div>
-    <!-- Pagination -->
-    <nav class="pagination-area mt-3">
-      <ul class="pagination">
-        <% for(let i = 1; i <= totalPages; i++) { %>
-          <li class="page-item <%= i===currentPage ? 'active' : '' %>">
-           <a
+    <!-- Centered Pagination -->
+    <div class="pagination-area">
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <% for(let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= i===currentPage ? 'active' : '' %>">
+             <a
   class="page-link"
   href="/admin/sales?dateRange=<%= dateRange %><% if (dateRange==='custom') { %>&startDate=<%= startDate %>&endDate=<%= endDate %><% } %>&page=<%= i %>&limit=10"
 ><%= i %></a>
 
-          </li>
-        <% } %>
-      </ul>
-    </nav>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
+    </div>
   </div>
 </form>
 
@@ -757,16 +1026,85 @@ function showToast(message, type = 'info') {
 </script>
 
        <script>
-  $(document).ready(function () {
-    // Sidebar toggle
-    $('.btn-aside-minimize, .btn-mobile').on('click', function () {
-      $('#offcanvas_aside').toggleClass('show');
-      $('body').toggleClass('sidebar-open');
+// Responsive Sidebar Toggle Functionality
+(function() {
+    const hamburger = document.getElementById('sidebarHamburger');
+    const screenOverlay = document.getElementById('sidebarOverlay');
+    const navbarAside = document.getElementById('offcanvas_aside');
+    const mainWrap = document.getElementById('mainWrap');
+
+    function openSidebar() {
+        navbarAside.classList.add('show');
+        screenOverlay.classList.add('active');
+        mainWrap.classList.add('dimmed');
+        hamburger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+        navbarAside.classList.remove('show');
+        screenOverlay.classList.remove('active');
+        mainWrap.classList.remove('dimmed');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+    }
+
+    // Hamburger button click
+    hamburger.addEventListener('click', function() {
+        if (navbarAside.classList.contains('show')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
     });
 
-    // Close sidebar if click outside
+    // Overlay click to close sidebar
+    screenOverlay.addEventListener('click', closeSidebar);
+
+    // ESC key to close sidebar
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && navbarAside.classList.contains('show')) {
+            closeSidebar();
+        }
+    });
+
+    // Close sidebar on window resize to desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+            closeSidebar();
+        }
+    });
+
+    // Close sidebar when clicking on menu links (mobile)
+    const menuLinks = document.querySelectorAll('.menu-aside .menu-link');
+    menuLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth < 992) {
+                closeSidebar();
+            }
+        });
+    });
+})();
+
+// Custom date toggle function
+function toggleCustomDates(val) {
+    const c = document.getElementById('customDateFilterContainer');
+    if (c) c.style.display = (val === 'custom' ? 'block' : 'none');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    toggleCustomDates(document.getElementById('dateRangeFilter').value);
+});
+  $(document).ready(function () {
+    // Remove old sidebar toggle logic since we have new responsive implementation
+    // $('.btn-aside-minimize, .btn-mobile').on('click', function () {
+    //   $('#offcanvas_aside').toggleClass('show');
+    //   $('body').toggleClass('sidebar-open');
+    // });
+
+    // Close sidebar if click outside (keep this for compatibility)
     $(document).on('click', function (e) {
-      if (!$(e.target).closest('#offcanvas_aside, .btn-aside-minimize, .btn-mobile').length) {
+      if (!$(e.target).closest('#offcanvas_aside, .btn-aside-minimize, .btn-mobile, .hamburger-btn').length) {
         if ($('#offcanvas_aside').hasClass('show')) {
           $('#offcanvas_aside').removeClass('show');
           $('body').removeClass('sidebar-open');

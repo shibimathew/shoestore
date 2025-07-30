@@ -4,16 +4,16 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <style>
-      .breadcrumb a,
-.breadcrumb span {
-    display: inline-block;
-    margin-right: 5px; /* space after each item */
-}
+    .breadcrumb a,
+    .breadcrumb span {
+        display: inline-block;
+        margin-right: 5px; /* space after each item */
+    }
 
-.breadcrumb .separator {
-    margin: 0 8px; /* horizontal space around '>' */
-    color: #999; /* optional: lighter color for separator */
-}
+    .breadcrumb .separator {
+        margin: 0 8px; /* horizontal space around '>' */
+        color: #999; /* optional: lighter color for separator */
+    }
 
     .profile-image {
         width: 150px;
@@ -113,6 +113,8 @@
         padding: 12px 15px;
         color: #666;
         transition: all 0.3s ease;
+        text-decoration: none;
+        border-left: 3px solid transparent;
     }
 
     .dashboard-menu .nav-link i {
@@ -122,8 +124,317 @@
 
     .dashboard-menu .nav-link:hover,
     .dashboard-menu .nav-link.active {
-        background-color: #f8f9fa;
+        background-color: #e8f5e8;
         color: #3BB77E;
+        border-left-color: #3BB77E;
+        font-weight: 600;
+    }
+
+    /* Responsive Sidebar Styles */
+    .sidebar-toggle {
+        display: none;
+        position: fixed;
+        top: 90px;
+        left: 20px;
+        z-index: 1001;
+        background: #3BB77E;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 14px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-toggle:hover {
+        background: #2d8f5f;
+        transform: scale(1.05);
+    }
+
+    .sidebar-toggle .hamburger {
+        width: 24px;
+        height: 3px;
+        background: white;
+        position: relative;
+        transition: all 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .sidebar-toggle .hamburger::before,
+    .sidebar-toggle .hamburger::after {
+        content: '';
+        position: absolute;
+        width: 24px;
+        height: 3px;
+        background: white;
+        transition: all 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .sidebar-toggle .hamburger::before {
+        top: -8px;
+    }
+
+    .sidebar-toggle .hamburger::after {
+        bottom: -8px;
+    }
+
+    .sidebar-toggle.active .hamburger {
+        background: transparent;
+    }
+
+    .sidebar-toggle.active .hamburger::before {
+        transform: rotate(45deg);
+        top: 0;
+    }
+
+    .sidebar-toggle.active .hamburger::after {
+        transform: rotate(-45deg);
+        bottom: 0;
+    }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+    }
+
+    /* Mobile and Tablet Responsive */
+    @media (max-width: 991px) {
+        .sidebar-toggle {
+            display: block;
+        }
+
+        .dashboard-menu {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100vh;
+            z-index: 1000;
+            margin: 0;
+            border-radius: 0;
+            overflow-y: auto;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            background: white;
+            padding-top: 20px;
+        }
+
+        .dashboard-menu.active {
+            transform: translateX(0);
+            left: 0;
+        }
+
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 300px;
+        }
+
+        .profile-content {
+            margin-top: 80px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .sidebar-toggle {
+            top: 90px;
+            left: 15px;
+            padding: 10px 12px;
+        }
+
+        .sidebar-toggle .hamburger,
+        .sidebar-toggle .hamburger::before,
+        .sidebar-toggle .hamburger::after {
+            width: 20px;
+            height: 2px;
+        }
+
+        .sidebar-toggle .hamburger::before {
+            top: -6px;
+        }
+
+        .sidebar-toggle .hamburger::after {
+            bottom: -6px;
+        }
+
+        .dashboard-menu {
+            width: 280px;
+            left: -280px;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 280px;
+        }
+
+        .profile-content .card-header {
+            padding: 1rem;
+        }
+
+        .profile-content .card-header h3 {
+            font-size: 1.25rem;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+        }
+
+        .profile-image-upload {
+            width: 35px;
+            height: 35px;
+        }
+
+        .profile-image-upload i {
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .form-group p {
+            margin: 0;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .sidebar-toggle {
+            top: 85px;
+            left: 10px;
+            padding: 8px 10px;
+        }
+
+        .dashboard-menu {
+            width: 100%;
+            left: -100%;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 0;
+        }
+
+        .profile-content {
+            margin-top: 60px;
+        }
+
+        .breadcrumb {
+            font-size: 0.85rem;
+        }
+
+        .profile-image {
+            width: 100px;
+            height: 100px;
+        }
+
+        .profile-image-upload {
+            width: 30px;
+            height: 30px;
+        }
+
+        .profile-image-upload i {
+            font-size: 14px;
+        }
+
+        .card-header h3 {
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .col-md-6 {
+            margin-bottom: 1rem;
+        }
+    }
+
+    /* Ensure proper z-index for header */
+    .header-area {
+        z-index: 1002;
+    }
+
+    /* Fix for existing mobile menu conflict */
+    .mobile-header-active {
+        z-index: 1003;
+    }
+
+    /* Additional Profile Page Styles */
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .bg-success {
+        background-color: #28a745 !important;
+        color: white;
+    }
+
+    .btn-fill-out {
+        background-color: #3BB77E;
+        color: white;
+        border: 1px solid #3BB77E;
+        padding: 0.5rem 1.5rem;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-fill-out:hover {
+        background-color: #2d8f5f;
+        border-color: #2d8f5f;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-group p {
+        color: #666;
+        margin: 0;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
     }
 </style>
 
@@ -134,8 +445,7 @@
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info">
                         <ul>
-                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
-                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
+                        
                         </ul>
                     </div>
                 </div>
@@ -217,13 +527,12 @@
                             <ul>
                                 <li><a href="/">Home</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                            
                             </ul>
                         </nav>
                     </div>
                 </div>
                 <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                    <!-- <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p> -->
                 </div>   
                 <div class="header-action-icon-2 d-block d-lg-none">
                     <div class="burger-icon burger-icon-white">
@@ -269,12 +578,22 @@
 </div>
 
 <main class="main">
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <div class="hamburger"></div>
+    </button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
-                <a href="/admin/products" rel="nofollow">Product</a>
+                <a href="/" rel="nofollow">Home</a>
                 <span class="separator">&gt;</span>
-                <span>Add Product</span>
+                <a href="/profileinfo">My Account</a>
+                <span class="separator">&gt;</span>
+                <span>Personal Information</span>
             </div>
         </div>
     </div>
@@ -283,7 +602,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-3">
-                    <div class="dashboard-menu">
+                    <div class="dashboard-menu" id="dashboardMenu">
                         <ul class="nav flex-column" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" href="/profileinfo">
@@ -323,74 +642,69 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-9">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h3 class="mb-0">Personal Information</h3>
-                            <a href="/edit-profile?id=<%= user._id %>" class="btn btn-sm btn-fill-out">Edit Profile</a>
-                        </div>
-                        <div class="card-body">
-                            <form method="post" action="/updateProfile" enctype="multipart/form-data">
-                                <% if (typeof user !== 'undefined' && user) { %>
-                                <div class="row">
-                                    <div class="col-md-12 text-center mb-4">
-                                        <div class="profile-image-container">
-                                            <img src="<%= user.profileImage || '/assets/imgs/people/avatar2.jpg' %>" alt="Profile Picture" class="profile-image" id="profile-preview">
-                                            <label class="profile-image-upload">
-                                                <i class="fi-rs-camera"></i>
-                                                <input type="file" name="profileImage" accept="image/*" onchange="previewImage(this)">
-                                            </label>
+                <div class="col-lg-9 main-content" id="mainContent">
+                    <div class="profile-content">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h3 class="mb-0">Personal Information</h3>
+                                <a href="/edit-profile?id=<%= user._id %>" class="btn btn-sm btn-fill-out">Edit Profile</a>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="/updateProfile" enctype="multipart/form-data">
+                                    <% if (typeof user !== 'undefined' && user) { %>
+                                    <div class="row">
+                                        <div class="col-md-12 text-center mb-4">
+                                            <div class="profile-image-container">
+                                                <img src="<%= user.profileImage || '/assets/imgs/people/avatar2.jpg' %>" alt="Profile Picture" class="profile-image" id="profile-preview">
+                                                <label class="profile-image-upload">
+                                                    <i class="fi-rs-camera"></i>
+                                                    <input type="file" name="profileImage" accept="image/*" onchange="previewImage(this)">
+                                                </label>
+                                            </div>
+                                            
+                                            <h5 class="mt-2">Profile Picture</h5>
+                                            <p class="text-muted small">Click the camera icon to change your profile picture</p>
                                         </div>
-                                        
-                                        <h5 class="mt-2">Profile Picture</h5>
-                                        <p class="text-muted small">Click the camera icon to change your profile picture</p>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Full Name</label>
+                                                <p><%= user.name %></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Email</label>
+                                                <p><%= user.email %></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Phone</label>
+                                                <p><%= user.phone || 'Not provided' %></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Gender</label>
+                                                <p><%= user.gender ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1) : 'Not specified' %></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Join Date</label>
+                                                <p><%= user.createdOn ? new Date(user.createdOn).toLocaleDateString() : 'Not available' %></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Account Status</label>
+                                                <p><span class="badge bg-success">Active</span></p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Full Name</label>
-                                            <p><%= user.name %></p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Email</label>
-                                            <p><%= user.email %></p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Phone</label>
-                                            <p><%= user.phone || 'Not provided' %></p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Gender</label>
-                                            <p><%= user.gender ? user.gender.charAt(0).toUpperCase() + user.gender.slice(1) : 'Not specified' %></p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Join Date</label>
-                                            <p><%= user.createdOn ? new Date(user.createdOn).toLocaleDateString() : 'Not available' %></p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Account Status</label>
-                                            <p><span class="badge bg-success">Active</span></p>
-                                        </div>
-                                    </div>
-                                    <!-- <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Last Login</label>
-                                            <p><%= user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Not available' %></p>
-                                        </div>
-                                    </div> -->
-                                    
-                                </div>
-                                <% } %>
-                            </form>
+                                    <% } %>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -402,25 +716,118 @@
 <%- include('../partials/user/footer.ejs') %>
 
 <script>
+// Sidebar Toggle Functionality
 document.addEventListener('DOMContentLoaded', function() {
-    // Add any JavaScript functionality here
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        // Add form validation and submission logic here
-        console.log('Form submitted');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const dashboardMenu = document.getElementById('dashboardMenu');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const mainContent = document.getElementById('mainContent');
+    
+    function toggleSidebar() {
+        const isActive = dashboardMenu.classList.contains('active');
+        
+        if (isActive) {
+            // Close sidebar
+            dashboardMenu.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            sidebarToggle.classList.remove('active');
+            mainContent.classList.remove('sidebar-open');
+            
+            // Hide overlay after animation
+            setTimeout(() => {
+                sidebarOverlay.style.display = 'none';
+            }, 300);
+        } else {
+            // Open sidebar
+            sidebarOverlay.style.display = 'block';
+            setTimeout(() => {
+                sidebarOverlay.classList.add('active');
+            }, 10);
+            dashboardMenu.classList.add('active');
+            sidebarToggle.classList.add('active');
+            mainContent.classList.add('sidebar-open');
+        }
+    }
+    
+    // Toggle button click
+    sidebarToggle.addEventListener('click', toggleSidebar);
+    
+    // Overlay click to close
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+    
+    // Close sidebar on window resize (if screen becomes large)
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 991) {
+            dashboardMenu.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            sidebarToggle.classList.remove('active');
+            mainContent.classList.remove('sidebar-open');
+            sidebarOverlay.style.display = 'none';
+        }
     });
+    
+    // Close sidebar when clicking on a menu link (mobile)
+    const menuLinks = dashboardMenu.querySelectorAll('.nav-link');
+    menuLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 991) {
+                toggleSidebar();
+            }
+        });
+    });
+
+    // Profile form functionality
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Add form validation and submission logic here
+            console.log('Form submitted');
+        });
+    }
 });
 
+// Image preview functionality
 function previewImage(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         
         reader.onload = function(e) {
-            document.getElementById('profile-preview').src = e.target.result;
+            const preview = document.getElementById('profile-preview');
+            if (preview) {
+                preview.src = e.target.result;
+            }
         }
         
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+// Enhanced UX for profile image upload
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.querySelector('input[type="file"]');
+    const uploadLabel = document.querySelector('.profile-image-upload');
+    
+    if (fileInput && uploadLabel) {
+        // Add hover effects
+        uploadLabel.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+        });
+        
+        uploadLabel.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+        
+        // File change feedback
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                // Optional: Show loading state or success message
+                uploadLabel.style.backgroundColor = '#28a745';
+                setTimeout(() => {
+                    uploadLabel.style.backgroundColor = '#3BB77E';
+                }, 1000);
+            }
+        });
+    }
+});
 </script>

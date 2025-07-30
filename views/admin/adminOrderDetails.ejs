@@ -2,6 +2,89 @@
     
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
+<style>
+    .navbar-aside {
+        width: 280px;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: #fff;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .main-wrap {
+        margin-left: 280px;
+        transition: all 0.3s ease;
+    }
+    .screen-overlay {
+        width: 100%;
+        height: 100%;
+        z-index: 999;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    .screen-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+    .hamburger-btn {
+        display: none;
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        z-index: 1100;
+        background: #fff;
+        border: none;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 10px 12px;
+        cursor: pointer;
+    }
+    .hamburger-btn .bar {
+        display: block;
+        width: 24px;
+        height: 3px;
+        margin: 4px 0;
+        background: #333;
+        border-radius: 2px;
+        transition: all 0.3s;
+    }
+    @media (max-width: 991px) {
+        .navbar-aside {
+            transform: translateX(-100%);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .navbar-aside.show {
+            transform: translateX(0);
+        }
+        .main-wrap {
+            margin-left: 0;
+        }
+        .hamburger-btn {
+            display: block;
+        }
+        .main-wrap.dimmed {
+            filter: blur(2px) grayscale(0.2) brightness(0.95);
+            pointer-events: none;
+            user-select: none;
+        }
+    }
+</style>
+
+<button class="hamburger-btn" id="sidebarHamburger" aria-label="Toggle sidebar" aria-controls="offcanvas_aside" aria-expanded="false">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+</button>
+<div class="screen-overlay" id="sidebarOverlay"></div>
+
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="/admin" class="brand-wrap">
@@ -13,7 +96,7 @@
         </div>
         <nav>
              <ul class="menu-aside">
-                <li class="menu-item active">
+                <li class="menu-item ">
                     <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
@@ -28,7 +111,7 @@
                         <span class="text">Products</span>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
                     </a>
@@ -58,7 +141,7 @@
         </nav>
     </aside>
 
-    <main class="main-wrap">
+    <main class="main-wrap" id="mainWrap">
         <!-- <header class="main-header navbar">
             <div class="col-search"> -->
                 <!-- <form class="searchform"> -->
@@ -285,6 +368,10 @@
       <% if (order.status === 'Cancelled' && order.cancelReason) { %>
           <strong>Cancellation Reason:</strong> <%= order.cancelReason %> <br>
       <% } %>
+     
+        Discount : <%=order.discount ? order.discount : 0 %> <br>
+        Total Amount : <%= order.totalAmount %>
+    
   </p>
 </div>
 
@@ -483,4 +570,47 @@
 
     setInterval(updateDateTime, 1000); // updates every 1 second
     updateDateTime(); // call once immediately on load
+</script>
+
+<script>
+// Sidebar toggle functionality
+(function() {
+    const hamburger = document.getElementById('sidebarHamburger');
+    const screenOverlay = document.getElementById('sidebarOverlay');
+    const navbarAside = document.getElementById('offcanvas_aside');
+    const mainWrap = document.getElementById('mainWrap');
+
+    function openSidebar() {
+        navbarAside.classList.add('show');
+        screenOverlay.classList.add('active');
+        mainWrap.classList.add('dimmed');
+        hamburger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+        navbarAside.classList.remove('show');
+        screenOverlay.classList.remove('active');
+        mainWrap.classList.remove('dimmed');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+    }
+    hamburger.addEventListener('click', function() {
+        if (navbarAside.classList.contains('show')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+    screenOverlay.addEventListener('click', closeSidebar);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && navbarAside.classList.contains('show')) {
+            closeSidebar();
+        }
+    });
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+            closeSidebar();
+        }
+    });
+})();
 </script>

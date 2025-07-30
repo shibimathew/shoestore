@@ -21,8 +21,7 @@ const getMyWalletPage = async (req, res, next) => {
     const transactions = await Wallet.find({ userId })
       .sort({ createdAt: -1 })
       .lean();
-    console.log(transactions);
-    // Ensure userId is a valid ObjectId
+
     const userObjectId = mongoose.Types.ObjectId.isValid(userId)
       ? new mongoose.Types.ObjectId(userId)
       : userId;

@@ -24,7 +24,7 @@
             left: 0;
             background: #fff;
             z-index: 1000;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .main-wrap {
@@ -40,23 +40,80 @@
             left: 0;
             background: rgba(0,0,0,0.5);
             display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .screen-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        .hamburger-btn {
+            display: none;
+            position: fixed;
+
+            right: 18px;
+            z-index: 1100;
+            background: #fff;
+            border: none;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 10px 12px;
+            cursor: pointer;
+        }
+        .hamburger-btn .bar {
+            display: block;
+            width: 24px;
+            height: 3px;
+            margin: 4px 0;
+            background: #333;
+            border-radius: 2px;
+            transition: all 0.3s;
         }
         @media (max-width: 991px) {
             .navbar-aside {
                 transform: translateX(-100%);
-            }
-            .main-wrap {
-                margin-left: 0;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             }
             .navbar-aside.show {
                 transform: translateX(0);
             }
+            .main-wrap {
+                margin-left: 0;
+            }
+            .hamburger-btn {
+                display: block;
+            }
+        }
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 0 16px;
+            position: sticky;
+            top: 0;
+            z-index: 1200;
+        }
+        .admin-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-left: 16px;
         }
     </style>
 </head>
 
 <body>
-    <div class="screen-overlay"></div>
+    <header class="admin-header">
+        <button class="hamburger-btn" id="sidebarHamburger" aria-label="Toggle sidebar" aria-controls="offcanvas_aside" aria-expanded="false">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        <span class="admin-title">Customers List</span>
+    </header>
+    <div class="screen-overlay" id="sidebarOverlay"></div>
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="/admin/dashboard" class="brand-wrap">
@@ -68,12 +125,12 @@
         </div>
         <nav>
            <ul class="menu-aside">
-                <li class="menu-item active">
+                <li class="menu-item ">
                     <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-person"></i>
                         <span class="text">Customers</span>
                     </a>
@@ -263,6 +320,42 @@
                 showConfirmButton: false
             });
         }
+
+        // Sidebar toggle for mobile/tablet
+        const sidebar = document.getElementById('offcanvas_aside');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('sidebarHamburger');
+        function openSidebar() {
+            sidebar.classList.add('show');
+            overlay.classList.add('active');
+            hamburger.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeSidebar() {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+        hamburger.addEventListener('click', function() {
+            if (sidebar.classList.contains('show')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        });
+        overlay.addEventListener('click', closeSidebar);
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('show')) {
+                closeSidebar();
+            }
+        });
+        // Optional: close sidebar when resizing to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992) {
+                closeSidebar();
+            }
+        });
     </script>
 </body>
 </html>

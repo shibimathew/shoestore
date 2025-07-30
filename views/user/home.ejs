@@ -1,5 +1,239 @@
 <%- include('../partials/user/header.ejs') %>
 
+<!-- Responsive Header -->
+<style>
+/* General Reset */
+.header, .header-area, .header-middle, .header-bottom, .header-top, .header-wrap, .header-action-right, .header-action-2, .header-action-icon-2, .logo {
+    box-sizing: border-box;
+}
+
+/* Modern Flex Header */
+.responsive-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 1002;
+}
+
+.header-wrap .header-right {
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: flex-end;
+}
+
+.responsive-header .logo {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #222;
+    letter-spacing: 1px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+.responsive-header .logo img {
+    height: 36px;
+    margin-right: 8px;
+}
+.responsive-header .header-icons {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+.responsive-header .header-icons a {
+    display: flex;
+    align-items: center;
+    position: relative;
+    color: #222;
+    transition: color 0.2s;
+    font-size: 1.3rem;
+}
+.responsive-header .header-icons a .wishlist-heart.red {
+    color: #ff3b3b !important;
+}
+.responsive-header .header-icons a .wishlist-heart {
+    transition: color 0.2s;
+}
+.responsive-header .header-icons a:hover {
+    color: #007bff;
+}
+
+/* Hamburger */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    cursor: pointer;
+    align-items: center;
+    z-index: 1101;
+    margin-left: 0.5rem;
+}
+.hamburger span {
+    display: block;
+    width: 22px;
+    height: 3px;
+    background: #222;
+    margin: 3px 0;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 240px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+    z-index: 1200;
+    transition: left 0.3s;
+    padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.mobile-menu.active {
+    left: 0;
+    display: flex;
+}
+.mobile-menu .menu-link {
+    font-size: 1.15rem;
+    color: #222;
+    text-decoration: none;
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.mobile-menu .menu-link.active,
+.mobile-menu .menu-link:hover {
+    color: #007bff;
+}
+.mobile-menu .close-menu {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #222;
+    cursor: pointer;
+}
+
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.25);
+    z-index: 1199;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 991px) {
+    .header-area, .header-middle, .header-bottom, .header-top {
+        display: none !important;
+    }
+    .responsive-header {
+        display: flex;
+    }
+    .hamburger {
+        display: flex;
+    }
+    .mobile-menu {
+        display: flex;
+    }
+}
+@media (min-width: 992px) {
+    .responsive-header, .mobile-menu, .menu-overlay {
+        display: none !important;
+    }
+    .responsive-header .logo {
+        margin-left: auto;
+        margin-right: 0;
+    }
+}
+</style>
+
+<script>
+// Expose login state to JS
+var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'false' %>";
+</script>
+
+<!-- Responsive Header for Mobile/Tablet -->
+<div class="responsive-header">
+    <a href="/home" class="logo">
+        <img src="/assets/imgs/theme/shoestore-logo.svg" alt="ShoeStore" onerror="this.style.display='none';">
+    </a>
+    <div class="header-icons">
+        <a href="/wishlist" title="Wishlist"><i class="fi-rs-heart wishlist-heart"></i></a>
+        <a href="/cart" title="Cart"><i class="fi-rs-shopping-cart"></i></a>
+        <button class="hamburger" id="mobileMenuToggle" aria-label="Open menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+<nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
+    <button class="close-menu" id="closeMobileMenu" aria-label="Close menu">&times;</button>
+    <a href="/home" class="menu-link <%= (typeof page !== 'undefined' && page === 'home') ? 'active' : '' %>">Home</a>
+    <a href="/shop" class="menu-link <%= (typeof page !== 'undefined' && page === 'shop') ? 'active' : '' %>">Shop</a>
+    <a href="/profileinfo" class="menu-link <%= (typeof page !== 'undefined' && page === 'profile') ? 'active' : '' %>">Profile</a>
+<a href="/logout" class="menu-link <%= (typeof page !== 'undefined' && page === 'logout') ? 'active' : '' %>">Logout</a>
+
+</nav>
+
+<script>
+// Mobile menu toggle
+(function() {
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const closeMenuBtn = document.getElementById('closeMobileMenu');
+    function openMenu() {
+        mobileMenu.classList.add('active');
+        menuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+        mobileMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    menuToggle.addEventListener('click', openMenu);
+    closeMenuBtn.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) closeMenu();
+    });
+})();
+</script>
+
     <!-- Modal -->
 
     <style>
@@ -35,139 +269,6 @@
         }
     </style>
 
-    <!-- Quick view -->
-    <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-        <div class="modal-content">              
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>       
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12">
-                            <div class="detail-gallery">
-                                <span class="zoom-icon"><i class="fi-rs-search"></i></span>
-                                <!-- MAIN SLIDES -->
-                                <div class="product-image-slider">
-                                    <figure class="border-radius-10">
-                                        <img src="assets/imgs/shop/product-16-2.jpg" alt="product image">
-                                    </figure>
-                                    <figure class="border-radius-10">
-                                        <img src="assets/imgs/shop/product-16-1.jpg" alt="product image">
-                                    </figure>
-                                    <figure class="border-radius-10">
-                                        <img src="assets/imgs/shop/product-16-3.jpg" alt="product image">
-                                    </figure>
-                                    <figure class="border-radius-10">
-                                        <img src="assets/imgs/shop/product-16-4.jpg" alt="product image">
-                                    </figure>
-                                    <figure class="border-radius-10">
-                                        <img src="assets/imgs/shop/product-16-5.jpg" alt="product image">
-                                    </figure>
-                                    <figure class="border-radius-10">
-                                        <img src="assets/imgs/shop/product-16-6.jpg" alt="product image">
-                                    </figure>
-                                    <figure class="border-radius-10">
-                                        <img src="assets/imgs/shop/product-16-7.jpg" alt="product image">
-                                    </figure>
-                                </div>
-                                <!-- THUMBNAILS -->
-                                <div class="slider-nav-thumbnails pl-15 pr-15">
-                                    <div><img src="assets/imgs/shop/thumbnail-3.jpg" alt="product image"></div>
-                                    <div><img src="assets/imgs/shop/thumbnail-4.jpg" alt="product image"></div>
-                                    <div><img src="assets/imgs/shop/thumbnail-5.jpg" alt="product image"></div>
-                                    <div><img src="assets/imgs/shop/thumbnail-6.jpg" alt="product image"></div>
-                                    <div><img src="assets/imgs/shop/thumbnail-7.jpg" alt="product image"></div>
-                                    <div><img src="assets/imgs/shop/thumbnail-8.jpg" alt="product image"></div>
-                                    <div><img src="assets/imgs/shop/thumbnail-9.jpg" alt="product image"></div>
-                                </div>
-                            </div>
-                            <!-- End Gallery -->
-                            <div class="social-icons single-share">
-                                <ul class="text-grey-5 d-inline-block">
-                                    <li><strong class="mr-10">Share this:</strong></li>
-                                    <li class="social-facebook"><a href="#"><img src="assets/imgs/theme/icons/icon-facebook.svg" alt=""></a></li>
-                                    <li class="social-twitter"> <a href="#"><img src="assets/imgs/theme/icons/icon-twitter.svg" alt=""></a></li>
-                                    <li class="social-instagram"><a href="#"><img src="assets/imgs/theme/icons/icon-instagram.svg" alt=""></a></li>
-                                    <li class="social-linkedin"><a href="#"><img src="assets/imgs/theme/icons/icon-pinterest.svg" alt=""></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-12 col-xs-12">
-                            <div class="detail-info">
-                                <h3 class="title-detail mt-30">Colorful Pattern Shirts HD450</h3>
-                                <div class="product-detail-rating">
-                                    <div class="pro-details-brand">
-                                        <span> Brands: <a href="shop-grid-right.html">Bootstrap</a></span>
-                                    </div>
-                                    <div class="product-rate-cover text-end">
-                                        <div class="product-rate d-inline-block">
-                                            <div class="product-rating" style="width:90%">
-                                            </div>
-                                        </div>
-                                        <span class="font-small ml-5 text-muted"> (25 reviews)</span>
-                                    </div>
-                                </div>
-                                <div class="clearfix product-price-cover">
-                                    <div class="product-price primary-color float-left">
-                                        <ins><span class="text-brand">$120.00</span></ins>
-                                        <ins><span class="old-price font-md ml-15">$200.00</span></ins>
-                                        <span class="save-price  font-md color3 ml-15">25% Off</span>
-                                    </div>
-                                </div>
-                                <div class="bt-1 border-color-1 mt-15 mb-15"></div>
-                                <div class="short-desc mb-30">
-                                    <p class="font-sm">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquam rem officia, corrupti reiciendis minima nisi modi,!</p>
-                                </div>
-                                
-
-                                
-                                <div class="attr-detail attr-color mb-15">
-                                    <strong class="mr-10">Color</strong>
-                                    <ul class="list-filter color-filter">
-                                        <li><a href="#" data-color="Red"><span class="product-color-red"></span></a></li>
-                                        <li><a href="#" data-color="Yellow"><span class="product-color-yellow"></span></a></li>
-                                        <li class="active"><a href="#" data-color="White"><span class="product-color-white"></span></a></li>
-                                        <li><a href="#" data-color="Orange"><span class="product-color-orange"></span></a></li>
-                                        <li><a href="#" data-color="Cyan"><span class="product-color-cyan"></span></a></li>
-                                        <li><a href="#" data-color="Green"><span class="product-color-green"></span></a></li>
-                                        <li><a href="#" data-color="Purple"><span class="product-color-purple"></span></a></li>
-                                    </ul>
-                                </div>
-                                <div class="attr-detail attr-size">
-                                    <strong class="mr-10">Size</strong>
-                                    <ul class="list-filter size-filter font-small">
-                                        <li><a href="#">S</a></li>
-                                        <li class="active"><a href="#">M</a></li>
-                                        <li><a href="#">L</a></li>
-                                        <li><a href="#">XL</a></li>
-                                        <li><a href="#">XXL</a></li>
-                                    </ul>
-                                </div>
-                                <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                                <div class="detail-extralink">
-                                    <div class="detail-qty border radius">
-                                        <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                        <span class="qty-val">1</span>
-                                        <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                                    </div>
-                                    <div class="product-extra-link2">
-                                        <button type="submit" class="button button-add-to-cart">Add to cart</button>
-                                        <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/wishlist"><i class="fi-rs-heart"></i></a>
-                                        <a aria-label="Compare" class="action-btn hover-up" href="/shop-compare"><i class="fi-rs-shuffle"></i></a>
-                                    </div>
-                                </div>
-                                <ul class="product-meta font-xs color-grey mt-50">
-                                    <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
-                                    <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#" rel="tag">Women</a>, <a href="#" rel="tag">Dress</a> </li>
-                                    <li>Availability:<span class="in-stock text-success ml-5">8 Items In Stock</span></li>
-                                </ul>
-                            </div>
-                            <!-- Detail Info -->
-                        </div>
-                    </div>
-                </div>        
-        </div>
-        </div>
-    </div>
   
     
     <header class="header-area header-style-1 header-height-2">
@@ -177,32 +278,18 @@
                     <div class="col-xl-3 col-lg-4">
                         <div class="header-info">
                             <ul>
-                                <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
-                                <li><i class="fi-rs-marker"></i><a  href="/contact">Our location</a></li>
                             </ul>
                         </div>
                     </div>
                     <div class="col-xl-6 col-lg-4">
                         <div class="text-center">
-                            <!-- <div id="news-flash" class="d-inline-block">
-                                <ul>
-                                    <li>Get great devices up to 50% off <a href="/shop">View details</a></li>
-                                    <li>Supper Value Deals - Save more with coupons</li>
-                                    <li>Trendy 25silver jewelry, save up 35% off today <a href="shope">Shop now</a></li>
-                                </ul>
-                            </div> -->
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-4">
                         <div class="header-info header-info-right">
                             <ul>
                                 <li>
-                                    <a class="language-dropdown-active" href="#"> <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i></a>
-                                    <ul class="language-dropdown">
-                                        <li><a href="#"><img src="assets/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                        <li><a href="#"><img src="assets/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                        <li><a href="#"><img src="assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
-                                    </ul>
+                                  
                                 </li>
                                   
                                 <% if (locals.user) { %>
@@ -210,8 +297,6 @@
                                         <a href="#" class="sign-in-link"><%= locals.user.name %></a>
                                         <div class="dropdown-content">
                                             <a href="/profileinfo">Profile</a>
-                                            <!-- <a href="/orders">Orders</a> -->
-                                            <!-- <a href="/wishlist">Wishlist</a> -->
                                             <a href="/logout">Logout</a>
                                         </div>
                                     </div>
@@ -232,45 +317,24 @@
         <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
             <div class="container">
                 <div class="header-wrap">
-                    <!-- <div class=" logo-width-1">
-                       <img src="assets/imgs/theme/jaeger.png" alt="logo">
-                    </div> -->
+                    <div class="logo logo-width-1">
+                        <img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore Logo">
+                    </div>
+                
                     <div class="header-right">
-                        <div class="search-style-2">
-                            <form action="#">
-                                <!-- <select class="select-active">
-                                    <option>All Categories</option>
-                                    <option>Women's</option>
-                                    <option>Men's</option>
-                                    <option>Cellphones</option>
-                                    <option>Computer</option>
-                                    <option>Electronics</option>
-                                    <option> Accessories</option>
-                                    <option>Home & Garden</option>
-                                    <option>Luggage</option>
-                                    <option>Shoes</option>
-                                    <option>Mother & Kids</option>
-                                </select> -->
-                                <!-- <input type="text" placeholder="Search for items..."> -->
-                            </form>
-                        </div>
                         <div class="header-action-right">
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
                                     <a href="/wishlist">
-                                        <img class="svgInject" alt="Shoestore" src="assets/imgs/theme/icons/icon-heart.svg">
-                                        <!-- <span class="pro-count blue">4</span> -->
+                                        <i class="fi-rs-heart wishlist-heart"></i>
+                                        <!-- <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg"> -->
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="/cart">
-                                        <img alt="Shoestore" src="assets/imgs/theme/icons/icon-cart.svg">
-                                        <!-- <span class="pro-count blue">2</span> -->
-                                        
-                                    <!-- <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span> -->
-                                </a>
+                                        <i class="fi-rs-shopping-cart"></i>
+                                        <!-- <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg"> -->
                                     </a>
-
                                 </div>
                             </div>
                         </div>
@@ -282,7 +346,7 @@
             <div class="container">
                 <div class="header-wrap header-space-between position-relative">
                     <div class="logo logo-width-1 d-block d-lg-none">
-                        <a href="/home"><img src="assets/imgs/theme/jaeger.png" alt="logo"></a>
+                        <a href="/home"><img src="/assets/imgs/theme/shoestore-logo.svg" alt="logo"></a>
                     </div>
                     <div class="header-nav d-none d-lg-flex">
         
@@ -332,7 +396,7 @@
                                     <h2 class="animated fw-900">Supper value deals</h2>
                                     <h1 class="animated fw-900 text-brand">On all shoes</h1>
                                     <p class="animated">Save more with coupons & up to 70% off</p>
-                                    <a class="animated btn btn-brush btn-brush-3" href="shop-product-right.html"> Shop Now </a>
+                                    <a class="animated btn btn-brush btn-brush-3" href="/shop"> Shop Now </a>
                                 </div>
                             </div>
                             <div class="col-lg-7 col-md-6">
@@ -344,72 +408,10 @@
                     </div>
                 </div>
             
-                <!-- <div class="single-hero-slider single-animation-wrap">
-                    <div class="container">
-                        <div class="row align-items-center slider-animated-1">
-                            <div class="col-lg-5 col-md-6">
-                                <div class="hero-slider-content-2">
-                                    <h4 class="animated">Upcoming Offer</h4>
-                                    <h2 class="animated fw-900">Big Deals From</h2>
-                                    <h1 class="animated fw-900 text-8">Manufacturer</h1>
-                                    <p class="animated">Shoes,Flats,Heels,Sneakers</p>
-                                    <a class="animated btn btn-brush btn-brush-1" href="shop-product-right.html"> Shop Now </a>
-                                </div>
-                            </div>
-                            <div class="col-lg-7 col-md-6">
-                                <div class="single-slider-img single-slider-img-1">
-                                    <img class="animated slider-1-3" src="assets/imgs/slider/violet.webp" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-            </div>
-            <div class="slider-arrow hero-slider-1-arrow"></div>
+                
         </section>
-        <section class="featured section-padding position-relative">            
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets/imgs/theme/icons/feature-1.png" alt="">
-                            <h4 class="bg-1">Free Shipping</h4>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets/imgs/theme/icons/feature-2.png" alt="">
-                            <h4 class="bg-3">Online Order</h4>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets/imgs/theme/icons/feature-3.png" alt="">
-                            <h4 class="bg-2">Save Money</h4>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets/imgs/theme/icons/feature-4.png" alt="">
-                            <h4 class="bg-4">Promotions</h4>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets/imgs/theme/icons/feature-5.png" alt="">
-                            <h4 class="bg-5">Happy Sell</h4>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets/imgs/theme/icons/feature-6.png" alt="">
-                            <h4 class="bg-6">24/7 Support</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section><section class="product-tabs section-padding position-relative wow fadeIn animated">
-            <div class="bg-square"></div>
+        <section class="product-tabs section-padding position-relative wow fadeIn animated">
+           
             <div class="container">
                 <div class="tab-header">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -441,12 +443,12 @@
                                             aria-label="Add To Wishlist">
                                         <i class="fi-rs-heart"></i>
                                     </button>
-                                    <a aria-label="Compare" class="action-btn hover-up" href="/shop-compare.html">
-                                        <i class="fi-rs-shuffle"></i>
-                                    </a>
+                                    <!-- <a aria-label="Compare" class="action-btn hover-up" href="/shop-compare.html"> -->
+                                        <!-- <i class="fi-rs-shuffle"></i> -->
+                                    <!-- </a> -->
                                 </div>
                                 <div class="product-badges product-badges-position product-badges-mrg">
-                                    <span class="hot">Hot</span>
+                                    <!-- <span class="hot">Hot</span> -->
                                 </div>
                             </div>
                             <div class="product-content-wrap">
@@ -454,11 +456,11 @@
                                     <a href="/shop?category=<%= product.category._id %>"><%= product.category.name %></a>
                                 </div>
                                 <h2><a href="/productDetails?id=<%= product._id %>"><%= product.productName %></a></h2>
-                                <div class="rating-result" title="90%">
+                                <!-- <div class="rating-result" title="90%"> -->
                                     <span>
-                                        <span>90%</span>
+                                        <!-- <span>90%</span> -->
                                     </span>
-                                </div>
+                                <!-- </div> -->
                                 <!-- <div class="product-price">
 
                                     <span>₹<%= product.salePrice %></span>
@@ -481,9 +483,9 @@
   <% } %>
 </div>
                                 <div class="product-action-1 show">
-                                    <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart?id=<%= product._id %>">
+                                    <!-- <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart?id=<%= product._id %>">
                                         <i class="fi-rs-shopping-bag-add"></i>
-                                    </a>
+                                    </a> -->
                                 </div>
                             </div>
                         </div>
@@ -508,12 +510,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.add-to-wishlist-btn').forEach(button => {
         button.addEventListener('click', async function(e) {
             e.preventDefault();
-            
             const productId = this.dataset.productId;
             const heartIcon = this.querySelector('i');
-            
-            // Check if user is logged in (you can modify this check based on your auth system)
-            <% if (typeof user === 'undefined' || !user) { %>
+            // Check if user is logged in
+            if (!isUserLoggedIn) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Please Login',
@@ -527,12 +527,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
                 return;
-            <% } %>
-            
+            }
             try {
-                // Disable button during request
                 this.disabled = true;
-                
                 const response = await fetch('/wishlist/add', {
                     method: 'POST',
                     headers: {
@@ -540,15 +537,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({ productId: productId })
                 });
-                
                 const data = await response.json();
-                
                 if (response.ok) {
                     // Success - change heart icon to filled/red
-                    heartIcon.style.color = '#ff6b6b';
+                    heartIcon.style.color = '#ff3b3b';
+                    heartIcon.classList.add('red');
                     heartIcon.classList.add('fi-rs-heart-fill');
                     heartIcon.classList.remove('fi-rs-heart');
-                    
                     // Update wishlist count in header if exists
                     const wishlistCountElement = document.querySelector('.header-action-icon-2 a[href="/wishlist"] .pro-count');
                     if (wishlistCountElement) {
@@ -556,8 +551,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         const newCount = currentCount + 1;
                         wishlistCountElement.textContent = `${newCount} product${newCount !== 1 ? 's' : ''}`;
                     }
-                    
-                    // Show success message
                     Swal.fire({
                         icon: 'success',
                         title: 'Added to Wishlist!',
@@ -567,9 +560,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         toast: true,
                         position: 'top-end'
                     });
-                    
                 } else {
-                    // Handle errors (like already in wishlist)
                     if (response.status === 400) {
                         Swal.fire({
                             icon: 'info',
@@ -584,7 +575,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         throw new Error(data.message || 'Failed to add to wishlist');
                     }
                 }
-                
             } catch (error) {
                 console.error('Error adding to wishlist:', error);
                 Swal.fire({
@@ -595,7 +585,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     showConfirmButton: false
                 });
             } finally {
-                // Re-enable button
                 this.disabled = false;
             }
         });

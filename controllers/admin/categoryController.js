@@ -197,8 +197,6 @@ const deleteCategory = async (req, res) => {
 };
 const applyCategoryOffer = async (req, res) => {
   try {
-    console.log("Apply category offer request:", req.body);
-
     const { categoryId, discountPercentage } = req.body;
 
     if (!categoryId || discountPercentage === undefined) {
@@ -226,8 +224,6 @@ const applyCategoryOffer = async (req, res) => {
     category.categoryOffer = discountPercentage;
     await category.save();
 
-    console.log("Category offer applied successfully"); // Debug log
-
     return res.status(200).json({
       success: true,
       message: `Category offer of ${discountPercentage}% applied successfully`,
@@ -244,8 +240,6 @@ const applyCategoryOffer = async (req, res) => {
 
 const removeCategoryOffer = async (req, res) => {
   try {
-    console.log("Remove category offer request:", req.body);
-
     const { categoryId } = req.body;
 
     if (!categoryId) {
@@ -265,8 +259,6 @@ const removeCategoryOffer = async (req, res) => {
 
     category.categoryOffer = 0;
     await category.save();
-
-    console.log("Category offer removed successfully"); 
 
     return res.status(200).json({
       success: true,

@@ -221,7 +221,7 @@
         </div>
         <nav>
             <ul class="menu-aside">
-                <li class="menu-item active">
+                <li class="menu-item ">
                     <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
@@ -231,7 +231,7 @@
                         <span class="text">Customers</span>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
@@ -371,7 +371,7 @@
                                                 <img id="imgView1" src="" alt="">
                                             </div>
                                             <input class="form-control" type="file" name="images" id="input1"
-                                            accept="image/png, image/jpeg, image/jpg"
+                                            accept="image/png, image/jpeg, image/jpg, image/webp"
                                             onchange="viewImage(event,1)">
                                             <div id="image-error" class="error-message"></div>
                                             <button type="button" id="saveButton1" class="btn-sm btn-primary">Save</button>
@@ -411,6 +411,39 @@
         </section>
         
         <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+     if (typeof message !== 'undefined' && message) { 
+        // Determine the icon based on message type
+        let icon = 'error';
+        let title = 'Error';
+        
+         if (typeof messageType !== 'undefined') { 
+             if (messageType === 'success') { 
+                icon = 'success';
+                title = 'Success';
+             } else if (messageType === 'warning') { 
+                icon = 'warning';
+                title = 'Warning';
+             } else if (messageType === 'info') { 
+                icon = 'info';
+                title = 'Information';
+             } 
+         } 
+        
+        Swal.fire({
+            title: "Use valid image types",
+            text: message,
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#3085d6',
+            customClass: {
+                popup: 'animated fadeInDown'
+            }
+        });
+     } 
+});
+
             let cropperInstances = {};
 
 function validateForm() {

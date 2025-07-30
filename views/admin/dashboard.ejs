@@ -12,6 +12,58 @@
         overflow-x: hidden;
     }
 
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.3);
+        z-index: 1029;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+
+    .navbar-aside {
+        width: 250px;
+        height: 100vh;
+        position: fixed;
+        overflow-y: auto;
+        z-index: 1030;
+        background: #fff;
+        transition: transform 0.3s ease-in-out;
+        left: 0;
+        top: 0;
+    }
+    @media (max-width: 991px) {
+        .navbar-aside {
+            transform: translateX(-100%) !important;
+        }
+        .navbar-aside.show {
+            transform: translateX(0) !important;
+        }
+        .sidebar-overlay {
+            display: block;
+        }
+        .main-wrap {
+            margin-left: 0;
+            width: 100%;
+        }
+    }
+    @media (min-width: 992px) {
+        .sidebar-overlay {
+            display: none !important;
+        }
+        .navbar-aside {
+            transform: none !important;
+        }
+    }
+
     .chart-container {
         position: relative;
         margin: auto;
@@ -54,6 +106,69 @@
         background-color: #5a6268;
         color: white;
     }
+
+    /* Add these styles to your existing style section */
+.date-range-container {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.filter-controls {
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .filter-controls {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .filter-controls .btn-group {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-controls .btn-group .btn {
+        flex: 1;
+        font-size: 0.8rem;
+    }
+    
+    .date-range-container {
+        width: 100%;
+    }
+    
+    .date-range-container .d-flex {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .date-range-container input {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+
+.global-filter-btn.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
 
     /* Mobile and Tablet Responsive Styles */
     @media (max-width: 991px) {
@@ -222,14 +337,16 @@
 }
 </style>
 <div class="wrapper">
+    <!-- Sidebar Overlay for mobile/tablet -->
+    <div class="sidebar-overlay" id="sidebarOverlay" tabindex="-1" aria-hidden="true"></div>
     <!-- Sidebar -->
-    <aside class="navbar-aside" id="offcanvas_aside">
+    <aside class="navbar-aside" id="offcanvas_aside" aria-label="Sidebar" aria-modal="true" role="dialog">
         <div class="aside-top">
             <a href="/admin" class="brand-wrap">
                 <img src="/assets/imgs/theme/shoestore-logo.svg" class="logo" alt="Shoestore">
             </a>
             <div>
-                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+                <button class="btn btn-icon btn-aside-minimize" id="mobile-menu-toggle" aria-label="Open sidebar" aria-controls="offcanvas_aside" aria-expanded="false"> <i class="text-muted material-icons md-menu_open"></i> </button>
             </div>
         </div>
         <nav>
@@ -286,8 +403,10 @@
 
             </div>
             <div class="col-nav" style="display: flex !important; visibility: visible !important;">
-                <!-- Debug: Mobile menu button -->
-                <!--  -->
+                <!-- Mobile menu button for <992px -->
+                <button class="btn btn-icon btn-aside-minimize d-lg-none" id="mobile-menu-toggle-header" aria-label="Open sidebar" aria-controls="offcanvas_aside" aria-expanded="false">
+                    <i class="material-icons md-menu_open"></i>
+                </button>
             </div>
         </header>
 
@@ -300,18 +419,41 @@
             </div>
             
             <!-- Global Filters -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title">Time Filter</h5>
-                        <div class="btn-group" role="group" aria-label="Time Filter">
-                            <button type="button" class="btn btn-sm btn-outline-secondary active global-filter-btn" data-filter="weekly">Weekly</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary global-filter-btn" data-filter="monthly">Monthly</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary global-filter-btn" data-filter="yearly">Yearly</button>
-                        </div>
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h5 class="card-title mb-2">Filter Options</h5>
+            <div class="filter-controls d-flex flex-wrap align-items-center gap-3">
+                <!-- Time Period Buttons -->
+                <div class="btn-group" role="group" aria-label="Time Filter">
+                    <button type="button" class="btn btn-sm btn-outline-secondary active global-filter-btn" data-filter="weekly">Weekly</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary global-filter-btn" data-filter="monthly">Monthly</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary global-filter-btn" data-filter="yearly">Yearly</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary global-filter-btn" data-filter="custom">Custom Range</button>
+                </div>
+                
+                <!-- Date Range Inputs (initially hidden) -->
+                <div id="dateRangeContainer" class="date-range-container d-none">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <input type="date" id="startDate" class="form-control form-control-sm" style="width: auto;">
+                        <span class="text-muted">to</span>
+                        <input type="date" id="endDate" class="form-control form-control-sm" style="width: auto;">
+                        <button type="button" id="applyDateRange" class="btn btn-sm btn-primary">Apply</button>
+                        <!-- <button type="button" id="clearDateRange" class="btn btn-sm btn-outline-secondary">Clear</button> -->
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Loading indicator -->
+        <div id="loadingIndicator" class="text-center mt-2 d-none">
+            <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="text-muted ms-2">Loading data...</span>
+        </div>
+    </div>
+</div>
             
             <!-- Stats Cards Row -->
             <div class="row">
@@ -424,7 +566,7 @@
 <script src="/assets/js/main.js" type="text/javascript"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded",async ()=>{
+document.addEventListener("DOMContentLoaded", async () => {
 
 $(document).ready(function() {
     console.log('Dashboard script initializing...');
@@ -445,6 +587,10 @@ $(document).ready(function() {
         console.log('Chart.js is available, initializing dashboard...');
         initializeDashboard();
     });
+    
+    // Declare chart variables at global scope
+    let salesChart = null;
+    let categoryChart = null;
     
     function initializeDashboard() {
         let weeklyChartData, monthlyChartData, yearlyChartData, categoryData, topProductsData;
@@ -473,9 +619,6 @@ $(document).ready(function() {
                 weeklyTopProducts: topProductsData,
                 weeklyStats
             });
-            
-            let salesChart = null;
-            let categoryChart = null;
             
             const chartData = {
                 weekly: {
@@ -515,6 +658,12 @@ $(document).ready(function() {
                 console.log('Updating charts for filter:', filter);
                 console.log('Chart data for filter:', chartData[filter]);
                 
+                // Check if the filter data exists
+                if (!chartData[filter]) {
+                    console.error('No data available for filter:', filter);
+                    return;
+                }
+                
                 updateSalesChart(filter);
                 updateCategoryChart(filter);
                 updateTopProducts(filter);
@@ -524,7 +673,6 @@ $(document).ready(function() {
             function updateSalesChart(filter) {
                 const ctx = document.getElementById('myChart');
                 if (!ctx) {
-                    alert("hy shibi")
                     console.error('Sales chart canvas not found');
                     return;
                 }
@@ -669,7 +817,8 @@ $(document).ready(function() {
                     return;
                 }
                 
-                const products = chartData[filter].topProducts;
+                const currentData = chartData[filter];
+                const products = currentData && currentData.topProducts ? currentData.topProducts : [];
                 console.log('Updating top products:', products);
                 
                 if (products && products.length > 0) {
@@ -677,9 +826,9 @@ $(document).ready(function() {
                     products.forEach(product => {
                         html += `
                         <div class="product-progress-item">
-                            <span class="text-muted font-xs">${product.productName}</span>
+                            <span class="text-muted font-xs">${product.productName || 'Unknown Product'}</span>
                             <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" style="width: ${product.percentage}%">${product.percentage}%</div>
+                                <div class="progress-bar" role="progressbar" style="width: ${product.percentage || 0}%">${product.percentage || 0}%</div>
                             </div>
                         </div>
                         `;
@@ -691,25 +840,26 @@ $(document).ready(function() {
             }
             
             function updateStatsCards(filter) {
-                const stats = chartData[filter].stats;
+                const currentData = chartData[filter];
+                const stats = currentData && currentData.stats ? currentData.stats : {};
                 console.log('Updating stats cards:', stats);
                 
                 // Update revenue
                 const revenueElement = document.querySelector('.revenue-value');
                 if (revenueElement) {
-                    revenueElement.innerHTML = '₹' + stats.revenue.toFixed(2);
+                    revenueElement.innerHTML = '₹' + (stats.revenue || 0).toFixed(2);
                 }
                 
                 // Update orders
                 const ordersElement = document.querySelector('.orders-value');
                 if (ordersElement) {
-                    ordersElement.innerHTML = stats.orders;
+                    ordersElement.innerHTML = stats.orders || 0;
                 }
                 
                 // Update products (this typically doesn't change by period, but we update it anyway)
                 const productsElement = document.querySelector('.products-value');
                 if (productsElement) {
-                    productsElement.innerHTML = stats.products;
+                    productsElement.innerHTML = stats.products || 0;
                 }
             }
             
@@ -722,16 +872,273 @@ $(document).ready(function() {
                 const filter = $(this).data('filter');
                 console.log('Filter clicked:', filter);
                 
-                $('.global-filter-btn').removeClass('active');
-                $(this).addClass('active');
-                
-                updateAllCharts(filter);
+                if (filter !== 'custom') {
+                    $('.global-filter-btn').removeClass('active');
+                    $(this).addClass('active');
+                    updateAllCharts(filter);
+                }
             });
+            
+            // Initialize the date range filter
+            initializeDateRangeFilter();
             
             console.log('Dashboard initialization complete');
         } catch (error) {
             console.error('Error initializing dashboard:', error);
         }
+    }
+
+    // Add date range functionality
+    function initializeDateRangeFilter() {
+        const customBtn = $('.global-filter-btn[data-filter="custom"]');
+        const dateRangeContainer = $('#dateRangeContainer');
+        const startDateInput = $('#startDate');
+        const endDateInput = $('#endDate');
+        const applyBtn = $('#applyDateRange');
+        const clearBtn = $('#clearDateRange');
+        const loadingIndicator = $('#loadingIndicator');
+        
+        // Set max date to today
+        const today = new Date().toISOString().split('T')[0];
+        startDateInput.attr('max', today);
+        endDateInput.attr('max', today);
+        
+        // Show/hide date range inputs
+        customBtn.on('click', function() {
+            if ($(this).hasClass('active')) {
+                // If already active, just show the date inputs
+                dateRangeContainer.removeClass('d-none');
+            } else {
+                // Make this button active and show inputs
+                $('.global-filter-btn').removeClass('active');
+                $(this).addClass('active');
+                dateRangeContainer.removeClass('d-none');
+            }
+        });
+        
+        // Hide date inputs when other filters are selected
+        $('.global-filter-btn:not([data-filter="custom"])').on('click', function() {
+            dateRangeContainer.addClass('d-none');
+            loadingIndicator.addClass('d-none');
+        });
+        
+        // Validate date inputs
+        startDateInput.on('change', function() {
+            const startDate = $(this).val();
+            if (startDate) {
+                endDateInput.attr('min', startDate);
+            }
+        });
+        
+        endDateInput.on('change', function() {
+            const endDate = $(this).val();
+            if (endDate) {
+                startDateInput.attr('max', endDate);
+            }
+        });
+        
+        // Apply date range filter
+        applyBtn.on('click', function() {
+            const startDate = startDateInput.val();
+            const endDate = endDateInput.val();
+            
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+            
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('Start date cannot be later than end date');
+                return;
+            }
+            
+            loadingIndicator.removeClass('d-none');
+            applyDateRangeFilter(startDate, endDate);
+        });
+        
+        // Clear date range
+        clearBtn.on('click', function() {
+            startDateInput.val('');
+            endDateInput.val('');
+            startDateInput.removeAttr('max');
+            endDateInput.removeAttr('min');
+            startDateInput.attr('max', today);
+            endDateInput.attr('max', today);
+            
+            // Switch back to weekly view
+            $('.global-filter-btn').removeClass('active');
+            $('.global-filter-btn[data-filter="weekly"]').addClass('active');
+            dateRangeContainer.addClass('d-none');
+            loadingIndicator.addClass('d-none');
+            updateAllCharts('weekly');
+        });
+    }
+
+    // Function to apply date range filter
+    function applyDateRangeFilter(startDate, endDate) {
+        $.ajax({
+            url: '/admin/dashboard/daterange',
+            method: 'GET',
+            data: { startDate, endDate },
+            success: function(response) {
+                console.log('Date range data received:', response);
+                
+                // Update charts with custom date range data
+                updateChartsWithCustomData(response, startDate, endDate);
+                
+                $('#loadingIndicator').addClass('d-none');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching date range data:', error);
+                alert('Error loading data for the selected date range. Please try again.');
+                $('#loadingIndicator').addClass('d-none');
+            }
+        });
+    }
+
+    // Function to update charts with custom date range data
+    function updateChartsWithCustomData(data, startDate, endDate) {
+        // Update sales chart
+        const salesCtx = document.getElementById('myChart');
+        if (salesChart) {
+            salesChart.destroy();
+        }
+        
+        if (salesCtx && data.chartData) {
+            const context = salesCtx.getContext('2d');
+            salesChart = new Chart(context, {
+                type: 'line',
+                data: {
+                    labels: data.chartData.labels || [],
+                    datasets: [{
+                        label: 'Sales',
+                        data: data.chartData.data || [],
+                        fill: true,
+                        backgroundColor: 'rgba(44, 120, 220, 0.2)',
+                        borderColor: 'rgba(44, 120, 220)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(44, 120, 220)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: `Sales Data (${formatDateForDisplay(startDate)} - ${formatDateForDisplay(endDate)})`
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 500
+                    }
+                }
+            });
+        }
+        
+        // Update category chart
+        const categoryCtx = document.getElementById('myChart2');
+        if (categoryChart) {
+            categoryChart.destroy();
+        }
+        
+        if (categoryCtx && data.categoryData && data.categoryData.labels && data.categoryData.labels.length > 0) {
+            const context2 = categoryCtx.getContext('2d');
+            categoryChart = new Chart(context2, {
+                type: 'doughnut',
+                data: {
+                    labels: data.categoryData.labels,
+                    datasets: [{
+                        data: data.categoryData.data || [],
+                        backgroundColor: [
+                            '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff',
+                            '#ff9f40', '#c9cbcf', '#66ff99', '#ff66cc', '#666699'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                font: { size: 11 }
+                            }
+                        }
+                    },
+                    animation: { duration: 500 },
+                    cutout: '70%'
+                }
+            });
+        }
+        
+        // Update top products
+        const topProductsContainer = document.getElementById('topProductsContainer');
+        if (topProductsContainer) {
+            if (data.topProducts && data.topProducts.length > 0) {
+                let html = '';
+                data.topProducts.forEach(product => {
+                    html += `
+                        <div class="product-progress-item">
+                            <span class="text-muted font-xs">${product.productName || 'Unknown Product'}</span>
+                            <div class="progress mb-3">
+                                <div class="progress-bar" role="progressbar" style="width: ${product.percentage || 0}%">${product.percentage || 0}%</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                topProductsContainer.innerHTML = html;
+            } else {
+                topProductsContainer.innerHTML = '<span class="text-muted">No product data available for selected range</span>';
+            }
+        }
+        
+        // Update stats cards
+        if (data.stats) {
+            const revenueElement = document.querySelector('.revenue-value');
+            if (revenueElement) {
+                revenueElement.innerHTML = '₹' + (data.stats.revenue || 0).toFixed(2);
+            }
+            
+            const ordersElement = document.querySelector('.orders-value');
+            if (ordersElement) {
+                ordersElement.innerHTML = data.stats.orders || 0;
+            }
+            
+            const productsElement = document.querySelector('.products-value');
+            if (productsElement) {
+                productsElement.innerHTML = data.stats.products || 0;
+            }
+        }
+    }
+
+    // Helper function to format date for display
+    function formatDateForDisplay(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            day: '2-digit', 
+            month: 'short', 
+            year: 'numeric' 
+        });
     }
 
     // Sidebar toggle functionality
@@ -740,15 +1147,17 @@ $(document).ready(function() {
         console.log('Toggle clicked');
         $('#offcanvas_aside').toggleClass('show');
         $('body').toggleClass('sidebar-open');
+        $('#sidebarOverlay').toggleClass('active');
     });
 
     // Close sidebar when clicking outside on mobile
     $(document).on('click', function(e) {
         if (window.innerWidth <= 991 && 
-            !$(e.target).closest('#offcanvas_aside, .btn-aside-minimize, #mobile-menu-toggle').length && 
+            !$(e.target).closest('#offcanvas_aside, .btn-aside-minimize, #mobile-menu-toggle, #sidebarOverlay').length && 
             $('#offcanvas_aside').hasClass('show')) {
             $('#offcanvas_aside').removeClass('show');
             $('body').removeClass('sidebar-open');
+            $('#sidebarOverlay').removeClass('active');
         }
     });
 });
@@ -757,23 +1166,27 @@ $(document).ready(function() {
 document.addEventListener('DOMContentLoaded', function () {
     const toggleBtn = document.querySelector('#mobile-menu-toggle');
     const sidebar = document.querySelector('#offcanvas_aside');
+    const sidebarOverlay = document.querySelector('#sidebarOverlay');
 
     toggleBtn?.addEventListener('click', function (e) {
         e.preventDefault();
         console.log('Mobile toggle clicked');
         sidebar.classList.toggle('show');
         document.body.classList.toggle('sidebar-open');
+        sidebarOverlay.classList.toggle('active');
     });
 
     document.addEventListener('click', function (e) {
         if (window.innerWidth <= 991 &&
             !e.target.closest('#offcanvas_aside') &&
-            !e.target.closest('#mobile-menu-toggle')) {
+            !e.target.closest('#mobile-menu-toggle') &&
+            !e.target.closest('#sidebarOverlay')) {
             sidebar.classList.remove('show');
             document.body.classList.remove('sidebar-open');
+            sidebarOverlay.classList.remove('active');
         }
     });
 });
-})
 
+});
 </script>
