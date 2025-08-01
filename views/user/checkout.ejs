@@ -1,4 +1,3 @@
-
 <%- include('../partials/user/header.ejs') %>
 
 <!-- Add Material Icons font -->
@@ -360,32 +359,1025 @@
         background-color: #2f9b6a;
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 767.98px) {
+    /* Enhanced Mobile UI - Tablet View */
+    @media (max-width: 991px) {
+        .container {
+            padding: 0 15px;
+        }
+        
+        .checkout-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Enhanced Address Cards */
         .address-list {
             grid-template-columns: 1fr;
+            gap: 0.75rem;
         }
-
+        
+        .address-card {
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .address-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #3BB77E;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .address-card.selected::before {
+            opacity: 1;
+        }
+        
+        .address-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        
+        /* Enhanced Product Cards */
         .checkout-product {
             flex-wrap: wrap;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .checkout-product:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .checkout-product-image {
-            margin-bottom: 1rem;
+            width: 70px;
+            height: 70px;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .checkout-product-details {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .checkout-product-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+        
+        .checkout-product-price {
+            color: #3BB77E;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .checkout-product-quantity {
             margin: 0.5rem 0;
             width: 100%;
+            font-size: 0.85rem;
+            background: #fff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
         }
 
         .checkout-product-total {
             width: 100%;
-            text-align: left;
+            text-align: right;
             margin-top: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        /* Enhanced Payment Methods */
+        .payment-method {
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .payment-method::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #3BB77E;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .payment-method.selected::before {
+            opacity: 1;
+        }
+        
+        .payment-method:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        
+        .payment-method-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 1rem;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .payment-method-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+        
+        .payment-method-description {
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        /* Enhanced Summary */
+        .checkout-summary {
+            padding: 1.5rem;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .checkout-summary-title {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+            font-weight: 600;
+            text-align: center;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #3BB77E;
+        }
+        
+        .checkout-summary-row {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-size: 0.9rem;
+        }
+        
+        .checkout-summary-row:last-child {
+            border-bottom: none;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #3BB77E;
+            padding-top: 1rem;
+            border-top: 2px solid #3BB77E;
+        }
+        
+        /* Enhanced Place Order Button */
+        .place-order-btn {
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            box-shadow: 0 4px 16px rgba(59, 183, 126, 0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .place-order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 183, 126, 0.4);
+            background: linear-gradient(135deg, #2d8f5f, #1e6b4a);
+        }
+        
+        /* Enhanced Coupon Section */
+        .coupon-input {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .coupon-input input {
+            width: 100%;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            transition: border-color 0.3s ease;
+        }
+        
+        .coupon-input input:focus {
+            border-color: #3BB77E;
+            box-shadow: 0 0 0 3px rgba(59, 183, 126, 0.1);
+        }
+        
+        .coupon-input button {
+            width: 100%;
+            margin-top: 0.25rem;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .coupon-input button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 183, 126, 0.3);
+        }
+        
+        .select-coupon-btn {
+            width: 100%;
+            margin-top: 0.25rem;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .select-coupon-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+        
+        /* Enhanced Add Address Button */
+        .add-address-btn {
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px dashed #3BB77E;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .add-address-btn:hover {
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(59, 183, 126, 0.3);
         }
     }
 
+    /* Enhanced Mobile UI - Mobile View */
+    @media (max-width: 767.98px) {
+        /* Mobile Header Enhancements */
+        .page-header {
+            padding: 1rem 0;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .breadcrumb a {
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .breadcrumb a:hover {
+            color: white;
+        }
+        
+        /* Enhanced Card Headers */
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px 12px 0 0;
+            border-bottom: 2px solid #3BB77E;
+        }
+        
+        .card-header h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header h4::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #3BB77E;
+            margin-right: 0.75rem;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Address Cards */
+        .address-card {
+            padding: 1rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+        }
+        
+        .address-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .address-card.selected::before {
+            opacity: 1;
+        }
+        
+        .address-card.selected {
+            background: linear-gradient(135deg, rgba(59, 183, 126, 0.05), rgba(45, 143, 95, 0.05));
+            border-color: #3BB77E;
+            transform: scale(1.02);
+        }
+        
+        .address-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .address-card .address-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            padding-right: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .address-card .address-details {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #666;
+        }
+        
+        .default-badge {
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(59, 183, 126, 0.3);
+        }
+        
+        /* Enhanced Add Address Button */
+        .add-address-btn {
+            padding: 1.25rem;
+            font-size: 1rem;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 3px dashed #3BB77E;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #3BB77E;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .add-address-btn:hover {
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 183, 126, 0.3);
+        }
+        
+        .add-address-btn i {
+            font-size: 1.25rem;
+        }
+        
+        /* Enhanced Product Cards */
+        .checkout-product {
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .checkout-product::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            opacity: 0.7;
+        }
+        
+        .checkout-product:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .checkout-product-image {
+            width: 80px;
+            height: 80px;
+            margin-right: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            object-fit: cover;
+        }
+        
+        .checkout-product-details {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .checkout-product-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        
+        .checkout-product-price {
+            color: #3BB77E;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .checkout-product-quantity {
+            font-size: 0.9rem;
+            background: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            display: inline-block;
+            color: #666;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .checkout-product-total {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+        
+        /* Enhanced Payment Methods */
+        .payment-method {
+            padding: 1.25rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .payment-method::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .payment-method.selected::before {
+            opacity: 1;
+        }
+        
+        .payment-method.selected {
+            background: linear-gradient(135deg, rgba(59, 183, 126, 0.05), rgba(45, 143, 95, 0.05));
+            border-color: #3BB77E;
+            transform: scale(1.02);
+        }
+        
+        .payment-method:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .payment-method-icon {
+            width: 50px;
+            height: 50px;
+            margin-right: 1rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 183, 126, 0.3);
+        }
+        
+        .payment-method-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+        
+        .payment-method-description {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .wallet-balance {
+            background: rgba(59, 183, 126, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #3BB77E;
+            margin-top: 0.25rem;
+            display: inline-block;
+        }
+        
+        /* Enhanced Summary */
+        .checkout-summary {
+            padding: 1.5rem;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .checkout-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+        }
+        
+        .checkout-summary-title {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+            font-weight: 700;
+            text-align: center;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #3BB77E;
+            position: relative;
+        }
+        
+        .checkout-summary-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+        }
+        
+        .checkout-summary-row {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .checkout-summary-row:last-child {
+            border-bottom: none;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #3BB77E;
+            padding-top: 1.5rem;
+            border-top: 2px solid #3BB77E;
+            margin-top: 1rem;
+        }
+        
+        /* Enhanced Place Order Button */
+        .place-order-btn {
+            padding: 1.25rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            box-shadow: 0 8px 25px rgba(59, 183, 126, 0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            color: white;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+        
+        .place-order-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(59, 183, 126, 0.4);
+            background: linear-gradient(135deg, #2d8f5f, #1e6b4a);
+        }
+        
+        .place-order-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        /* Enhanced Coupon Section */
+        .coupon-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            margin-bottom: 2rem;
+        }
+        
+        .coupon-input {
+            margin-bottom: 1.5rem;
+        }
+        
+        .coupon-input input {
+            padding: 1rem 1.25rem;
+            font-size: 1.1rem;
+            border-radius: 16px;
+            border: 3px solid #e9ecef;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .coupon-input input:focus {
+            border-color: #3BB77E;
+            box-shadow: 0 0 0 6px rgba(59, 183, 126, 0.15);
+            background: white;
+        }
+        
+        .coupon-input button {
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            border: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            color: white;
+            box-shadow: 0 6px 16px rgba(59, 183, 126, 0.4);
+        }
+        
+        .coupon-input button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 183, 126, 0.5);
+        }
+        
+        .select-coupon-btn {
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            border: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            color: white;
+            box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
+        }
+        
+        .select-coupon-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.5);
+        }
+        
+        /* Enhanced Coupon Dropdown */
+        .coupon-dropdown {
+            max-height: 250px;
+            border-radius: 16px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+            border: 2px solid #e9ecef;
+        }
+        
+        .coupon-item {
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .coupon-item:hover {
+            background: linear-gradient(135deg, rgba(59, 183, 126, 0.08), rgba(45, 143, 95, 0.08));
+        }
+        
+        .coupon-item.selected {
+            background: linear-gradient(135deg, rgba(59, 183, 126, 0.15), rgba(45, 143, 95, 0.15));
+            border-left: 6px solid #3BB77E;
+        }
+        
+        .coupon-code {
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+        
+        .coupon-description {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .coupon-terms {
+            font-size: 0.85rem;
+            color: #999;
+        }
+        
+        .coupon-actions {
+            padding: 1.5rem;
+            gap: 1rem;
+            background: #f8f9fa;
+            border-radius: 16px;
+            margin-top: 1.5rem;
+        }
+        
+        .apply-selected-btn,
+        .clear-selection-btn {
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            border-radius: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .apply-selected-btn {
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            color: white;
+            box-shadow: 0 6px 16px rgba(59, 183, 126, 0.4);
+        }
+        
+        .clear-selection-btn {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            color: white;
+            box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
+        }
+        
+        .apply-selected-btn:hover,
+        .clear-selection-btn:hover {
+            transform: translateY(-3px);
+        }
+        
+        .coupon-success-message {
+            padding: 1.25rem;
+            font-size: 1rem;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 2px solid #c3e6cb;
+            color: #155724;
+            font-weight: 700;
+        }
+        
+        .remove-coupon-btn {
+            font-size: 0.9rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            background: rgba(220, 53, 69, 0.15);
+            color: #dc3545;
+            border: 2px solid rgba(220, 53, 69, 0.3);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .remove-coupon-btn:hover {
+            background: rgba(220, 53, 69, 0.25);
+            color: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        /* Enhanced Coupon Success Message */
+        .coupon-success-message {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 2px solid #c3e6cb;
+            border-radius: 16px;
+            padding: 1.25rem;
+            color: #155724;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .coupon-success-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        
+        .success-content {
+            flex: 1;
+        }
+        
+        .success-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .success-title {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .success-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .coupon-applied-info {
+            font-weight: 600;
+            color: #0f5132;
+        }
+        
+        .savings-info {
+            color: #198754;
+            font-weight: 600;
+        }
+        
+        .usage-info {
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        /* Coupon Toast Notifications */
+        .coupon-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 9999;
+            animation: slideInRight 0.3s ease-out;
+            border-left: 4px solid;
+        }
+        
+        .coupon-toast.success {
+            border-left-color: #28a745;
+            color: #155724;
+        }
+        
+        .coupon-toast.error {
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    }
+    
+    /* Additional mobile optimizations */
+    .row {
+        margin: 0;
+    }
+    
+    .col-lg-8,
+    .col-lg-4 {
+        padding: 0 5px;
+    }
+    
+    .checkout-section {
+        margin-bottom: 1rem;
+    }
+    
+    .card {
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Improve touch targets on mobile */
+    .payment-method,
+    .address-card {
+        min-height: 44px;
+    }
+    
+    .place-order-btn {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Better spacing for mobile */
+    .mt-50 {
+        margin-top: 1.5rem !important;
+    }
+    
+    .mb-50 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Improve form elements on mobile */
+    input[type="radio"],
+    input[type="text"] {
+        min-height: 44px;
+    }
+    
+    /* Better button spacing */
+    .coupon-input button,
+    .select-coupon-btn {
+        min-height: 44px;
+    }
+    
+    /* Improve wallet balance display on mobile */
+    .wallet-balance {
+        font-size: 11px !important;
+        margin-top: 1px !important;
+    }
+    
+    /* Better payment method layout on mobile */
+    .payment-method-details {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    /* Improve address card layout on mobile */
+    .address-card .address-name {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .address-card .address-details {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    /* Better product image display on mobile */
+    .checkout-product-image {
+        flex-shrink: 0;
+    }
+    
+    /* Improve summary layout on mobile */
+    .checkout-summary-row {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    /* Better coupon dropdown on mobile */
+    .coupon-dropdown {
+        z-index: 1000;
+        position: relative;
+    }
+    
+    /* Improve form validation messages on mobile */
+    .coupon-invalid,
+    .coupon-valid {
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+}
+
+/* Payment method and address card selection styles */
     .payment-method {
   border: 2px solid transparent;   
   border-radius: 6px;
@@ -745,6 +1737,156 @@
     color: white;
   }
   
+  /* Enhanced Coupon Styles */
+  .coupon-item {
+    padding: 1.25rem;
+    border-radius: 12px;
+    margin: 0.75rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .coupon-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .coupon-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: rgba(59, 183, 126, 0.3);
+  }
+  
+  .coupon-item.selected {
+    background: linear-gradient(135deg, rgba(59, 183, 126, 0.08), rgba(45, 143, 95, 0.08));
+    border-color: #3BB77E;
+    transform: scale(1.02);
+  }
+  
+  .coupon-item.selected::before {
+    opacity: 1;
+  }
+  
+  .coupon-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  
+  .coupon-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .coupon-main-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .coupon-code {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #3BB77E;
+    letter-spacing: 1px;
+  }
+  
+  .coupon-discount-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .coupon-discount {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #dc3545;
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    display: inline-block;
+    border: 2px solid #ffc107;
+  }
+  
+  .savings-percentage {
+    font-size: 0.8rem;
+    color: #28a745;
+    font-weight: 600;
+  }
+  
+  .usage-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .usage-badge.single-use {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white;
+  }
+  
+  .usage-badge.multi-use {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+    color: white;
+  }
+  
+  .coupon-description {
+    font-size: 0.95rem;
+    color: #333;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+  
+  .coupon-terms {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .term-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  .term-item i {
+    color: #3BB77E;
+    font-size: 0.9rem;
+  }
+  
+  .coupon-empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #999;
+  }
+  
+  .coupon-empty-state p {
+    margin: 0.5rem 0;
+    font-weight: 600;
+  }
+  
+  .coupon-empty-state small {
+    font-size: 0.8rem;
+  }
+  
   .coupon-actions {
     display: flex;
     gap: 10px;
@@ -791,7 +1933,405 @@
     background-color: #5a6268;
   }
 
+  .coupon-empty-state small {
+    font-size: 0.8rem;
+  }
+  
+  /* Enhanced Coupon Success Message */
+  .coupon-success-message {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    border: 2px solid #c3e6cb;
+    border-radius: 16px;
+    padding: 1.25rem;
+    color: #155724;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .coupon-success-message::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #28a745, #20c997);
+  }
+  
+  .success-content {
+    flex: 1;
+  }
+  
+  .success-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .success-title {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  
+  .success-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .coupon-applied-info {
+    font-weight: 600;
+    color: #0f5132;
+  }
+  
+  .savings-info {
+    color: #198754;
+    font-weight: 600;
+  }
+  
+  .usage-info {
+    color: #6c757d;
+    font-style: italic;
+  }
+  
+  /* Enhanced Remove Coupon Button */
+  .remove-coupon-btn {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 2px solid rgba(220, 53, 69, 0.3);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
+  }
+  
+  .remove-coupon-btn:hover {
+    background: rgba(220, 53, 69, 0.2);
+    color: #c82333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+  }
+  
+  /* Coupon Toast Notifications */
+  .coupon-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 9999;
+    animation: slideInRight 0.3s ease-out;
+    border-left: 4px solid;
+  }
+  
+  .coupon-toast.success {
+    border-left-color: #28a745;
+    color: #155724;
+  }
+  
+  .coupon-toast.error {
+    border-left-color: #dc3545;
+    color: #721c24;
+  }
+  
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Enhanced Coupon Input Styling */
+  .coupon-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    align-items: stretch;
+  }
+  
+  .coupon-input input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+  }
+  
+  .coupon-input input:focus {
+    outline: none;
+    border-color: #3BB77E;
+    box-shadow: 0 0 0 3px rgba(59, 183, 126, 0.1);
+    background: white;
+  }
+  
+  .coupon-input button {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+  
+  .coupon-input button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 183, 126, 0.3);
+  }
+  
+  .coupon-input button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .select-coupon-btn {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    white-space: nowrap;
+  }
+  
+  .select-coupon-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5a6268, #495057) !important;
+  }
+  
+  .coupon-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+  }
+
 </style>
+
+<!-- Responsive Header for Mobile/Tablet (copied from home.ejs, adjusted for checkout context) -->
+<style>
+/* General Reset */
+.header, .header-area, .header-middle, .header-bottom, .header-top, .header-wrap, .header-action-right, .header-action-2, .header-action-icon-2, .logo {
+    box-sizing: border-box;
+}
+/* Modern Flex Header */
+.responsive-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 1002;
+}
+.responsive-header .logo {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #222;
+    letter-spacing: 1px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+.responsive-header .logo img {
+    height: 36px;
+    margin-right: 8px;
+}
+.responsive-header .header-icons {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+.responsive-header .header-icons a {
+    display: flex;
+    align-items: center;
+    position: relative;
+    color: #222;
+    transition: color 0.2s;
+    font-size: 1.3rem;
+}
+.responsive-header .header-icons a .wishlist-heart.red {
+    color: #ff3b3b !important;
+}
+.responsive-header .header-icons a .wishlist-heart {
+    transition: color 0.2s;
+}
+.responsive-header .header-icons a:hover {
+    color: #007bff;
+}
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    cursor: pointer;
+    align-items: center;
+    z-index: 1101;
+    margin-left: 0.5rem;
+}
+.hamburger span {
+    display: block;
+    width: 22px;
+    height: 3px;
+    background: #222;
+    margin: 3px 0;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.25);
+    z-index: 1199;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 240px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+    z-index: 1200;
+    transition: left 0.3s;
+    padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.mobile-menu.active {
+    left: 0;
+    display: flex;
+}
+.mobile-menu .menu-link {
+    font-size: 1.15rem;
+    color: #222;
+    text-decoration: none;
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.mobile-menu .menu-link.active,
+.mobile-menu .menu-link:hover {
+    color: #007bff;
+}
+.mobile-menu .close-menu {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #222;
+    cursor: pointer;
+}
+@media (max-width: 991px) {
+    .header-area, .header-middle, .header-bottom, .header-top {
+        display: none !important;
+    }
+    .responsive-header {
+        display: flex;
+    }
+    .hamburger {
+        display: flex;
+    }
+    .mobile-menu {
+        display: flex;
+    }
+}
+@media (min-width: 992px) {
+    .responsive-header, .mobile-menu, .menu-overlay {
+        display: none !important;
+    }
+    .responsive-header .logo {
+        margin-left: auto;
+        margin-right: 0;
+    }
+}
+</style>
+<div class="responsive-header">
+    <a href="/home" class="logo">
+        <img src="/assets/imgs/theme/shoestore-logo.svg" alt="ShoeStore" onerror="this.style.display='none';">
+    </a>
+    <div class="header-icons">
+        <a href="/wishlist" title="Wishlist"><i class="fi-rs-heart wishlist-heart"></i></a>
+        <a href="/cart" title="Cart"><i class="fi-rs-shopping-cart"></i></a>
+        <button class="hamburger" id="mobileMenuToggle" aria-label="Open menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+<nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
+    <button class="close-menu" id="closeMobileMenu" aria-label="Close menu">&times;</button>
+    <a href="/home" class="menu-link">Home</a>
+    <a href="/shop" class="menu-link">Shop</a>
+    <a href="/cart" class="menu-link">Cart</a>
+    <a href="/profileinfo" class="menu-link">Profile</a>
+    <a href="/logout" class="menu-link">Logout</a>
+</nav>
+<script>
+// Mobile menu toggle
+(function() {
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const closeMenuBtn = document.getElementById('closeMobileMenu');
+    function openMenu() {
+        mobileMenu.classList.add('active');
+        menuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+        mobileMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    menuToggle.addEventListener('click', openMenu);
+    closeMenuBtn.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) closeMenu();
+    });
+})();
+</script>
+<!-- End Responsive Header -->
 
 <header class="header-area header-style-1 header-height-2">
     <div class="header-top header-top-ptb-1 d-none d-lg-block">
@@ -942,7 +2482,7 @@
     <div class="container">
         <form class="form" id="checkoutForm" action="/checkout" method="post">
             <div class="row">
-              <div class="col-lg-8">
+              <div class="col-lg-8 col-md-12">
                 <!-- Shipping Address Section -->
                 <div class="checkout-section">
                   <div class="card">
@@ -1067,7 +2607,7 @@
               </div>
           
               <!-- Order Summary -->
-              <div class="col-lg-4">
+              <div class="col-lg-4 col-md-12">
                 <% const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0); %>
                 <% const shipping = 41; %>
                 <% const tax = subtotal * 0.05; %>
@@ -1090,7 +2630,7 @@
                         <!-- Available coupons will be loaded here -->
                       </div>
                       <div class="coupon-actions" id="couponActions" style="display: none;">
-                        <!-- <button type="button" id="applySelectedCouponBtn" class="apply-selected-btn">Apply Selected Coupon</button> -->
+                        <button type="button" id="applySelectedCouponBtn" class="apply-selected-btn">Apply Selected Coupon</button>
                         <button type="button" id="clearSelectionBtn" class="clear-selection-btn">Clear Selection</button>
                       </div>
                       <div class="coupon-invalid" id="couponInvalid"></div>
@@ -1309,27 +2849,65 @@ function displayCoupons(coupons) {
   
   if (coupons.length === 0) {
     console.log('No coupons available');
-    dropdown.innerHTML = '<div class="coupon-item">No coupons available</div>';
+    dropdown.innerHTML = `
+      <div class="coupon-item no-coupons">
+        <div class="coupon-empty-state">
+          <i class="fi-rs-tag" style="font-size: 2rem; color: #ccc; margin-bottom: 0.5rem;"></i>
+          <p>No coupons available at the moment</p>
+          <small>Check back later for exciting offers!</small>
+        </div>
+      </div>`;
     return;
   }
+  
+  // Sort coupons by discount amount (highest first)
+  coupons.sort((a, b) => b.offerPrice - a.offerPrice);
   
   coupons.forEach(coupon => {
     console.log('Creating coupon item for:', coupon);
     const couponItem = document.createElement('div');
     couponItem.className = 'coupon-item';
+    
+    // Determine usage type badge
+    const usageTypeBadge = coupon.usageType === 'single-use' 
+      ? '<span class="usage-badge single-use">Single Use</span>'
+      : '<span class="usage-badge multi-use">Multi Use</span>';
+    
+    // Calculate savings percentage
+    const savingsPercentage = Math.round((coupon.offerPrice / coupon.minPrice) * 100);
+    
     couponItem.innerHTML = `
       <div class="coupon-header">
         <div class="coupon-info">
-          <span class="coupon-code">${coupon.code}</span>
-          <span class="coupon-discount">₹${coupon.offerPrice} OFF</span>
+          <div class="coupon-main-info">
+            <span class="coupon-code">${coupon.code}</span>
+            <div class="coupon-discount-info">
+              <span class="coupon-discount">₹${coupon.offerPrice} OFF</span>
+              <span class="savings-percentage">(${savingsPercentage}% savings)</span>
+            </div>
+          </div>
+          ${usageTypeBadge}
         </div>
         <div class="coupon-selection">
           <input type="radio" name="selectedCoupon" value="${coupon.code}" id="coupon_${coupon.code}">
           <label for="coupon_${coupon.code}" class="select-label">Select</label>
         </div>
       </div>
-      <div class="coupon-description">${coupon.description}</div>
-      <div class="coupon-terms">Min. order: ₹${coupon.minPrice}</div>
+      <div class="coupon-description">${coupon.description || 'Get amazing discount on your purchase!'}</div>
+      <div class="coupon-terms">
+        <div class="term-item">
+          <i class="fi-rs-info"></i>
+          <span>Min. order: ₹${coupon.minPrice}</span>
+        </div>
+        <div class="term-item">
+          <i class="fi-rs-calendar"></i>
+          <span>Valid till: ${new Date(coupon.expiryDate).toLocaleDateString()}</span>
+        </div>
+        <div class="term-item">
+          <i class="fi-rs-user"></i>
+          <span>${coupon.usageType === 'single-use' ? 'One-time use per customer' : 'Can be used multiple times'}</span>
+        </div>
+      </div>
     `;
     
     // Add click event to the radio button
@@ -1381,23 +2959,29 @@ function displayCoupons(coupons) {
   console.log('Coupons displayed in dropdown');
 }
 
-// Apply coupon
+// Enhanced apply coupon function with better user feedback
 async function applyCoupon() {
   console.log('Applying coupon...');
   const couponCode = document.getElementById('couponCode').value.trim();
   console.log('Coupon code:', couponCode);
   
   if (!couponCode) {
-    console.log('No coupon code entered');
+    showCouponError('Please enter a coupon code');
     return;
   }
 
   try {
+    // Show loading state
+    const applyBtn = document.getElementById('applyCouponBtn');
+    const originalText = applyBtn.textContent;
+    applyBtn.textContent = 'Applying...';
+    applyBtn.disabled = true;
+
     // Get subtotal from the order summary using the specific ID
     const subtotalElement = document.getElementById('orderSubtotal');
     if (!subtotalElement) {
       console.error('Could not find subtotal element');
-      alert('Error: Could not find order subtotal. Please refresh the page and try again.');
+      showCouponError('Error: Could not find order subtotal. Please refresh the page and try again.');
       return;
     }
     
@@ -1410,7 +2994,7 @@ async function applyCoupon() {
     
     if (isNaN(subtotal)) {
       console.error('Invalid subtotal value:', subtotalText);
-      alert('Error: Invalid order subtotal. Please refresh the page and try again.');
+      showCouponError('Error: Invalid order subtotal. Please refresh the page and try again.');
       return;
     }
     
@@ -1427,25 +3011,88 @@ async function applyCoupon() {
       appliedCoupon = data.coupon;
       couponDiscount = data.discount;
       
+      // Enhanced success message with coupon details
+      const usageInfo = data.coupon.usageType === 'single-use' 
+        ? 'One-time use per customer' 
+        : 'Can be used multiple times';
+      
       document.getElementById('couponValid').innerHTML = `
         <div class="coupon-success-message">
-          <span>Coupon applied! You saved ₹${couponDiscount.toFixed(2)}</span>
-          <button type="button" class="remove-coupon-btn" onclick="window.removeCouponDiscount()">Remove</button>
+          <div class="success-content">
+            <div class="success-header">
+              <i class="fi-rs-check-circle" style="color: #28a745; margin-right: 0.5rem;"></i>
+              <span class="success-title">Coupon Applied Successfully!</span>
+            </div>
+            <div class="success-details">
+              <div class="coupon-applied-info">
+                <strong>${data.coupon.code}</strong> - ${data.coupon.name || 'Discount Applied'}
+              </div>
+              <div class="savings-info">
+                You saved: <strong>₹${couponDiscount.toFixed(2)}</strong>
+              </div>
+              <div class="usage-info">
+                <small>${usageInfo}</small>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="remove-coupon-btn" onclick="window.removeCouponDiscount()">
+            <i class="fi-rs-cross"></i> Remove
+          </button>
         </div>
       `;
       document.getElementById('couponValid').style.display = 'block';
       document.getElementById('couponInvalid').style.display = 'none';
       
+      // Clear the input field
+      document.getElementById('couponCode').value = '';
+      
+      // Hide dropdown if open
+      document.getElementById('couponDropdown').classList.remove('active');
+      document.getElementById('couponActions').style.display = 'none';
+      
       updateOrderSummary();
+      
+      // Show success toast
+      showCouponSuccess(data.message || 'Coupon applied successfully!');
+      
     } else {
-      document.getElementById('couponInvalid').textContent = data.message;
-      document.getElementById('couponInvalid').style.display = 'block';
-      document.getElementById('couponValid').style.display = 'none';
+      showCouponError(data.message || 'Failed to apply coupon');
     }
   } catch (error) {
     console.error('Error applying coupon:', error);
-    alert('Error applying coupon. Please try again.');
+    showCouponError('Error applying coupon. Please try again.');
+  } finally {
+    // Restore button state
+    const applyBtn = document.getElementById('applyCouponBtn');
+    applyBtn.textContent = 'Apply';
+    applyBtn.disabled = false;
   }
+}
+
+// Helper function to show coupon error
+function showCouponError(message) {
+  document.getElementById('couponInvalid').textContent = message;
+  document.getElementById('couponInvalid').style.display = 'block';
+  document.getElementById('couponValid').style.display = 'none';
+}
+
+// Helper function to show coupon success toast
+function showCouponSuccess(message) {
+  // Create a simple toast notification
+  const toast = document.createElement('div');
+  toast.className = 'coupon-toast success';
+  toast.innerHTML = `
+    <i class="fi-rs-check-circle"></i>
+    <span>${message}</span>
+  `;
+  document.body.appendChild(toast);
+  
+  // Remove toast after 3 seconds
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.parentNode.removeChild(toast);
+    }
+  }, 3000);
 }
 
 function updateOrderSummary() {
@@ -1904,37 +3551,73 @@ const formData = {
 });
 
 // Apply selected coupon button
-document.getElementById('applySelectedCouponBtn').addEventListener('click', () => {
-  const selectedCoupon = document.querySelector('input[name="selectedCoupon"]:checked');
-  if (selectedCoupon) {
-    document.getElementById('couponCode').value = selectedCoupon.value;
-    applyCoupon();
-    // Hide dropdown and action buttons after applying
-    document.getElementById('couponDropdown').classList.remove('active');
-    document.getElementById('couponActions').style.display = 'none';
-  } else {
-    alert('Please select a coupon first');
-  }
-});
+const applySelectedBtn = document.getElementById('applySelectedCouponBtn');
+if (applySelectedBtn) {
+  applySelectedBtn.addEventListener('click', () => {
+    console.log('Apply selected coupon button clicked');
+    
+    const selectedCoupon = document.querySelector('input[name="selectedCoupon"]:checked');
+    if (selectedCoupon) {
+      console.log('Selected coupon:', selectedCoupon.value);
+      document.getElementById('couponCode').value = selectedCoupon.value;
+      
+      // Apply the coupon
+      applyCoupon();
+      
+      // Hide dropdown and action buttons after applying
+      document.getElementById('couponDropdown').classList.remove('active');
+      document.getElementById('couponActions').style.display = 'none';
+    } else {
+      console.log('No coupon selected');
+      showCouponError('Please select a coupon first');
+    }
+  });
+} else {
+  console.error('Apply Selected Coupon button not found');
+}
 
 // Clear selection button
-document.getElementById('clearSelectionBtn').addEventListener('click', () => {
-  // Uncheck all radio buttons
-  document.querySelectorAll('input[name="selectedCoupon"]').forEach(radio => {
-    radio.checked = false;
+const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+if (clearSelectionBtn) {
+  clearSelectionBtn.addEventListener('click', () => {
+    console.log('Clear selection button clicked');
+    
+    // Uncheck all radio buttons
+    document.querySelectorAll('input[name="selectedCoupon"]').forEach(radio => {
+      radio.checked = false;
+    });
+    
+    // Remove visual selection from all coupon items
+    document.querySelectorAll('.coupon-item').forEach(item => {
+      item.classList.remove('selected');
+    });
+    
+    // Clear coupon code input
+    document.getElementById('couponCode').value = '';
+    
+    // Hide action buttons
+    document.getElementById('couponActions').style.display = 'none';
+    
+    // Hide dropdown if it's open
+    document.getElementById('couponDropdown').classList.remove('active');
+    
+    // Clear any error or success messages
+    document.getElementById('couponInvalid').style.display = 'none';
+    document.getElementById('couponValid').style.display = 'none';
+    
+    // Reset coupon variables
+    appliedCoupon = null;
+    couponDiscount = 0;
+    
+    // Update order summary to remove any applied discount
+    updateOrderSummary();
+    
+    // Show feedback to user
+    showCouponSuccess('Selection cleared successfully');
+    
+    console.log('Selection cleared successfully');
   });
-  
-  // Remove visual selection
-  document.querySelectorAll('.coupon-item').forEach(item => {
-    item.classList.remove('selected');
-  });
-  
-  // Clear coupon code input
-  document.getElementById('couponCode').value = '';
-  
-  // Hide action buttons
-  document.getElementById('couponActions').style.display = 'none';
-  
-  console.log('Selection cleared');
-});
+} else {
+  console.error('Clear Selection button not found');
+}
 </script> 

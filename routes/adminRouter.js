@@ -68,6 +68,7 @@ router.get("/orders", adminAuth, orderController.getOrderManagement);
 router.get("/orderDetails", adminAuth, orderController.getOrderDetails);
 router.get("/orderDetails/:id", adminAuth, orderController.getOrderDetails);
 router.post("/order-status", adminAuth, orderController.updateOrderStatus);
+router.post("/cancel-item", adminAuth, orderController.cancelIndividualItem);
 router.get("/orderTrack/:id", adminAuth, orderController.getOrderTracking);
 router.post(
   "/approve-return/:orderId",

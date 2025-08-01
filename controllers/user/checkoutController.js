@@ -49,44 +49,65 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// Modified applyCoupon function with better session handling
+
 const applyCoupon = async (req, res) => {
   try {
     const { couponCode, subtotal } = req.body;
     const userId = req.user?._id || req.session?.user;
     const currentDate = new Date();
 
+    if (!couponCode || !subtotal) {
+      return res.json({ 
+        success: false, 
+        message: "Coupon code and order amount are required" 
+      });
+    }
+  
     const coupon = await Coupon.findOne({
-      code: couponCode,
+      code: { $regex: new RegExp(`^${couponCode}$`, 'i') },
       status: "Active",
       startDate: { $lte: currentDate },
       expiryDate: { $gte: currentDate },
     });
 
     if (!coupon) {
-      return res.json({ success: false, message: "Invalid or expired coupon" });
-    }
-
-    if (subtotal < coupon.minPrice) {
-      return res.json({
-        success: false,
-        message: `Minimum order amount should be ₹${coupon.minPrice}`,
+      return res.json({ 
+        success: false, 
+        message: "Invalid or expired coupon code" 
       });
     }
 
-    if (coupon.usageType === "single-use" && coupon.userId.includes(userId)) {
-      return res.json({ success: false, message: "Coupon already used" });
+    // Check minimum order amount
+    if (subtotal < coupon.minPrice) {
+      return res.json({
+        success: false,
+        message: `Minimum order amount should be ₹${coupon.minPrice} to use this coupon`,
+      });
+    }
+
+    // Enhanced single-use validation
+    if (coupon.usageType === "single-use") {
+      // Check if user has already used this coupon
+      if (coupon.userId && coupon.userId.includes(userId)) {
+        return res.json({ 
+          success: false, 
+          message: "This coupon can only be used once per customer. You have already used it." 
+        });
+      }
     }
 
     const discount = Math.min(coupon.offerPrice, subtotal);
 
-    // Store coupon data in session with explicit save
+    // Store enhanced coupon data in session
     req.session.coupon = {
       _id: coupon._id,
       code: coupon.code,
+      name: coupon.name,
+      description: coupon.description,
       offerPrice: coupon.offerPrice,
       minPrice: coupon.minPrice,
       usageType: coupon.usageType,
+      expiryDate: coupon.expiryDate,
     };
     req.session.discount = discount;
 
@@ -98,15 +119,31 @@ const applyCoupon = async (req, res) => {
           .status(500)
           .json({ success: false, message: "Error saving coupon data" });
       }
-      res.json({ success: true, coupon, discount });
+      
+      // Return enhanced response with usage information
+      res.json({ 
+        success: true, 
+        coupon: {
+          ...coupon.toObject(),
+          usageType: coupon.usageType,
+          usageInfo: coupon.usageType === 'single-use' 
+            ? 'One-time use per customer' 
+            : 'Can be used multiple times'
+        }, 
+        discount,
+        message: `Coupon applied successfully! You saved ₹${discount.toFixed(2)}`
+      });
     });
   } catch (error) {
     console.error("Apply coupon error:", error);
-    res.status(500).json({ success: false, message: "Error applying coupon" });
+    res.status(500).json({ 
+      success: false, 
+      message: "Error applying coupon. Please try again." 
+    });
   }
 };
 
-// Add a function to clear coupon from session when needed
+
 const clearCoupon = async (req, res) => {
   try {
     req.session.coupon = null;
@@ -312,19 +349,72 @@ const getCoupon = async (req, res) => {
     const userId = req.user?._id || req.session?.user;
     const currentDate = new Date();
 
-    const coupons = await Coupon.find({
+    // Get all active coupons
+    const allCoupons = await Coupon.find({
       status: "Active",
       startDate: { $lte: currentDate },
       expiryDate: { $gte: currentDate },
-      $or: [
-        { usageType: "multi-use" },
-        { usageType: "single-use", userId: { $ne: userId } },
-      ],
     });
 
-    res.json({ success: true, coupons });
+    // Filter coupons based on usage type and user history
+    const availableCoupons = allCoupons.filter(coupon => {
+      // Multi-use coupons are always available
+      if (coupon.usageType === "multi-use") {
+        return true;
+      }
+      
+     
+      if (coupon.usageType === "single-use") {
+        return !coupon.userId || !coupon.userId.includes(userId);
+      }
+      
+      return false;
+    });
+
+    // Enhance coupon data with additional information
+    const enhancedCoupons = availableCoupons.map(coupon => {
+      const couponObj = coupon.toObject();
+      
+      // Add usage information
+      couponObj.usageInfo = coupon.usageType === 'single-use' 
+        ? 'One-time use per customer' 
+        : 'Can be used multiple times';
+      
+      // Add savings percentage
+      couponObj.savingsPercentage = Math.round((coupon.offerPrice / coupon.minPrice) * 100);
+      
+      // Add days remaining
+      const daysRemaining = Math.ceil((new Date(coupon.expiryDate) - currentDate) / (1000 * 60 * 60 * 24));
+      couponObj.daysRemaining = daysRemaining;
+      couponObj.expiryInfo = daysRemaining <= 7 
+        ? `Expires in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}` 
+        : `Valid till ${new Date(coupon.expiryDate).toLocaleDateString()}`;
+      
+      return couponObj;
+    });
+
+    // Sort coupons by discount amount (highest first), then by expiry date
+    enhancedCoupons.sort((a, b) => {
+      if (b.offerPrice !== a.offerPrice) {
+        return b.offerPrice - a.offerPrice;
+      }
+      return new Date(a.expiryDate) - new Date(b.expiryDate);
+    });
+
+    res.json({ 
+      success: true, 
+      coupons: enhancedCoupons,
+      totalAvailable: enhancedCoupons.length,
+      message: enhancedCoupons.length > 0 
+        ? `${enhancedCoupons.length} coupon${enhancedCoupons.length !== 1 ? 's' : ''} available` 
+        : 'No coupons available at the moment'
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error fetching coupons" });
+    console.error("Error fetching coupons:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Error fetching available coupons" 
+    });
   }
 };
 

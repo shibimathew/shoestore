@@ -538,7 +538,7 @@
 </td>
 
               <td><%= moment(order.createdAt).format('DD MMM, YYYY') %></td>
-              <td>₹<%= order.totalAmount %></td>
+              <td>₹<%= typeof calculateOrderTotal === 'function' ? calculateOrderTotal(order).toFixed(2) : (order.totalAmount ? Number(order.totalAmount).toFixed(2) : '0.00') %></td>
               <td>
                 <span class="badge badge-pill badge-soft-<%= order.paymentStatus==='Paid' ? 'success' : (order.paymentStatus==='Refund' ? 'warning' : 'danger') %>">
                   <%= order.paymentStatus %>
@@ -548,6 +548,19 @@
             </tr>
           <% }) %>
           </tbody>
+          <tfoot>
+            <tr class="table-light">
+              <th colspan="3" class="text-end">Grand Total (Excluding Cancelled Items):</th>
+              <th colspan="3" class="fw-bold">
+                ₹<%= orders.reduce((sum, order) => {
+                  const calculatedTotal = typeof calculateOrderTotal === 'function' 
+                    ? calculateOrderTotal(order) 
+                    : (order.totalAmount || 0);
+                  return sum + calculatedTotal;
+                }, 0).toFixed(2) %>
+              </th>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>

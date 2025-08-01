@@ -87,13 +87,38 @@ const getCouponInfo = (order) => {
   return { couponCode, couponName, discountAmount };
 };
 
+// Helper function to calculate order total excluding cancelled items
+const calculateOrderTotal = (order) => {
+  if (!order.orderItems || !Array.isArray(order.orderItems)) {
+    return order.totalAmount || 0;
+  }
+  
+  let total = 0;
+  order.orderItems.forEach(item => {
+    // Only include items that are not cancelled
+    if (item.currentStatus !== 'Cancelled') {
+      const price = item.product?.salePrice || item.price || 0;
+      const quantity = item.quantity || 1;
+      total += price * quantity;
+    }
+  });
+  
+  // Add delivery charge and tax, subtract discount
+  const deliveryCharge = order.deliveryCharge || 0;
+  const tax = order.tax || 0;
+  const discount = order.discount || order.couponDiscount || 0;
+  
+  return total + deliveryCharge + tax - discount;
+};
+
 const processOrdersData = (orders) => {
   let totalRevenue = 0;
   let totalOrders = orders.length;
   let totalDiscount = 0;
 
   orders.forEach(order => {
-    totalRevenue += order.totalAmount;
+    const calculatedTotal = calculateOrderTotal(order);
+    totalRevenue += calculatedTotal;
     totalDiscount += getOrderDiscount(order);
   });
 
@@ -101,7 +126,8 @@ const processOrdersData = (orders) => {
   const ordersByDay = {};
   orders.forEach(order => {
     const day = moment(order.createdAt).format('YYYY-MM-DD');
-    salesByDay[day] = (salesByDay[day] || 0) + order.totalAmount;
+    const calculatedTotal = calculateOrderTotal(order);
+    salesByDay[day] = (salesByDay[day] || 0) + calculatedTotal;
     ordersByDay[day] = (ordersByDay[day] || 0) + 1;
   });
   
@@ -114,12 +140,13 @@ const processOrdersData = (orders) => {
     .slice(0, 4)
     .map(order => {
       const names = order.orderItems.map(i => i.product?.name || 'Product').join(', ');
-      return { date: moment(order.createdAt).format('MMM DD'), amount: order.totalAmount, description: `Sale of ${names}` };
+      const calculatedTotal = calculateOrderTotal(order);
+      return { date: moment(order.createdAt).format('MMM DD'), amount: calculatedTotal, description: `Sale of ${names}` };
     });
 
   const monthlyEarning = orders
     .filter(o => moment(o.createdAt).isAfter(moment().startOf('month')))
-    .reduce((sum, o) => sum + o.totalAmount, 0);
+    .reduce((sum, o) => sum + calculateOrderTotal(o), 0);
 
   totalRevenue = parseFloat(totalRevenue.toFixed(1));
   totalDiscount = parseFloat(totalDiscount.toFixed(1));
@@ -193,7 +220,8 @@ const loadSalesReport = async (req, res) => {
       endDate: dateFilter.endDate ? moment(dateFilter.endDate).format('YYYY-MM-DD') : '',
       moment,
       getOrderDiscount, // Add helper function to template
-      getCouponInfo    // Add helper function to template
+      getCouponInfo,    // Add helper function to template
+      calculateOrderTotal // Add helper function to template
     });
   } catch (err) {
     console.error('Sales load error:', err);

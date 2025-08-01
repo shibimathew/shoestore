@@ -297,6 +297,260 @@
         font-weight: 500;
     }
     
+    /* Responsive Cart Styles */
+    @media (max-width: 991px) {
+        .container {
+            padding: 0 10px;
+        }
+        .cart-table th, .cart-table td {
+            font-size: 0.95rem;
+            padding: 0.5rem 0.5rem;
+        }
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+        }
+        .cart-summary {
+            padding: 1rem;
+        }
+        .cart-summary-title {
+            font-size: 1rem;
+        }
+        .cart-checkout-btn {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+        }
+    }
+    @media (max-width: 767.98px) {
+        .cart-table {
+            display: block;
+            width: 100%;
+        }
+        .cart-table thead {
+            display: none;
+        }
+        .cart-table tbody {
+            display: block;
+        }
+        .cart-table tr {
+            display: block;
+            margin-bottom: 1.25rem;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 1rem 0.5rem;
+        }
+        .cart-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: none;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+            position: relative;
+        }
+        .cart-table td:before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #6c757d;
+            flex: 1;
+            margin-right: 1rem;
+            min-width: 90px;
+        }
+        .cart-item-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+        }
+        .cart-item-details {
+            padding-left: 0.5rem;
+        }
+        .cart-item-name {
+            font-size: 1rem;
+        }
+        .cart-summary {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .cart-summary-title {
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .cart-summary-row {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .cart-summary-row:last-child {
+            font-size: 1.1rem;
+        }
+        .cart-checkout-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            color: #fff;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(59, 183, 126, 0.15);
+            margin-top: 1rem;
+        }
+        .cart-checkout-btn:disabled {
+            background: #ccc;
+            color: #fff;
+        }
+        .cart-actions {
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .cart-continue-shopping {
+            text-align: center;
+            font-size: 1rem;
+        }
+        .cart-coupon-form {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .cart-coupon-input, .cart-coupon-btn {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .cart-coupon-btn {
+            background: linear-gradient(135deg, #3BB77E, #2d8f5f);
+            color: #fff;
+            font-weight: 600;
+        }
+    }
+    @media (max-width: 480px) {
+        .cart-table tr {
+            padding: 0.75rem 0.25rem;
+        }
+        .cart-item-image {
+            width: 40px;
+            height: 40px;
+        }
+        .cart-summary {
+            padding: 0.75rem;
+        }
+        .cart-summary-title {
+            font-size: 1rem;
+        }
+        .cart-checkout-btn {
+            font-size: 1rem;
+            padding: 0.75rem;
+        }
+    }
+
+    /* --- Card-based Cart Layout for Mobile/Tablet --- */
+    @media (max-width: 991px) {
+        .cart-table { display: none; }
+        .cart-item-cards { display: block; }
+    }
+    @media (min-width: 992px) {
+        .cart-item-cards { display: none; }
+    }
+    .cart-item-card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        margin-bottom: 1.25rem;
+        padding: 1rem 0.75rem;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        position: relative;
+    }
+    .cart-item-card .cart-item-image {
+        width: 70px;
+        height: 70px;
+        border-radius: 10px;
+        object-fit: cover;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .cart-item-card .cart-item-info {
+        flex: 1;
+        min-width: 0;
+    }
+    .cart-item-card .cart-item-name {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.25rem;
+    }
+    .cart-item-card .cart-item-variant {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+    .cart-item-card .cart-item-price {
+        color: #3BB77E;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+    .cart-item-card .cart-item-stock {
+        font-size: 0.85rem;
+        color: #888;
+        margin-bottom: 0.25rem;
+    }
+    .cart-item-card .cart-item-badges {
+        margin-bottom: 0.25rem;
+    }
+    .cart-item-card .badge {
+        font-size: 0.7rem;
+        margin-right: 0.25rem;
+    }
+    .cart-item-card .cart-quantity {
+        margin: 0.5rem 0 0.5rem 0;
+    }
+    .cart-item-card .cart-quantity-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1.2rem;
+        border-radius: 8px;
+    }
+    .cart-item-card .cart-quantity-input {
+        width: 48px;
+        height: 32px;
+        font-size: 1rem;
+        border-radius: 8px;
+    }
+    .cart-item-card .cart-item-total {
+        font-weight: 700;
+        color: #222;
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+    }
+    .cart-item-card .cart-item-remove {
+        color: #dc3545;
+        background: none;
+        border: none;
+        font-size: 1.3rem;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    .cart-item-card .cart-item-remove:hover {
+        color: #a71d2a;
+    }
+    @media (max-width: 480px) {
+        .cart-item-card {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0.75rem 0.5rem;
+        }
+        .cart-item-card .cart-item-image {
+            width: 54px;
+            height: 54px;
+            margin-bottom: 0.5rem;
+        }
+    }
 </style>
 
 <header class="header-area header-style-1 header-height-2">
@@ -408,6 +662,211 @@
     </div>
 </header>
 
+<!-- Responsive Header for Mobile/Tablet (copied from home.ejs, adjusted for cart context) -->
+<style>
+/* General Reset */
+.header, .header-area, .header-middle, .header-bottom, .header-top, .header-wrap, .header-action-right, .header-action-2, .header-action-icon-2, .logo {
+    box-sizing: border-box;
+}
+/* Modern Flex Header */
+.responsive-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 1002;
+}
+.responsive-header .logo {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #222;
+    letter-spacing: 1px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+.responsive-header .logo img {
+    height: 36px;
+    margin-right: 8px;
+}
+.responsive-header .header-icons {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+.responsive-header .header-icons a {
+    display: flex;
+    align-items: center;
+    position: relative;
+    color: #222;
+    transition: color 0.2s;
+    font-size: 1.3rem;
+}
+.responsive-header .header-icons a .wishlist-heart.red {
+    color: #ff3b3b !important;
+}
+.responsive-header .header-icons a .wishlist-heart {
+    transition: color 0.2s;
+}
+.responsive-header .header-icons a:hover {
+    color: #007bff;
+}
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    cursor: pointer;
+    align-items: center;
+    z-index: 1101;
+    margin-left: 0.5rem;
+}
+.hamburger span {
+    display: block;
+    width: 22px;
+    height: 3px;
+    background: #222;
+    margin: 3px 0;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.25);
+    z-index: 1199;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 240px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+    z-index: 1200;
+    transition: left 0.3s;
+    padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.mobile-menu.active {
+    left: 0;
+    display: flex;
+}
+.mobile-menu .menu-link {
+    font-size: 1.15rem;
+    color: #222;
+    text-decoration: none;
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.mobile-menu .menu-link.active,
+.mobile-menu .menu-link:hover {
+    color: #007bff;
+}
+.mobile-menu .close-menu {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #222;
+    cursor: pointer;
+}
+@media (max-width: 991px) {
+    .header-area, .header-middle, .header-bottom, .header-top {
+        display: none !important;
+    }
+    .responsive-header {
+        display: flex;
+    }
+    .hamburger {
+        display: flex;
+    }
+    .mobile-menu {
+        display: flex;
+    }
+}
+@media (min-width: 992px) {
+    .responsive-header, .mobile-menu, .menu-overlay {
+        display: none !important;
+    }
+    .responsive-header .logo {
+        margin-left: auto;
+        margin-right: 0;
+    }
+}
+</style>
+<div class="responsive-header">
+    <a href="/home" class="logo">
+        <img src="/assets/imgs/theme/shoestore-logo.svg" alt="ShoeStore" onerror="this.style.display='none';">
+    </a>
+    <div class="header-icons">
+        <a href="/wishlist" title="Wishlist"><i class="fi-rs-heart wishlist-heart"></i></a>
+        <a href="/cart" title="Cart"><i class="fi-rs-shopping-cart"></i></a>
+        <button class="hamburger" id="mobileMenuToggle" aria-label="Open menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+<nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
+    <button class="close-menu" id="closeMobileMenu" aria-label="Close menu">&times;</button>
+    <a href="/home" class="menu-link">Home</a>
+    <a href="/shop" class="menu-link">Shop</a>
+    <a href="/cart" class="menu-link">Cart</a>
+    <a href="/profileinfo" class="menu-link">Profile</a>
+    <a href="/logout" class="menu-link">Logout</a>
+</nav>
+<script>
+// Mobile menu toggle
+(function() {
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const closeMenuBtn = document.getElementById('closeMobileMenu');
+    function openMenu() {
+        mobileMenu.classList.add('active');
+        menuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+        mobileMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    menuToggle.addEventListener('click', openMenu);
+    closeMenuBtn.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) closeMenu();
+    });
+})();
+</script>
+<!-- End Responsive Header -->
+
 <div class="mobile-header-active mobile-header-wrapper-style perfect-scrollbar">
     <div class="mobile-header-wrapper-inner">
         <div class="mobile-header-content-area">
@@ -513,6 +972,7 @@
                             <% } %>
 
                             <!-- Cart with items -->
+                            <!-- Cart Table (Desktop) -->
                             <div class="cart-with-items">
                                 <table class="cart-table">
                                     <thead>
@@ -543,7 +1003,7 @@
                                             else if (isOverStock) rowClass = 'table-warning';
                                             %>
                                             <tr class="cart-item-row <%= rowClass %>" data-price="<%= item.price %>" data-stock="<%= stockAvailable %>">
-                                                <td>
+                                                <td data-label="Product">
                                                     <div class="d-flex align-items-center">
                                                         <img src="<%= item.productImage %>" alt="<%= item.name %>" class="cart-item-image" />
                                                         <div class="cart-item-details">
@@ -561,18 +1021,18 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="item-price">₹<%= item.price.toFixed(2) %></td>
-                                                <td class="item-size">
+                                                <td class="item-price" data-label="Price">₹<%= item.price.toFixed(2) %></td>
+                                                <td class="item-size" data-label="Size">
                                                     <%= item.variants && item.variants.size ? item.variants.size.toUpperCase() : 'N/A' %>
                                                 </td>
-                                                <td>
+                                                <td data-label="Quantity">
                                                     <div class="cart-quantity">
                                                         <button type="button" class="cart-quantity-btn decrease-btn" data-id="<%= item._id %>" <% if (isOutOfStock) { %>disabled<% } %>>-</button>
                                                         <input type="number" name="quantity" class="cart-quantity-input" value="<%= item.quantity %>" min="1" max="<%= Math.max(1, stockAvailable) %>" data-id="<%= item._id %>" <% if (isOutOfStock) { %>disabled<% } %> />
                                                         <button type="button" class="cart-quantity-btn increase-btn" data-id="<%= item._id %>" <% if (isOutOfStock || item.quantity >= stockAvailable) { %>disabled<% } %>>+</button>
                                                     </div>
                                                 </td>
-                                                <td class="item-total">₹<%= (item.price * item.quantity).toFixed(2) %></td>
+                                                <td class="item-total" data-label="Total">₹<%= (item.price * item.quantity).toFixed(2) %></td>
                                                 <td>
                                                     <form action="/cart/remove?_method=DELETE" method="POST">
                                                         <input type="hidden" name="itemId" value="<%= item._id %>" />
@@ -585,26 +1045,50 @@
                                         <% }) %>
                                     </tbody>
                                 </table>
-
-                                <div class="cart-actions mt-4 d-flex justify-content-between">
-                                    <a href="/shop" class="cart-continue-shopping">
-                                        <i class="fi-rs-arrow-left"></i> Continue Shopping
-                                    </a>
-                                </div>
-
-                                <div class="cart-coupon">
-                                    <div class="cart-coupon-title">
-                                        <!-- Have a Coupon? -->
+                            </div>
+                            <!-- Card-based Cart Items for Mobile/Tablet -->
+                            <div class="cart-item-cards">
+                                <% items.forEach(item => { %>
+                                    <% 
+                                    let stockAvailable = 0;
+                                    if (item.productId && item.productId.shoeSizes) {
+                                        const sizeKey = item.variants.size.toLowerCase();
+                                        stockAvailable = item.productId.shoeSizes.get(sizeKey) || 0;
+                                    }
+                                    let isOutOfStock = stockAvailable === 0;
+                                    let isOverStock = item.quantity > stockAvailable;
+                                    %>
+                                    <div class="cart-item-card" data-price="<%= item.price %>" data-stock="<%= stockAvailable %>">
+                                        <img src="<%= item.productImage %>" alt="<%= item.name %>" class="cart-item-image" />
+                                        <div class="cart-item-info">
+                                            <div class="cart-item-name"><%= item.name %></div>
+                                            <div class="cart-item-variant">Size: <%= item.variants && item.variants.size ? item.variants.size.toUpperCase() : 'N/A' %></div>
+                                            <div class="cart-item-price">₹<%= item.price.toFixed(2) %></div>
+                                            <div class="cart-item-stock">Stock: <%= stockAvailable %></div>
+                                            <div class="cart-item-badges">
+                                                <% if (isOutOfStock) { %>
+                                                    <span class="badge bg-danger">OUT OF STOCK</span>
+                                                <% } else if (isOverStock) { %>
+                                                    <span class="badge bg-warning">EXCEEDS STOCK</span>
+                                                <% } else if (stockAvailable <= 5) { %>
+                                                    <span class="badge bg-warning">LOW STOCK</span>
+                                                <% } %>
+                                            </div>
+                                            <div class="cart-quantity">
+                                                <button type="button" class="cart-quantity-btn decrease-btn" data-id="<%= item._id %>" <% if (isOutOfStock) { %>disabled<% } %>>-</button>
+                                                <input type="number" name="quantity" class="cart-quantity-input" value="<%= item.quantity %>" min="1" max="<%= Math.max(1, stockAvailable) %>" data-id="<%= item._id %>" <% if (isOutOfStock) { %>disabled<% } %> />
+                                                <button type="button" class="cart-quantity-btn increase-btn" data-id="<%= item._id %>" <% if (isOutOfStock || item.quantity >= stockAvailable) { %>disabled<% } %>>+</button>
+                                            </div>
+                                            <div class="cart-item-total">Total: ₹<%= (item.price * item.quantity).toFixed(2) %></div>
+                                        </div>
+                                        <form action="/cart/remove?_method=DELETE" method="POST">
+                                            <input type="hidden" name="itemId" value="<%= item._id %>" />
+                                            <button type="submit" class="cart-item-remove" onclick="removeFromCart('<%= item._id %>')">
+                                                <i class="fi-rs-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
-                                    <div class="cart-coupon-form">
-                                        <!-- <input type="text" class="cart-coupon-input" 
-                                        placeholder="Enter coupon code" 
-                                        /> -->
-                                        <button class="cart-coupon-btn">
-                                            <!-- Apply -->
-                                        </button>
-                                    </div>
-                                </div>
+                                <% }) %>
                             </div>
                         <% } else { %>
                             <!-- Empty cart -->

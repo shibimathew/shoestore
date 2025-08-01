@@ -1,5 +1,238 @@
 <%- include('../partials/user/header.ejs') %>
 
+<!-- Responsive Header -->
+<style>
+/* General Reset */
+.header, .header-area, .header-middle, .header-bottom, .header-top, .header-wrap, .header-action-right, .header-action-2, .header-action-icon-2, .logo {
+    box-sizing: border-box;
+}
+
+/* Modern Flex Header */
+.responsive-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 1002;
+}
+
+.header-wrap .header-right {
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: flex-end;
+}
+
+.responsive-header .logo {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #222;
+    letter-spacing: 1px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+.responsive-header .logo img {
+    height: 36px;
+    margin-right: 8px;
+}
+.responsive-header .header-icons {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+.responsive-header .header-icons a {
+    display: flex;
+    align-items: center;
+    position: relative;
+    color: #222;
+    transition: color 0.2s;
+    font-size: 1.3rem;
+}
+.responsive-header .header-icons a .wishlist-heart.red {
+    color: #ff3b3b !important;
+}
+.responsive-header .header-icons a .wishlist-heart {
+    transition: color 0.2s;
+}
+.responsive-header .header-icons a:hover {
+    color: #007bff;
+}
+
+/* Hamburger */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    cursor: pointer;
+    align-items: center;
+    z-index: 1101;
+    margin-left: 0.5rem;
+}
+.hamburger span {
+    display: block;
+    width: 22px;
+    height: 3px;
+    background: #222;
+    margin: 3px 0;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 240px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+    z-index: 1200;
+    transition: left 0.3s;
+    padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.mobile-menu.active {
+    left: 0;
+    display: flex;
+}
+.mobile-menu .menu-link {
+    font-size: 1.15rem;
+    color: #222;
+    text-decoration: none;
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.mobile-menu .menu-link.active,
+.mobile-menu .menu-link:hover {
+    color: #007bff;
+}
+.mobile-menu .close-menu {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #222;
+    cursor: pointer;
+}
+
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.25);
+    z-index: 1199;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 991px) {
+    .header-area, .header-middle, .header-bottom, .header-top {
+        display: none !important;
+    }
+    .responsive-header {
+        display: flex;
+    }
+    .hamburger {
+        display: flex;
+    }
+    .mobile-menu {
+        display: flex;
+    }
+}
+@media (min-width: 992px) {
+    .responsive-header, .mobile-menu, .menu-overlay {
+        display: none !important;
+    }
+    .responsive-header .logo {
+        margin-left: auto;
+        margin-right: 0;
+    }
+}
+</style>
+
+<script>
+// Expose login state to JS
+var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'false' %>";
+</script>
+
+<!-- Responsive Header for Mobile/Tablet -->
+<div class="responsive-header">
+    <a href="/home" class="logo">
+        <img src="/assets/imgs/theme/shoestore-logo.svg" alt="ShoeStore" onerror="this.style.display='none';">
+    </a>
+    <div class="header-icons">
+        <a href="/wishlist" title="Wishlist"><i class="fi-rs-heart wishlist-heart"></i></a>
+        <a href="/cart" title="Cart"><i class="fi-rs-shopping-cart"></i></a>
+        <button class="hamburger" id="mobileMenuToggle" aria-label="Open menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+<nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
+    <button class="close-menu" id="closeMobileMenu" aria-label="Close menu">&times;</button>
+    <a href="/home" class="menu-link <%= (typeof page !== 'undefined' && page === 'home') ? 'active' : '' %>">Home</a>
+    <a href="/shop" class="menu-link <%= (typeof page !== 'undefined' && page === 'shop') ? 'active' : '' %>">Shop</a>
+    <a href="/profileinfo" class="menu-link <%= (typeof page !== 'undefined' && page === 'profile') ? 'active' : '' %>">Profile</a>
+    <a href="/logout" class="menu-link <%= (typeof page !== 'undefined' && page === 'logout') ? 'active' : '' %>">Logout</a>
+</nav>
+
+<script>
+// Mobile menu toggle
+(function() {
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const closeMenuBtn = document.getElementById('closeMobileMenu');
+    function openMenu() {
+        mobileMenu.classList.add('active');
+        menuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+        mobileMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    menuToggle.addEventListener('click', openMenu);
+    closeMenuBtn.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) closeMenu();
+    });
+})();
+</script>
+
 <!-- Add Material Icons font -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -106,51 +339,65 @@
         text-decoration: none;
     }
 
-    /* Wishlist content area */
+    /* Wishlist content area - Enhanced like myWallet */
     .wishlist-content {
         background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         padding: 0;
+        border: 1px solid #e9ecef;
+        overflow: hidden;
     }
 
     .wishlist-content .card-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #dee2e6;
-        padding: 1.25rem;
-        border-radius: 8px 8px 0 0;
+        background: linear-gradient(135deg, #3BB77E 0%, #2a9d8f 100%);
+        color: white;
+        border-bottom: none;
+        padding: 1.5rem 1.25rem;
+        border-radius: 12px 12px 0 0;
     }
 
     .wishlist-content .card-header h3 {
         margin: 0;
         font-size: 1.5rem;
-        font-weight: 600;
-        color: #333;
+        font-weight: 700;
+        color: white;
     }
 
     .wishlist-content .table-responsive {
-        padding: 1.25rem;
+        padding: 1.5rem;
     }
 
-    /* Table Styles */
+    /* Table Styles - Enhanced like myWallet */
     .shopping-summery {
         width: 100%;
         border-collapse: collapse;
+        background: white;
     }
 
     .shopping-summery th {
-        background-color: #f8f9fa;
-        padding: 1rem 0.75rem;
-        font-weight: 600;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 1.25rem 1rem;
+        font-weight: 700;
         color: #333;
         border-bottom: 2px solid #dee2e6;
         text-align: left;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     .shopping-summery td {
-        padding: 1rem 0.75rem;
+        padding: 1.25rem 1rem;
         vertical-align: middle;
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+    }
+
+    .shopping-summery tr:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     .shopping-summery tr:last-child td {
@@ -158,96 +405,136 @@
     }
 
     .shopping-summery .image img {
-        width: 80px;
-        height: 80px;
+        width: 90px;
+        height: 90px;
         object-fit: cover;
-        border-radius: 8px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .shopping-summery .image img:hover {
+        transform: scale(1.05);
     }
 
     .shopping-summery .product-name h5 {
         margin: 0;
-        font-size: 1rem;
-        font-weight: 600;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #333;
     }
 
     .shopping-summery .product-name a {
         color: #333;
         text-decoration: none;
+        transition: color 0.3s ease;
     }
 
     .shopping-summery .product-name a:hover {
         color: #3BB77E;
+        text-decoration: none;
     }
 
     .shopping-summery .price {
-        font-weight: 600;
+        font-weight: 700;
         color: #3BB77E;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, #3BB77E 0%, #2a9d8f 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
     .shopping-summery .action .btn {
-        background-color: #3BB77E;
+        background: linear-gradient(135deg, #3BB77E 0%, #2a9d8f 100%);
         color: white;
         border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
         text-decoration: none;
         display: inline-block;
-        transition: background-color 0.3s ease;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(59, 183, 126, 0.25);
     }
 
     .shopping-summery .action .btn:hover {
-        background-color: #2d8f5f;
+        background: linear-gradient(135deg, #2d8f5f 0%, #1f7a6b 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 183, 126, 0.35);
+        color: white;
+        text-decoration: none;
     }
 
     .shopping-summery .remove .btn {
-        background-color: #dc3545;
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
         color: white;
         border: none;
-        padding: 0.5rem;
-        border-radius: 4px;
-        transition: background-color 0.3s ease;
+        padding: 0.75rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
     }
 
     .shopping-summery .remove .btn:hover {
-        background-color: #c82333;
+        background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.35);
     }
 
-    /* Empty cart styles */
+    /* Empty wishlist styles - Enhanced like myWallet */
     .cart-empty {
         text-align: center;
-        padding: 3rem 1rem;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px;
+        margin: 2rem 0;
+        border: 2px dashed #dee2e6;
     }
 
     .cart-empty i {
-        font-size: 4rem;
-        color: #dee2e6;
-        margin-bottom: 1.5rem;
+        font-size: 5rem;
+        background: linear-gradient(135deg, #3BB77E 0%, #2a9d8f 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 2rem;
+        display: block;
     }
 
     .cart-empty h3 {
-        font-weight: 600;
+        font-weight: 700;
         margin-bottom: 1rem;
         color: #333;
+        font-size: 1.5rem;
     }
 
     .cart-empty p {
         color: #6c757d;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+        line-height: 1.6;
     }
 
     .cart-empty .btn {
-        background-color: #3BB77E;
+        background: linear-gradient(135deg, #3BB77E 0%, #2a9d8f 100%);
         color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 4px;
+        padding: 1rem 2rem;
+        border-radius: 8px;
         text-decoration: none;
         display: inline-block;
-        transition: background-color 0.3s ease;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(59, 183, 126, 0.25);
+        border: none;
     }
 
     .cart-empty .btn:hover {
-        background-color: #2d8f5f;
+        background: linear-gradient(135deg, #2d8f5f 0%, #1f7a6b 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 183, 126, 0.35);
+        color: white;
+        text-decoration: none;
     }
 
     /* Responsive Sidebar Styles */
@@ -384,9 +671,10 @@
 
     @media (max-width: 768px) {
         .sidebar-toggle {
-            top: 70px;
-            left: 650px;
-            padding: 10px 12px;
+            top: 90px;
+        left: 690px;
+        padding: 10px 12px;
+        position: absolute;
         }
 
         .sidebar-toggle .hamburger,
@@ -548,9 +836,10 @@
 
     @media (max-width: 480px) {
         .sidebar-toggle {
-            top: 60px;
+             top: 40px;
             left: 250px;
             padding: 8px 10px;
+            position: relative;
         }
 
         .dashboard-menu {
@@ -607,150 +896,6 @@
         z-index: 1003;
     }
 </style>
-
-<header class="header-area header-style-1 header-height-2">
-    <div class="header-top header-top-ptb-1 d-none d-lg-block">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-xl-3 col-lg-4">
-                    <div class="header-info">
-                        <ul>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xl-6 col-lg-4">
-                    <div class="text-center">
-                    </div>
-                </div>
-                <div class="col-xl-3 col-lg-4">
-                    <div class="header-info header-info-right">
-                        <ul>
-                            <li>
-                                <a class="language-dropdown-active" href="#"> 
-                                    <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
-                                </a>
-                                <ul class="language-dropdown">
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
-                                </ul>
-                            </li>
-                            <% if (typeof user !== 'undefined' && user) { %>
-                                <div class="dropdown">
-                                    <a href="#" class="sign-in-link"><%= user.name %></a>
-                                    <div class="dropdown-content">
-                                        <a href="/profileinfo">Profile</a>
-                                        <a href="/logout">Logout</a>
-                                    </div>
-                                </div>
-                            <% } else { %>
-                                <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
-                            <% } %>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
-        <div class="container">
-            <div class="header-wrap">
-                <div class="logo logo-width-1">
-                   <!-- <img src="/assets/imgs/theme/shoestore-logo.svg" alt="logo"> -->
-                </div>
-                <div class="header-right">
-                    <!-- <div class="search-style-2">
-                        <form action="/search" method="get">
-                            <input type="text" placeholder="Search for items..." name="query">
-                        </form> -->
-                    </div>
-                    <div class="header-action-right">
-<div class="header-action-2">
-                                <div class="header-action-icon-2">
-                                    <a href="/wishlist">
-                                        <i class="fi-rs-heart wishlist-heart"></i>
-                                        <!-- <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg"> -->
-                                        <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
-
-                                    </a>
-                                </div>
-                                <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="/cart">
-                                        <i class="fi-rs-shopping-cart"></i>
-                                        <!-- <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg"> -->
-                                        <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
-                                    </a>
-
-                                </div>
-                            </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="header-bottom header-bottom-bg-color sticky-bar">
-        <div class="container">
-            <div class="header-wrap header-space-between position-relative">
-                <div class="logo logo-width-1 d-block d-lg-none">
-                    <a href="/"><img src="/assets/imgs/theme/shoestore-logo.svg" alt="logo"></a>
-                </div>
-                <div class="header-nav d-none d-lg-flex">
-                    <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
-                        <nav>
-                            <ul>
-                                <li><a href="/">Home</a></li>
-                                <li><a href="/shop">Shop</a></li>
-                               
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-                <div class="hotline d-none d-lg-block">
-                    <!-- <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p> -->
-                </div>   
-                <div class="header-action-icon-2 d-block d-lg-none">
-                    
-                    <!-- <div class="burger-icon burger-icon-white">
-                        <span class="burger-icon-top"><span></span><span></span><span></span></span>
-                        <span class="burger-icon-mid"><span></span><span></span><span></span></span>
-                        <span class="burger-icon-bottom"><span></span><span></span><span></span></span>
-                    </div> -->
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
-
-<div class="mobile-header-active mobile-header-wrapper-style perfect-scrollbar">
-    <div class="mobile-header-wrapper-inner">
-        <div class="mobile-header-content-area">
-            <div class="perfect-scroll">
-                <div class="mobile-menu-wrap mobile-header-border">
-                    <nav>
-                        <ul class="mobile-menu font-heading">
-                            <li><a class="active" href="/">Home</a></li>
-                            <li><a href="/about">About</a></li>
-                            <li><a href="/shop">Shop</a></li>
-                            <li><a href="/offers">Deals</a></li>
-                            <li><a href="/contact">Contact</a></li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="mobile-account">
-                    <h6 class="mb-10px">My Account</h6>
-                    <ul class="mobile-menu font-heading">
-                        <li><a href="/profileinfo">Profile</a></li>
-                        <li><a href="/myorders">My Orders</a></li>
-                        <li><a href="/addresses">My Addresses</a></li>
-                        <li><a href="/wishlist">Wishlist</a></li>
-                        <li><a href="/wallet">My Wallet</a></li>
-                        <li><a href="/logout">Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <main class="main">
     <!-- Sidebar Toggle Button -->
@@ -821,7 +966,13 @@
                 <div class="col-lg-9 main-content" id="mainContent">
                     <div class="wishlist-content">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h3 class="mb-0">My Wishlist</h3>
+                            <h3 class="mb-0">
+                                <i class="fi-rs-heart me-2"></i>
+                                My Wishlist
+                                <span class="badge bg-light text-dark ms-2 rounded-pill">
+                                    <%= products.length %> Items
+                                </span>
+                            </h3>
                         </div>
                         <div class="table-responsive">
                             <table class="shopping-summery">
@@ -841,8 +992,11 @@
                                         <div class="cart-empty">
                                           <i class="fi-rs-heart"></i>
                                           <h3>Your wishlist is empty</h3>
-                                          <p>Looks like you haven't added any products to your wishlist yet.</p>
-                                          <a href="/shop" class="btn">Start Shopping</a>
+                                          <p>Looks like you haven't added any products to your wishlist yet. Start exploring our collection and add your favorite items!</p>
+                                          <a href="/shop" class="btn">
+                                            <i class="fi-rs-shopping-bag me-2"></i>
+                                            Start Shopping
+                                          </a>
                                         </div>
                                       </td>
                                     </tr>
@@ -865,7 +1019,7 @@
                                         </td>
                                         <td class="action" data-label="Action">
                                             <a href="/productDetails?id=<%= product._id %>" class="btn">
-                                              <i class="fi-rs-shopping-bag-add mr-5"></i>Add to cart
+                                              <i class="fi-rs-shopping-bag-add me-2"></i>Add to cart
                                             </a>
                                         </td>
                                         <td class="remove" data-label="Remove">
@@ -880,6 +1034,44 @@
                                   <% } %>
                                 </tbody>
                               </table>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions Card - Like myWallet -->
+                    <div class="card mt-4" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e9ecef;">
+                        <div class="card-header" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-bottom: 1px solid #dee2e6; padding: 1.25rem;">
+                            <h4 class="mb-0" style="font-weight: 700; color: #333;">
+                                <i class="fi-rs-settings me-2"></i>
+                                Quick Actions
+                            </h4>
+                        </div>
+                        <div class="card-body" style="padding: 1.5rem;">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <a href="/shop" class="btn btn-outline-success w-100" style="border-radius: 8px; padding: 0.75rem; font-weight: 600; transition: all 0.3s ease;">
+                                        <i class="fi-rs-shopping-bag me-2"></i>
+                                        Continue Shopping
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/cart" class="btn btn-outline-primary w-100" style="border-radius: 8px; padding: 0.75rem; font-weight: 600; transition: all 0.3s ease;">
+                                        <i class="fi-rs-shopping-cart me-2"></i>
+                                        View Cart
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/myorders" class="btn btn-outline-info w-100" style="border-radius: 8px; padding: 0.75rem; font-weight: 600; transition: all 0.3s ease;">
+                                        <i class="fi-rs-shopping-cart me-2"></i>
+                                        My Orders
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/profileinfo" class="btn btn-outline-secondary w-100" style="border-radius: 8px; padding: 0.75rem; font-weight: 600; transition: all 0.3s ease;">
+                                        <i class="fi-rs-user me-2"></i>
+                                        My Profile
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1010,5 +1202,4 @@
         }
       });
     });
-</script>
 </script>

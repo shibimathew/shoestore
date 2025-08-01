@@ -56,7 +56,6 @@ const productDetails = async (req, res) => {
       product.images = ["/assets/imgs/shop/product-placeholder.jpg"];
     }
 
-    // Initialize longDescription and specifications if not present
     if (!product.longDescription) {
       product.longDescription = product.description || "";
     }
@@ -69,9 +68,9 @@ const productDetails = async (req, res) => {
     const relatedProducts = await Product.find({
       category: categoryId,
       _id: { $ne: productId }, // Exclude current product
-      isBlocked: { $ne: true }, // Only show products that aren't blocked
+      isBlocked: { $ne: true },
     })
-      .limit(4) // Limit to 4 related products
+      .limit(4) 
       .populate("category")
       .lean();
 

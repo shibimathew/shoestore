@@ -191,7 +191,11 @@ const addMyAddresses = async (req, res) => {
     addressDoc.address.push(newAddress);
     await addressDoc.save();
     if (redirect === "checkout") {
-      return res.redirect("/checkout");
+       return res.status(200).json({
+        success: true,
+        message: "Address added successfully",
+        redirect : '/checkout'
+      });
     } else {
       return res.status(200).json({
         success: true,

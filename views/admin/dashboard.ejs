@@ -336,18 +336,26 @@
   }
 }
 </style>
-<div class="wrapper">
-    <!-- Sidebar Overlay for mobile/tablet -->
-    <div class="sidebar-overlay" id="sidebarOverlay" tabindex="-1" aria-hidden="true"></div>
+<body>
+    <!-- Mobile Header with Logo and Hamburger -->
+    <div class="mobile-header">
+        <div class="mobile-logo">
+            <img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore">
+        </div>
+        <button class="hamburger-btn" id="sidebarHamburger" aria-label="Toggle sidebar" aria-controls="offcanvas_aside" aria-expanded="false">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </div>
+    <!-- Overlay -->
+    <div class="screen-overlay" id="sidebarOverlay"></div>
     <!-- Sidebar -->
     <aside class="navbar-aside" id="offcanvas_aside" aria-label="Sidebar" aria-modal="true" role="dialog">
         <div class="aside-top">
             <a href="/admin" class="brand-wrap">
                 <img src="/assets/imgs/theme/shoestore-logo.svg" class="logo" alt="Shoestore">
             </a>
-            <div>
-                <button class="btn btn-icon btn-aside-minimize" id="mobile-menu-toggle" aria-label="Open sidebar" aria-controls="offcanvas_aside" aria-expanded="false"> <i class="text-muted material-icons md-menu_open"></i> </button>
-            </div>
         </div>
         <nav>
             <ul class="menu-aside">
@@ -386,7 +394,7 @@
                         <span class="text">Sales Report</span>
                     </a>
                 </li>
-                  <li class="menu-item">
+                <li class="menu-item">
                     <a class="menu-link" href="/admin/logout"> <i class="icon material-icons md-exit_to_app"></i>
                         <span class="text">Sign Out</span>
                     </a>
@@ -395,9 +403,7 @@
             <hr>
         </nav>
     </aside>
-
-    <!-- Main Content -->
-    <main class="main-wrap">
+    <main class="main-wrap" id="mainWrap">
         <header class="main-header navbar" style="display: flex !important; visibility: visible !important;">
             <div class="col-search">
 
@@ -552,7 +558,7 @@
             </div>
         </section>
     </main>
-</div>
+</body>
 
 <!-- jQuery CDN (must be first) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -1162,28 +1168,41 @@ $(document).ready(function() {
     });
 });
 
-// Additional initialization for mobile menu
+// Sidebar toggle for dashboard (category style)
 document.addEventListener('DOMContentLoaded', function () {
-    const toggleBtn = document.querySelector('#mobile-menu-toggle');
-    const sidebar = document.querySelector('#offcanvas_aside');
-    const sidebarOverlay = document.querySelector('#sidebarOverlay');
-
-    toggleBtn?.addEventListener('click', function (e) {
-        e.preventDefault();
-        console.log('Mobile toggle clicked');
-        sidebar.classList.toggle('show');
-        document.body.classList.toggle('sidebar-open');
-        sidebarOverlay.classList.toggle('active');
+    const sidebar = document.getElementById('offcanvas_aside');
+    const overlay = document.getElementById('sidebarOverlay');
+    const hamburger = document.getElementById('sidebarHamburger');
+    function openSidebar() {
+        sidebar.classList.add('show');
+        overlay.classList.add('active');
+        document.getElementById('mainWrap').classList.add('dimmed');
+        hamburger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('show');
+        overlay.classList.remove('active');
+        document.getElementById('mainWrap').classList.remove('dimmed');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+    }
+    hamburger.addEventListener('click', function() {
+        if (sidebar.classList.contains('show')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
     });
-
-    document.addEventListener('click', function (e) {
-        if (window.innerWidth <= 991 &&
-            !e.target.closest('#offcanvas_aside') &&
-            !e.target.closest('#mobile-menu-toggle') &&
-            !e.target.closest('#sidebarOverlay')) {
-            sidebar.classList.remove('show');
-            document.body.classList.remove('sidebar-open');
-            sidebarOverlay.classList.remove('active');
+    overlay.addEventListener('click', closeSidebar);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && sidebar.classList.contains('show')) {
+            closeSidebar();
+        }
+    });
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+            closeSidebar();
         }
     });
 });

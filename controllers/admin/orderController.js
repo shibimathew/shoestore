@@ -147,7 +147,7 @@ const getOrderTracking = async (req, res) => {
 
 const updateOrderStatus = async (req, res) => {
   try {
-    const { orderId, newStatus } = req.body;
+    const { orderId, newStatus, activeItemsOnly } = req.body;
 
     const allowed = [
       "Pending",
@@ -168,32 +168,205 @@ const updateOrderStatus = async (req, res) => {
       return res.status(404).send("Order not found");
     }
 
+    // Update main order status
     order.status = newStatus;
 
+    // Track which items were updated
+    let updatedItemsCount = 0;
+    let cancelledItemsCount = 0;
+
     order.orderItems.forEach((item) => {
-      item.currentStatus = newStatus;
+      // Only update items that are not cancelled
+      if (item.currentStatus !== 'Cancelled') {
+        item.currentStatus = newStatus;
+        updatedItemsCount++;
 
-      if (!Array.isArray(item.statusHistory)) {
-        item.statusHistory = [];
-      }
+        if (!Array.isArray(item.statusHistory)) {
+          item.statusHistory = [];
+        }
 
-      const lastEntry = item.statusHistory[item.statusHistory.length - 1];
-      if (!lastEntry || lastEntry.status !== newStatus) {
-        item.statusHistory.push({
-          status: newStatus,
-          timestamp: new Date(),
-        });
+        const lastEntry = item.statusHistory[item.statusHistory.length - 1];
+        if (!lastEntry || lastEntry.status !== newStatus) {
+          item.statusHistory.push({
+            status: newStatus,
+            timestamp: new Date(),
+          });
+        }
+      } else {
+        // Keep cancelled items as cancelled
+        cancelledItemsCount++;
+        console.log(`Item ${item._id} remains cancelled: ${item.product?.productName || 'Unknown Product'}`);
       }
     });
+
+    // Recalculate total amount excluding cancelled items
+    const totalAmount = order.orderItems
+      .filter(item => item.currentStatus !== 'Cancelled')
+      .reduce((sum, item) => {
+        return sum + (item.product?.salePrice || 0) * (item.quantity || 1);
+      }, 0);
+
+    // Apply discount if any
+    const finalAmount = order.discount ? totalAmount - order.discount : totalAmount;
+    
+    // Update the order total amount
+    order.totalAmount = finalAmount;
 
     if (order.paymentMethod === "cod") {
       order.paymentStatus = "Paid";
     }
 
     await order.save();
+    
+    console.log(`Order ${orderId} updated: ${updatedItemsCount} items updated, ${cancelledItemsCount} items remained cancelled`);
+    
     res.redirect(`/admin/orderDetails?id=${orderId}`);
   } catch (error) {
     console.error("Error updating order status:", error);
+    res.redirect("/admin/pageerror");
+  }
+};
+
+const cancelIndividualItem = async (req, res) => {
+  try {
+    const { orderId, itemId, cancelReason } = req.body;
+    
+    const order = await Order.findById(orderId).populate('orderItems.product');
+    if (!order) {
+      return res.status(404).send("Order not found");
+    }
+
+    const itemToCancel = order.orderItems.find(
+      (item) => item._id.toString() === itemId
+    );
+
+    if (!itemToCancel) {
+      return res.status(404).send("Item not found");
+    }
+
+    if (itemToCancel.currentStatus === "Cancelled") {
+      return res.status(400).send("Item is already cancelled");
+    }
+
+    // Cancel the individual item
+    itemToCancel.currentStatus = "Cancelled";
+
+    if (!itemToCancel.statusHistory) {
+      itemToCancel.statusHistory = [];
+    }
+
+    // Add cancellation to item's status history
+    itemToCancel.statusHistory.push({
+      status: "Cancelled",
+      timestamp: new Date(),
+      reason: cancelReason || "Cancelled by admin",
+    });
+
+    // Restore stock for the cancelled item
+    const size = itemToCancel.variant?.size;
+    const productId = itemToCancel.product._id || itemToCancel.product;
+    const quantity = itemToCancel.quantity;
+
+    if (size && productId) {
+      await Product.findOneAndUpdate(
+        { _id: productId },
+        {
+          $inc: {
+            [`shoeSizes.${size}`]: quantity,
+          },
+        }
+      );
+    }
+
+    // Handle refund for individual item if payment was made online
+    const paymentMethod = (order.paymentMethod || "").toLowerCase();
+    if (paymentMethod !== "cod" && order.paymentStatus === "Paid") {
+      const userId = order.userId;
+
+      // Calculate refund amount for this specific item
+      const itemPrice = itemToCancel.product?.salePrice || itemToCancel.price || 0;
+      const itemTotal = itemPrice * itemToCancel.quantity;
+
+      // Calculate proportional delivery charge and tax if applicable
+      const orderSubtotal = order.subTotal || 0;
+      const proportionalDeliveryCharge =
+        orderSubtotal > 0
+          ? (itemTotal / orderSubtotal) * (order.deliveryCharge || 0)
+          : 0;
+      const proportionalTax =
+        orderSubtotal > 0 ? (itemTotal / orderSubtotal) * (order.tax || 0) : 0;
+
+      const refundAmount = itemTotal + proportionalDeliveryCharge + proportionalTax;
+
+      // Create wallet entry for refund
+      await new Wallet({
+        userId: userId,
+        transactionId: `ADMIN-ITEM-REFUND-${Date.now()}`,
+        payment_type: "refund",
+        amount: refundAmount,
+        status: "completed",
+        entryType: "CREDIT",
+        type: "item_refund",
+        orderId: order._id,
+        itemId: itemToCancel._id,
+      }).save();
+
+      // Update user wallet
+      await User.findByIdAndUpdate(userId, {
+        $inc: { wallet: refundAmount },
+        $push: {
+          walletHistory: {
+            type: "credit",
+            amount: refundAmount,
+            description: `Admin refund for cancelled item: ${
+              itemToCancel.product?.productName || "Item"
+            } from order #${order._id}`,
+          },
+        },
+      });
+    }
+
+    // Recalculate total amount excluding cancelled items
+    const totalAmount = order.orderItems
+      .filter(item => item.currentStatus !== 'Cancelled')
+      .reduce((sum, item) => {
+        return sum + (item.product?.salePrice || 0) * (item.quantity || 1);
+      }, 0);
+
+    // Apply discount if any
+    const finalAmount = order.discount ? totalAmount - order.discount : totalAmount;
+    
+    // Update the order total amount
+    order.totalAmount = finalAmount;
+
+    // Check if all items are cancelled to update order status
+    const allItemsCancelled = order.orderItems.every(
+      (item) =>
+        item.currentStatus === "Cancelled" || item.currentStatus === "Returned"
+    );
+
+    if (allItemsCancelled) {
+      order.status = "Cancelled";
+      order.cancelReason = "All items cancelled by admin";
+
+      if (!order.statusHistory) {
+        order.statusHistory = [];
+      }
+
+      order.statusHistory.push({
+        status: "Cancelled",
+        timestamp: new Date(),
+        reason: "All items cancelled individually by admin",
+      });
+    }
+
+    await order.save();
+
+    console.log(`Admin cancelled item ${itemId} in order ${orderId}: ${itemToCancel.product?.productName || 'Unknown Product'}`);
+    
+    res.redirect(`/admin/orderDetails?id=${orderId}`);
+  } catch (error) {
+    console.error("Error cancelling individual item:", error);
     res.redirect("/admin/pageerror");
   }
 };
@@ -362,6 +535,7 @@ module.exports = {
   getOrderDetails,
   getOrderTracking,
   updateOrderStatus,
+  cancelIndividualItem,
   approveReturns,
   rejectReturns,
 };

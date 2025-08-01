@@ -262,6 +262,7 @@ const cancelIndividualItem = async (req, res) => {
         reason: "All items cancelled individually",
       });
     }
+  
 
     await order.save();
 

@@ -47,6 +47,7 @@ const getMyWalletPage = async (req, res, next) => {
       total += amounts.amount;
     });
 
+
     let cart = await Cart.findOne({ userId }).populate("items.productId");
 
     const items = cart?.items || [];
@@ -64,7 +65,7 @@ const getMyWalletPage = async (req, res, next) => {
       user,
       items,
       wishlistCount,
-      total,
+      total
     });
   } catch (error) {
     console.error("Error rendering wallet page:", error);
