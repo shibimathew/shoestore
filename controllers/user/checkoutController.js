@@ -248,6 +248,8 @@ const loadOrderSuccess = async (req, res) => {
       .populate("orderItems.product")
       .populate("address.addressDocId");
 
+      console.log('last order ===>',latestOrder, 'user id ==>', userId)
+
     if (!latestOrder) {
       return res.redirect("/orders?error=no-order-found");
     }
