@@ -382,6 +382,12 @@ var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'fals
         color: #721c24;
     }
 
+    .order-card .order-status.payment-failed {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #dc3545;
+    }
+
     .order-card .order-total {
         font-weight: 600;
         font-size: 1.1rem;
@@ -1445,11 +1451,18 @@ var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'fals
                                             <%= order.status === 'Delivered' ? 'delivered' : '' %> 
                                             <%= order.status === 'Shipped' ? 'shipped' : '' %> 
                                             <%= order.status === 'Processing' ? 'processing' : '' %> 
-                                            <%= order.status === 'Cancelled' ? 'cancelled' : '' %>">
-                                            <%= order.status || 'Unknown' %>
+                                            <%= order.status === 'Cancelled' ? 'cancelled' : '' %>
+                                            <%= order.paymentStatus === 'Failed' ? 'payment-failed' : '' %>
+                                            <%= order.status === 'Payment Failed' ? 'payment-failed' : '' %>">
+                                            <% if (order.paymentStatus === 'Failed' || order.status === 'Payment Failed') { %>
+                                                Payment Failed
+                                            <% } else { %>
+                                                <%= order.status || 'Unknown' %>
+                                            <% } %>
                                         </span>
                                     </div>
                                     <div class="card-body">
+                                        
                                         <div class="order-items">
                                             <% order.orderItems.forEach(item => { %>
                                             <div class="order-item <%= item.currentStatus === 'Cancelled' ? 'cancelled-item' : '' %>">

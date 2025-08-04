@@ -544,7 +544,7 @@
                                         <div class="product-progress-item">
                                             <span class="text-muted font-xs"><%= product.productName %></span>
                                             <div class="progress mb-3">
-                                                <div class="progress-bar" role="progressbar" style="width: <%= product.percentage %>%;"><%= product.percentage %>%</div>
+                                                <div class="progress-bar" role="progressbar" data-percentage="<%= product.percentage %>" style="width: 0%"><%= product.percentage %>%</div>
                                             </div>
                                         </div>
                                     <% }); %>
@@ -592,11 +592,25 @@ $(document).ready(function() {
     waitForChart().then(() => {
         console.log('Chart.js is available, initializing dashboard...');
         initializeDashboard();
+        // Set initial progress bar widths
+        setProgressBarWidths();
     });
     
     // Declare chart variables at global scope
     let salesChart = null;
     let categoryChart = null;
+    
+    // Function to set progress bar widths
+    function setProgressBarWidths() {
+        document.querySelectorAll('.progress-bar[data-percentage]').forEach(bar => {
+            const percentage = bar.getAttribute('data-percentage');
+            if (percentage) {
+                setTimeout(() => {
+                    bar.style.width = percentage + '%';
+                }, 100);
+            }
+        });
+    }
     
     function initializeDashboard() {
         let weeklyChartData, monthlyChartData, yearlyChartData, categoryData, topProductsData;
@@ -607,12 +621,25 @@ $(document).ready(function() {
             monthlyChartData = JSON.parse('<%- JSON.stringify(monthlyChartData) %>' || '[]');
             yearlyChartData = JSON.parse('<%- JSON.stringify(yearlyChartData) %>' || '[]');
             
-            categoryData = {
-                labels: JSON.parse('<%- JSON.stringify(categoryChartData.labels || []) %>'),
-                data: JSON.parse('<%- JSON.stringify(categoryChartData.data || []) %>')
-            };
+            // Parse period-specific category data
+            const weeklyCategoryData = JSON.parse('<%- JSON.stringify(weeklyCategoryData || {}) %>');
+            const monthlyCategoryData = JSON.parse('<%- JSON.stringify(monthlyCategoryData || {}) %>');
+            const yearlyCategoryData = JSON.parse('<%- JSON.stringify(yearlyCategoryData || {}) %>');
             
-            topProductsData = JSON.parse('<%- JSON.stringify(topProducts || []) %>');
+            // Parse period-specific top products data
+            const weeklyTopProducts = JSON.parse('<%- JSON.stringify(weeklyTopProducts || []) %>');
+            const monthlyTopProducts = JSON.parse('<%- JSON.stringify(monthlyTopProducts || []) %>');
+            const yearlyTopProducts = JSON.parse('<%- JSON.stringify(yearlyTopProducts || []) %>');
+            
+            // Validate that we have the expected data structure
+            console.log('Data validation:', {
+                weeklyCategoryData: typeof weeklyCategoryData === 'object' && weeklyCategoryData !== null,
+                monthlyCategoryData: typeof monthlyCategoryData === 'object' && monthlyCategoryData !== null,
+                yearlyCategoryData: typeof yearlyCategoryData === 'object' && yearlyCategoryData !== null,
+                weeklyTopProducts: Array.isArray(weeklyTopProducts),
+                monthlyTopProducts: Array.isArray(monthlyTopProducts),
+                yearlyTopProducts: Array.isArray(yearlyTopProducts)
+            });
             
             // Parse period-specific stats
             weeklyStats = JSON.parse('<%- JSON.stringify(weeklyStats) %>');
@@ -621,26 +648,39 @@ $(document).ready(function() {
             
             console.log('Parsed data successfully:', {
                 weeklyChartData,
-                weeklyCategoryData: categoryData,
-                weeklyTopProducts: topProductsData,
-                weeklyStats
+                weeklyCategoryData,
+                weeklyTopProducts,
+                weeklyStats,
+                monthlyCategoryData,
+                monthlyTopProducts,
+                yearlyCategoryData,
+                yearlyTopProducts
+            });
+            
+            // Detailed logging for monthly data
+            console.log('Monthly data details:', {
+                categoryData: monthlyCategoryData,
+                topProducts: monthlyTopProducts,
+                categoryLabels: monthlyCategoryData?.labels,
+                categoryDataArray: monthlyCategoryData?.data,
+                topProductsLength: monthlyTopProducts?.length
             });
             
             const chartData = {
                 weekly: {
                     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
                     data: weeklyChartData,
-                    categoryLabels: categoryData.labels,
-                    categoryData: categoryData.data,
-                    topProducts: topProductsData,
+                    categoryLabels: (weeklyCategoryData && weeklyCategoryData.labels) ? weeklyCategoryData.labels : [],
+                    categoryData: (weeklyCategoryData && weeklyCategoryData.data) ? weeklyCategoryData.data : [],
+                    topProducts: Array.isArray(weeklyTopProducts) ? weeklyTopProducts : [],
                     stats: weeklyStats
                 },
                 monthly: {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                     data: monthlyChartData,
-                    categoryLabels: categoryData.labels,
-                    categoryData: categoryData.data,
-                    topProducts: topProductsData,
+                    categoryLabels: (monthlyCategoryData && monthlyCategoryData.labels) ? monthlyCategoryData.labels : [],
+                    categoryData: (monthlyCategoryData && monthlyCategoryData.data) ? monthlyCategoryData.data : [],
+                    topProducts: Array.isArray(monthlyTopProducts) ? monthlyTopProducts : [],
                     stats: monthlyStats
                 },
                 yearly: {
@@ -653,12 +693,38 @@ $(document).ready(function() {
                         '<%= new Date().getFullYear() %>'
                     ],
                     data: yearlyChartData,
-                    categoryLabels: categoryData.labels,
-                    categoryData: categoryData.data,
-                    topProducts: topProductsData,
+                    categoryLabels: (yearlyCategoryData && yearlyCategoryData.labels) ? yearlyCategoryData.labels : [],
+                    categoryData: (yearlyCategoryData && yearlyCategoryData.data) ? yearlyCategoryData.data : [],
+                    topProducts: Array.isArray(yearlyTopProducts) ? yearlyTopProducts : [],
                     stats: yearlyStats
                 }
             };
+            
+            // Debug: Log the final chart data structure
+            console.log('Final chart data structure:', {
+                weekly: {
+                    hasCategoryLabels: chartData.weekly.categoryLabels.length > 0,
+                    hasCategoryData: chartData.weekly.categoryData.length > 0,
+                    hasTopProducts: chartData.weekly.topProducts.length > 0
+                },
+                monthly: {
+                    hasCategoryLabels: chartData.monthly.categoryLabels.length > 0,
+                    hasCategoryData: chartData.monthly.categoryData.length > 0,
+                    hasTopProducts: chartData.monthly.topProducts.length > 0
+                },
+                yearly: {
+                    hasCategoryLabels: chartData.yearly.categoryLabels.length > 0,
+                    hasCategoryData: chartData.yearly.categoryData.length > 0,
+                    hasTopProducts: chartData.yearly.topProducts.length > 0
+                }
+            });
+            
+            // Additional debugging for monthly data
+            console.log('Monthly data details:', {
+                categoryLabels: chartData.monthly.categoryLabels,
+                categoryData: chartData.monthly.categoryData,
+                topProducts: chartData.monthly.topProducts
+            });
 
             function updateAllCharts(filter) {
                 console.log('Updating charts for filter:', filter);
@@ -669,6 +735,13 @@ $(document).ready(function() {
                     console.error('No data available for filter:', filter);
                     return;
                 }
+                
+                console.log('Category data for', filter, ':', {
+                    labels: chartData[filter].categoryLabels,
+                    data: chartData[filter].categoryData
+                });
+                
+                console.log('Top products for', filter, ':', chartData[filter].topProducts);
                 
                 updateSalesChart(filter);
                 updateCategoryChart(filter);
@@ -755,6 +828,9 @@ $(document).ready(function() {
                     return;
                 }
                 
+                console.log('Category chart canvas found:', ctx2);
+                console.log('Canvas dimensions:', ctx2.width, 'x', ctx2.height);
+                
                 console.log('Updating category chart for:', filter);
                 const context2 = ctx2.getContext('2d');
                 
@@ -763,6 +839,8 @@ $(document).ready(function() {
                 }
                 
                 const currentData = chartData[filter];
+                console.log('Category chart data for', filter, ':', currentData);
+                
                 if (!currentData || !currentData.categoryLabels || currentData.categoryLabels.length === 0) {
                     console.warn('No category data available for filter:', filter);
                     // Show empty state
@@ -770,7 +848,7 @@ $(document).ready(function() {
                     context2.fillStyle = '#666';
                     context2.font = '14px Arial';
                     context2.textAlign = 'center';
-                    context2.fillText('No category data available', ctx2.width / 2, ctx2.height / 2);
+                    context2.fillText('No category data available for ' + filter + ' period', ctx2.width / 2, ctx2.height / 2);
                     return;
                 }
                 
@@ -823,9 +901,13 @@ $(document).ready(function() {
                     return;
                 }
                 
+                console.log('Top products container found:', container);
+                console.log('Container innerHTML length:', container.innerHTML.length);
+                
                 const currentData = chartData[filter];
                 const products = currentData && currentData.topProducts ? currentData.topProducts : [];
-                console.log('Updating top products:', products);
+                console.log('Updating top products for', filter, ':', products);
+                console.log('Current data for', filter, ':', currentData);
                 
                 if (products && products.length > 0) {
                     let html = '';
@@ -834,15 +916,18 @@ $(document).ready(function() {
                         <div class="product-progress-item">
                             <span class="text-muted font-xs">${product.productName || 'Unknown Product'}</span>
                             <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" style="width: ${product.percentage || 0}%">${product.percentage || 0}%</div>
+                                <div class="progress-bar" role="progressbar" data-percentage="${product.percentage || 0}" style="width: 0%">${product.percentage || 0}%</div>
                             </div>
                         </div>
                         `;
                     });
                     container.innerHTML = html;
                 } else {
-                    container.innerHTML = '<span class="text-muted">No product data available</span>';
+                    container.innerHTML = '<span class="text-muted">No product data available for ' + filter + ' period</span>';
                 }
+                
+                // Set progress bar widths after updating content
+                setTimeout(setProgressBarWidths, 50);
             }
             
             function updateStatsCards(filter) {
@@ -877,10 +962,19 @@ $(document).ready(function() {
             $('.global-filter-btn').on('click', function() {
                 const filter = $(this).data('filter');
                 console.log('Filter clicked:', filter);
+                console.log('Available chart data for', filter, ':', chartData[filter]);
                 
                 if (filter !== 'custom') {
                     $('.global-filter-btn').removeClass('active');
                     $(this).addClass('active');
+                    
+                    // Test monthly filter specifically
+                    if (filter === 'monthly') {
+                        console.log('Monthly filter clicked - testing data...');
+                        console.log('Monthly category data:', chartData.monthly.categoryLabels, chartData.monthly.categoryData);
+                        console.log('Monthly top products:', chartData.monthly.topProducts);
+                    }
+                    
                     updateAllCharts(filter);
                 }
             });
@@ -1107,7 +1201,7 @@ $(document).ready(function() {
                         <div class="product-progress-item">
                             <span class="text-muted font-xs">${product.productName || 'Unknown Product'}</span>
                             <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" style="width: ${product.percentage || 0}%">${product.percentage || 0}%</div>
+                                <div class="progress-bar" role="progressbar" data-percentage="${product.percentage || 0}" style="width: 0%">${product.percentage || 0}%</div>
                             </div>
                         </div>
                     `;
@@ -1116,6 +1210,9 @@ $(document).ready(function() {
             } else {
                 topProductsContainer.innerHTML = '<span class="text-muted">No product data available for selected range</span>';
             }
+            
+            // Set progress bar widths after updating content
+            setTimeout(setProgressBarWidths, 50);
         }
         
         // Update stats cards

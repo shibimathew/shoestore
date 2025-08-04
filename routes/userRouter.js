@@ -104,7 +104,7 @@ router.post(
 router.get("/wishlist", userAuth, wishlistController.getWishlistPage);
 router.post("/wishlist/add", userAuth, wishlistController.addToWishlist);
 router.post(
-  "/wishlist/remove",
+"/wishlist/remove",
   userAuth,
   wishlistController.removeFromWishlist
 );
@@ -129,8 +129,9 @@ router.post(
 );
 router.get("/available-coupons", userAuth, checkoutController.getCoupon);
 router.post("/apply-coupon", userAuth, checkoutController.applyCoupon);
+router.get("/check-stock", userAuth, checkoutController.checkStockAvailability);
 
-router.get("/payment-failed", userAuth); 
+router.get("/payment-failed", userAuth);
 
 // order success & failure routes
 router.get("/order-success", userAuth, checkoutController.loadOrderSuccess);

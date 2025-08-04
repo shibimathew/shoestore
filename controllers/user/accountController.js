@@ -272,7 +272,7 @@ const editProfileInfo = async (req, res) => {
 
     await user.save();
 
-    // Send appropriate response based on request type
+  
 
     return res.status(200).json({
       success: true,

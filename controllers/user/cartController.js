@@ -108,7 +108,7 @@ const getCartPage = async (req, res) => {
       match: { isListed: { $ne: false } }, // Only show products that aren't blocked by admin
     });
 
-    // Filter out null productId entries (products that were filtered out by populate match)
+    // Filter out null productId entries 
     const items = cart?.items?.filter((item) => item.productId !== null) || [];
     req.session.coupon = null;
     return res.render("user/myCart", {

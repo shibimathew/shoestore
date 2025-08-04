@@ -257,24 +257,69 @@
         /* phind */
 
         .invalid-feedback {
-            display: block;
+            display: none;
             margin-top: 0.25rem;
             font-size: 0.875rem;
             color: #dc3545;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .invalid-feedback.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .is-invalid {
-            border-color: #dc3545;
-            padding-right: calc(1.5rem + 1.5625rem);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3E%3Ccircle cx='6' cy='6' r='4.5'/%3E%3Cpath d='M6 7l2 2 2-2M6 7l-2 2-2-2'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right calc(0.375rem + 0.1875rem) center;
-            background-size: calc(0.75rem + 0.375rem) calc(0.75rem + 0.375rem);
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15) !important;
+            background-color: #fff5f5;
         }
 
-        .form-control:focus:not(:placeholder-shown):invalid {
-            border-color: #dc3545;
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        .is-invalid:focus {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='m5.8 4.6 2.4 2.4m0-2.4L5.8 7'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+
+        /* Success state for valid fields */
+        .is-valid {
+            border-color: #28a745 !important;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15) !important;
+        }
+
+        .is-valid:focus {
+            border-color: #28a745 !important;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+        }
+
+        /* Address type error styling */
+        .address-type-selector.is-invalid {
+            border: 1px solid #dc3545;
+            border-radius: 8px;
+            padding: 1rem;
+            background-color: #fff5f5;
+        }
+
+        .address-type-selector.is-invalid .form-check-label {
+            color: #dc3545;
         }
         /* Responsive Sidebar Styles */
     .sidebar-toggle {
@@ -1112,12 +1157,14 @@
                                             <div class="form-group">
                                                 <label for="name" class="form-label">Full Name</label>
                                                 <input type="text" class="form-control" id="name" name="name">
+                                                <div class="invalid-feedback" id="nameError"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="phone" class="form-label">Phone Number</label>
                                                 <input type="tel" class="form-control" id="phone" name="phone">
+                                                <div class="invalid-feedback" id="phoneError"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -1128,12 +1175,14 @@
                                                 <label for="altPhone" class="form-label">Alternative Phone
                                                     (Optional)</label>
                                                 <input type="tel" class="form-control" id="altPhone" name="altPhone">
+                                                <div class="invalid-feedback" id="altPhoneError"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="landmark" class="form-label">Landmark (Optional)</label>
                                                 <input type="text" class="form-control" id="landmark" name="landmark">
+                                                <div class="invalid-feedback" id="landmarkError"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -1141,11 +1190,13 @@
                                     <div class="form-group">
                                         <label for="addressLine1" class="form-label">Address Line 1</label>
                                         <input type="text" class="form-control" id="addressLine1" name="addressLine1">
+                                        <div class="invalid-feedback" id="addressLine1Error"></div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="addressLine2" class="form-label">Address Line 2 (Optional)</label>
                                         <input type="text" class="form-control" id="addressLine2" name="addressLine2">
+                                        <div class="invalid-feedback" id="addressLine2Error"></div>
                                     </div>
 
                                     <div class="row">
@@ -1153,6 +1204,7 @@
                                             <div class="form-group">
                                                 <label for="city" class="form-label">City</label>
                                                 <input type="text" class="form-control" id="city" name="city">
+                                                <div class="invalid-feedback" id="cityError"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -1199,6 +1251,7 @@
                                                     <option value="Lakshadweep">Lakshadweep</option>
                                                     <option value="Puducherry">Puducherry</option>
                                                 </select>
+                                                <div class="invalid-feedback" id="stateError"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -1208,6 +1261,7 @@
                                             <div class="form-group">
                                                 <label for="pincode" class="form-label">Postal Code</label>
                                                 <input type="text" class="form-control" id="pincode" name="pincode">
+                                                <div class="invalid-feedback" id="pincodeError"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -1232,6 +1286,7 @@
                                                 <label for="addressTypeOther" class="form-check-label">Other</label>
                                             </div>
                                         </div>
+                                        <div class="invalid-feedback" id="addressTypeError"></div>
                                     </div>
 
                                     <div class="default-address-toggle">
@@ -1321,53 +1376,122 @@
             document.addEventListener('DOMContentLoaded', function () {
                 const form = document.getElementById('addressForm');
 
+                // Function to clear all validation errors
+                function clearAllErrors() {
+                    const errorElements = document.querySelectorAll('.invalid-feedback');
+                    const inputElements = document.querySelectorAll('.form-control, .form-select');
+                    
+                    errorElements.forEach(element => {
+                        element.textContent = '';
+                        element.classList.remove('show');
+                    });
+                    
+                    inputElements.forEach(element => {
+                        element.classList.remove('is-invalid', 'is-valid');
+                    });
+
+                    // Clear address type selector errors
+                    const addressTypeSelector = document.querySelector('.address-type-selector');
+                    if (addressTypeSelector) {
+                        addressTypeSelector.classList.remove('is-invalid');
+                    }
+                }
+
+                // Function to show error for specific field
+                function showError(fieldId, message) {
+                    const field = document.getElementById(fieldId);
+                    const errorElement = document.getElementById(fieldId + 'Error');
+                    
+                    if (field && errorElement) {
+                        field.classList.add('is-invalid');
+                        field.classList.remove('is-valid');
+                        errorElement.textContent = message;
+                        errorElement.classList.add('show');
+                    }
+                }
+
+                // Function to clear error for specific field
+                function clearError(fieldId) {
+                    const field = document.getElementById(fieldId);
+                    const errorElement = document.getElementById(fieldId + 'Error');
+                    
+                    if (field && errorElement) {
+                        field.classList.remove('is-invalid');
+                        errorElement.textContent = '';
+                        errorElement.classList.remove('show');
+                    }
+                }
+
+                // Function to show success for specific field
+                function showSuccess(fieldId) {
+                    const field = document.getElementById(fieldId);
+                    const errorElement = document.getElementById(fieldId + 'Error');
+                    
+                    if (field && errorElement) {
+                        field.classList.remove('is-invalid');
+                        field.classList.add('is-valid');
+                        errorElement.textContent = '';
+                        errorElement.classList.remove('show');
+                    }
+                }
+
                 function validateForm() {
-                    let errors = [];
+                    let isValid = true;
+                    clearAllErrors();
 
                     // Full Name
-                    const name = form.elements['name'];
+                    const name = document.getElementById('name');
                     if (!name.value.trim()) {
-                        errors.push('Full Name is required.');
+                        showError('name', 'Full Name is required.');
+                        isValid = false;
                     }
 
                     // Phone Number (Indian 10-digit mobile)
-                    const phone = form.elements['phone'];
+                    const phone = document.getElementById('phone');
                     if (!phone.value.trim()) {
-                        errors.push('Phone Number is required.');
+                        showError('phone', 'Phone Number is required.');
+                        isValid = false;
                     } else if (!/^[6-9]\d{9}$/.test(phone.value.trim())) {
-                        errors.push('Enter valid 10-digit Indian mobile number.');
+                        showError('phone', 'Enter valid 10-digit Indian mobile number.');
+                        isValid = false;
                     }
 
                     // Alternate Phone (optional, but must be valid if present)
-                    const altPhone = form.elements['altPhone'];
+                    const altPhone = document.getElementById('altPhone');
                     if (altPhone.value && altPhone.value.trim() && !/^[6-9]\d{9}$/.test(altPhone.value.trim())) {
-                        errors.push('Enter valid 10-digit Alternative mobile number.');
+                        showError('altPhone', 'Enter valid 10-digit Alternative mobile number.');
+                        isValid = false;
                     }
 
                     // Address Line 1
-                    const add1 = form.elements['addressLine1'];
-                    if (!add1.value.trim()) {
-                        errors.push('Address Line 1 is required.');
+                    const addressLine1 = document.getElementById('addressLine1');
+                    if (!addressLine1.value.trim()) {
+                        showError('addressLine1', 'Address Line 1 is required.');
+                        isValid = false;
                     }
 
                     // City
-                    const city = form.elements['city'];
+                    const city = document.getElementById('city');
                     if (!city.value.trim()) {
-                        errors.push('City is required.');
+                        showError('city', 'City is required.');
+                        isValid = false;
                     }
 
                     // State (must select)
-                    const state = form.elements['state'];
+                    const state = document.getElementById('state');
                     if (!state.value) {
-                        errors.push('Please select a state.');
+                        showError('state', 'Please select a state.');
+                        isValid = false;
                     }
 
                     // Pincode (Indian 6-digit)
-                    const pincode = form.elements['pincode'];
+                    const pincode = document.getElementById('pincode');
                     if (!pincode.value.trim()) {
-                        errors.push('Postal Code is required.');
+                        showError('pincode', 'Postal Code is required.');
+                        isValid = false;
                     } else if (!/^\d{6}$/.test(pincode.value.trim())) {
-                        errors.push('Enter a valid 6-digit Postal Code.');
+                        showError('pincode', 'Enter a valid 6-digit Postal Code.');
+                        isValid = false;
                     }
 
                     // Address Type (radio group, at least one checked)
@@ -1377,29 +1501,104 @@
                         if (input.checked) addressTypeChecked = true;
                     });
                     if (!addressTypeChecked) {
-                        errors.push('Select address type.');
+                        const addressTypeSelector = document.querySelector('.address-type-selector');
+                        const errorElement = document.getElementById('addressTypeError');
+                        if (addressTypeSelector && errorElement) {
+                            addressTypeSelector.classList.add('is-invalid');
+                            errorElement.textContent = 'Select address type.';
+                            errorElement.classList.add('show');
+                        }
+                        isValid = false;
                     }
 
-                    return errors;
+                    return isValid;
+                }
+
+                // Real-time validation on input
+                const inputs = ['name', 'phone', 'altPhone', 'addressLine1', 'city', 'pincode'];
+                inputs.forEach(inputId => {
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        input.addEventListener('input', function() {
+                            clearError(inputId);
+                        });
+                        input.addEventListener('blur', function() {
+                            // Validate specific field on blur
+                            validateField(inputId);
+                        });
+                    }
+                });
+
+                // State select validation
+                const stateSelect = document.getElementById('state');
+                if (stateSelect) {
+                    stateSelect.addEventListener('change', function() {
+                        clearError('state');
+                    });
+                }
+
+                // Address type validation
+                const addressTypeInputs = form.querySelectorAll('input[name="addressType"]');
+                addressTypeInputs.forEach(input => {
+                    input.addEventListener('change', function() {
+                        const addressTypeSelector = document.querySelector('.address-type-selector');
+                        const errorElement = document.getElementById('addressTypeError');
+                        if (addressTypeSelector && errorElement) {
+                            addressTypeSelector.classList.remove('is-invalid');
+                            errorElement.textContent = '';
+                            errorElement.classList.remove('show');
+                        }
+                    });
+                });
+
+                // Function to validate individual field
+                function validateField(fieldId) {
+                    const field = document.getElementById(fieldId);
+                    if (!field) return;
+
+                    switch(fieldId) {
+                        case 'name':
+                            if (!field.value.trim()) {
+                                showError('name', 'Full Name is required.');
+                            }
+                            break;
+                        case 'phone':
+                            if (!field.value.trim()) {
+                                showError('phone', 'Phone Number is required.');
+                            } else if (!/^[6-9]\d{9}$/.test(field.value.trim())) {
+                                showError('phone', 'Enter valid 10-digit Indian mobile number.');
+                            }
+                            break;
+                        case 'altPhone':
+                            if (field.value && field.value.trim() && !/^[6-9]\d{9}$/.test(field.value.trim())) {
+                                showError('altPhone', 'Enter valid 10-digit Alternative mobile number.');
+                            }
+                            break;
+                        case 'addressLine1':
+                            if (!field.value.trim()) {
+                                showError('addressLine1', 'Address Line 1 is required.');
+                            }
+                            break;
+                        case 'city':
+                            if (!field.value.trim()) {
+                                showError('city', 'City is required.');
+                            }
+                            break;
+                        case 'pincode':
+                            if (!field.value.trim()) {
+                                showError('pincode', 'Postal Code is required.');
+                            } else if (!/^\d{6}$/.test(field.value.trim())) {
+                                showError('pincode', 'Enter a valid 6-digit Postal Code.');
+                            }
+                            break;
+                    }
                 }
 
                 form.addEventListener('submit', async function (e) {
                     e.preventDefault(); // Always prevent default first
 
-                    // Run validation and collect errors
-                    let errorMessages = validateForm();
-                    if (errorMessages.length > 0) {
-                        if (typeof Swal !== 'undefined') {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Validation Error",
-                                html: errorMessages.join('<br>'),
-                                timer: 2000,
-                                showConfirmButton: false,
-                            });
-                        } else {
-                            alert(errorMessages.join('\n'));
-                        }
+                    // Run validation
+                    if (!validateForm()) {
                         return; // Don't proceed with fetch
                     }
 
@@ -1435,6 +1634,7 @@
 
                         const data = await response.json();
                         if (response.ok && data.success) {
+                            // Show success message and redirect
                             if (typeof Swal !== 'undefined') {
                                 Swal.fire({
                                     icon: "success",
@@ -1451,22 +1651,36 @@
                                 });
                             } else {
                                 alert(data.message || "Address added successfully!");
-                                window.location.href = '/myAddresses';
+                                if (data.redirect) {
+                                    window.location.href = data.redirect;
+                                } else {
+                                    window.location.href = '/myAddresses';
+                                }
                             }
                         } else if (!data.success) {
-                            Swal.fire({
-                                icon: "warning",
-                                title: "Error!",
-                                text: data.message || "Failed to add address",
-                                timer: 3000,
-                                showConfirmButton: true
-                            });
+                            // Show error message
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: "warning",
+                                    title: "Error!",
+                                    text: data.message || "Failed to add address",
+                                    timer: 3000,
+                                    showConfirmButton: true
+                                });
+                            } else {
+                                alert(data.message || "Failed to add address");
+                            }
                         } else {
-                            Swal.fire({
-                                icon: 'warning',
-                                text: data.message || "Something went wrong",
-                                timer: 3000
-                            })
+                            // Show generic error
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    text: data.message || "Something went wrong",
+                                    timer: 3000
+                                });
+                            } else {
+                                alert(data.message || "Something went wrong");
+                            }
                         }
                     } catch (error) {
                         console.error('Error:', error);

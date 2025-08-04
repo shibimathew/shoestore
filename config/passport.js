@@ -8,8 +8,8 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://www.shoestore.fun/auth/google/callback",
-      // callbackURL: "/auth/google/callback",
+      // callbackURL: "https://www.shoestore.fun/auth/google/callback",
+      callbackURL: "/auth/google/callback",
     },
     async (accessToken, refeshToken, profile, done) => {
       try {

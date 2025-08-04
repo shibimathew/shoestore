@@ -16,6 +16,7 @@ const getMyOrdersPage = async (req, res) => {
     const limit = 5;
     const skip = (page - 1) * limit;
 
+    // Include all orders including failed payments
     const totalOrders = await Order.countDocuments({ userId: user._id });
     const totalPages = Math.ceil(totalOrders / limit);
 

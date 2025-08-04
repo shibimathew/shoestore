@@ -51,6 +51,17 @@ const placeOrder = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Cart is empty" });
     }
 
+    // Stock validation before processing order
+    const stockValidation = await validateStock(cart.items);
+    if (!stockValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Some items in your cart are out of stock or have insufficient quantity",
+        outOfStockItems: stockValidation.outOfStockItems,
+        insufficientStockItems: stockValidation.insufficientStockItems
+      });
+    }
+
     const orderItems = cart.items.map((item) => ({
       product: item.productId._id,
       quantity: item.quantity,
@@ -370,6 +381,54 @@ const placeOrder = async (req, res, next) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+// Stock validation function
+const validateStock = async (cartItems) => {
+  const outOfStockItems = [];
+  const insufficientStockItems = [];
+
+  for (const item of cartItems) {
+    const product = item.productId;
+    const requestedSize = item.variants.size.toLowerCase();
+    const requestedQuantity = item.quantity;
+
+    // Check if product exists and is available
+    if (!product || product.status === "out of stock" || product.status === "Discountinued") {
+      outOfStockItems.push({
+        productName: product?.productName || 'Unknown Product',
+        size: item.variants.size,
+        reason: 'Product is out of stock or discontinued'
+      });
+      continue;
+    }
+
+    // Check stock for the specific size
+    const availableStock = product.shoeSizes.get(requestedSize) || 0;
+    
+    if (availableStock === 0) {
+      outOfStockItems.push({
+        productName: product.productName,
+        size: item.variants.size,
+        reason: 'This size is out of stock'
+      });
+    } else if (availableStock < requestedQuantity) {
+      insufficientStockItems.push({
+        productName: product.productName,
+        size: item.variants.size,
+        requestedQuantity,
+        availableStock,
+        reason: `Only ${availableStock} items available in this size`
+      });
+    }
+  }
+
+  return {
+    isValid: outOfStockItems.length === 0 && insufficientStockItems.length === 0,
+    outOfStockItems,
+    insufficientStockItems
+  };
+};
+
 module.exports = {
   placeOrder,
 };

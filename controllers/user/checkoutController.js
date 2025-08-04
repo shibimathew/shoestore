@@ -98,7 +98,7 @@ const applyCoupon = async (req, res) => {
 
     const discount = Math.min(coupon.offerPrice, subtotal);
 
-    // Store enhanced coupon data in session
+ 
     req.session.coupon = {
       _id: coupon._id,
       code: coupon.code,
@@ -111,7 +111,7 @@ const applyCoupon = async (req, res) => {
     };
     req.session.discount = discount;
 
-    // Explicitly save session to ensure it persists
+  
     req.session.save((err) => {
       if (err) {
         console.error("Session save error:", err);
@@ -120,7 +120,6 @@ const applyCoupon = async (req, res) => {
           .json({ success: false, message: "Error saving coupon data" });
       }
       
-      // Return enhanced response with usage information
       res.json({ 
         success: true, 
         coupon: {
@@ -190,7 +189,6 @@ const getWalletBalance = async (req, res) => {
   }
 };
 
-// New route to create Razorpay order
 const createRazorpayOrder = async (req, res) => {
   try {
     const userId = req.user?._id || req.session?.user;
@@ -380,7 +378,7 @@ const getCoupon = async (req, res) => {
         ? 'One-time use per customer' 
         : 'Can be used multiple times';
       
-      // Add savings percentage
+  
       couponObj.savingsPercentage = Math.round((coupon.offerPrice / coupon.minPrice) * 100);
       
       // Add days remaining
@@ -418,9 +416,81 @@ const getCoupon = async (req, res) => {
   }
 };
 
+// Stock validation function for frontend
+const checkStockAvailability = async (req, res) => {
+  try {
+    const userId = req.user?._id || req.session?.user;
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
+
+    if (!cart || !cart.items.length) {
+      return res.json({ 
+        success: true, 
+        isValid: true, 
+        message: "Cart is empty" 
+      });
+    }
+
+    const outOfStockItems = [];
+    const insufficientStockItems = [];
+
+    for (const item of cart.items) {
+      const product = item.productId;
+      const requestedSize = item.variants.size.toLowerCase();
+      const requestedQuantity = item.quantity;
+
+      // Check if product exists and is available
+      if (!product || product.status === "out of stock" || product.status === "Discountinued") {
+        outOfStockItems.push({
+          productName: product?.productName || 'Unknown Product',
+          size: item.variants.size,
+          reason: 'Product is out of stock or discontinued'
+        });
+        continue;
+      }
+
+     
+      const availableStock = product.shoeSizes.get(requestedSize) || 0;
+      
+      if (availableStock === 0) {
+        outOfStockItems.push({
+          productName: product.productName,
+          size: item.variants.size,
+          reason: 'This size is out of stock'
+        });
+      } else if (availableStock < requestedQuantity) {
+        insufficientStockItems.push({
+          productName: product.productName,
+          size: item.variants.size,
+          requestedQuantity,
+          availableStock,
+          reason: `Only ${availableStock} items available in this size`
+        });
+      }
+    }
+
+    const isValid = outOfStockItems.length === 0 && insufficientStockItems.length === 0;
+
+    res.json({
+      success: true,
+      isValid,
+      outOfStockItems,
+      insufficientStockItems,
+      message: isValid 
+        ? "All items are in stock" 
+        : "Some items have stock issues"
+    });
+
+  } catch (error) {
+    console.error("Error checking stock availability:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Error checking stock availability" 
+    });
+  }
+};
+
 module.exports = {
   getCheckoutPage,
-
   loadOrderSuccess,
   loadOrderFailurePage,
   createRazorpayOrder,
@@ -428,4 +498,5 @@ module.exports = {
   getCoupon,
   applyCoupon,
   clearCoupon,
+  checkStockAvailability,
 };

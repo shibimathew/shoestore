@@ -291,6 +291,16 @@ const loadDashboard = async (req, res) => {
         dateRanges.yearly.start,
         dateRanges.yearly.end
       );
+      
+      // Debug logging
+      console.log('Monthly data debug:', {
+        dateRange: {
+          start: dateRanges.monthly.start,
+          end: dateRanges.monthly.end
+        },
+        categoryData: monthlyCategoryData,
+        topProducts: monthlyTopProducts
+      });
 
       // Overall totals
       const revenueData = await Order.aggregate([
@@ -706,6 +716,35 @@ const getDashboardDateRange = async (req, res) => {
     });
   } catch (error) {
     console.error("Error getting dashboard date range data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// Add a test endpoint to check monthly data
+const testMonthlyData = async (req, res) => {
+  try {
+    const dateRanges = getDateRanges();
+    
+    const monthlyCategoryData = await getBestSellingCategoriesForPeriod(
+      dateRanges.monthly.start,
+      dateRanges.monthly.end
+    );
+    
+    const monthlyTopProducts = await getTopProductsForPeriod(
+      dateRanges.monthly.start,
+      dateRanges.monthly.end
+    );
+    
+    res.json({
+      monthlyCategoryData,
+      monthlyTopProducts,
+      dateRange: {
+        start: dateRanges.monthly.start,
+        end: dateRanges.monthly.end
+      }
+    });
+  } catch (error) {
+    console.error("Error testing monthly data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
