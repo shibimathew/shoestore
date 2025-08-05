@@ -17,7 +17,7 @@ const walletSchema = new Schema({
     },    
     transactionId : {
         type : String,
-        required : true
+        // required : true
     },
     payment_type: {
         type: String,

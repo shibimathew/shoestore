@@ -2615,7 +2615,12 @@
                       
                      <strong class="total-amount"><%=coupon ? totalAmount-coupon.offerPrice:totalAmount%></strong>
                     </div>
+                    <%if(addresses.length > 0){%>
                     <button type="submit" class="btn place-order-btn mt-4" id="placeOrderBtn">Place Order</button>
+                    <%}else{%>
+                      <p style="color: red; font-size: 14px; margin-top: 10px;">Please add an address to proceed with the order</p>
+                      <button type="button" class="btn place-order-btn mt-4" id="addAddressBtn" onclick="window.location.href='/addAddresses?redirect=checkout'">Add Address</button>
+                    <%}%>
                   </div>
                 </div>
               </div>

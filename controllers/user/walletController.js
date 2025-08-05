@@ -13,7 +13,6 @@ const getMyWalletPage = async (req, res, next) => {
     }
 
     const user = await User.findById(userId);
-
     if (!user) {
       return res.redirect("/login");
     }
@@ -22,38 +21,31 @@ const getMyWalletPage = async (req, res, next) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    const userObjectId = mongoose.Types.ObjectId.isValid(userId)
-      ? new mongoose.Types.ObjectId(userId)
-      : userId;
+    // Use user.wallet field as primary balance, but verify with transactions if needed
+    let balance = user.wallet || 0;
 
-    const agg = await Wallet.aggregate([
-      { $match: { userId: userObjectId } },
-      {
-        $group: {
-          _id: "$userId",
-          credits: {
-            $sum: { $cond: [{ $eq: ["$entryType", "CREDIT"] }, "$amount", 0] },
-          },
-          debits: {
-            $sum: { $cond: [{ $eq: ["$entryType", "DEBIT"] }, "$amount", 0] },
-          },
-        },
-      },
-    ]);
-
-    const balance = (agg[0]?.credits || 0) - (agg[0]?.debits || 0);
-    let total = 0;
-    transactions.forEach((amounts) => {
-      total += amounts.amount;
+    // Optional: Verify balance matches transaction history (for debugging)
+    let calculatedBalance = 0;
+    transactions.forEach(transaction => {
+      if (transaction.entryType === 'CREDIT') {
+        calculatedBalance += transaction.amount;
+      } else if (transaction.entryType === 'DEBIT') {
+        calculatedBalance -= transaction.amount;
+      }
     });
 
+    console.log("User wallet balance:", balance);
+    console.log("Calculated from transactions:", calculatedBalance);
+    
+    // If there's a mismatch, you might want to sync them
+    if (Math.abs(balance - calculatedBalance) > 0.01) {
+      console.warn("Balance mismatch detected - consider syncing");
+    }
 
     let cart = await Cart.findOne({ userId }).populate("items.productId");
-
     const items = cart?.items || [];
 
     let wishlistCount = 0;
-
     if (userId) {
       const wishlist = await Wishlist.findOne({ userId });
       wishlistCount = wishlist ? wishlist.products.length : 0;
@@ -65,7 +57,6 @@ const getMyWalletPage = async (req, res, next) => {
       user,
       items,
       wishlistCount,
-      total
     });
   } catch (error) {
     console.error("Error rendering wallet page:", error);
@@ -103,20 +94,40 @@ const refundMoney = async (req, res) => {
 
     const { amount, orderId, transactionId, payment_type, address } = req.body;
 
-    const txn = await Wallet.create({
+    // Validate amount
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ success: false, error: "Invalid amount" });
+    }
+
+    // Prepare wallet transaction data
+    const walletData = {
       userId,
       amount,
-      orderId,
-      transactionId,
       payment_type,
       entryType: "CREDIT",
       type: "refund",
-      address,
-    });
+      status: "completed",
+    };
 
+    // Add optional fields if provided
+    if (orderId) walletData.orderId = orderId;
+    if (transactionId) walletData.transactionId = transactionId;
+    if (address) walletData.address = address;
+
+    // Create the wallet transaction
+    const txn = await Wallet.create(walletData);
+
+    // Update user's wallet balance
     await User.findByIdAndUpdate(userId, {
       $inc: { wallet: amount },
-      $push: { walletHistory: txn._id },
+      $push: {
+        walletHistory: {
+          type: "credit",
+          amount: amount,
+          description: `Refund${orderId ? ` for order #${orderId}` : ''}`,
+          timestamp: new Date(),
+        },
+      },
     });
 
     res.json({ success: true, transaction: txn });
@@ -131,3 +142,5 @@ module.exports = {
   getWalletTransactions,
   refundMoney,
 };
+
+

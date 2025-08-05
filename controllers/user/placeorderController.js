@@ -20,6 +20,14 @@ const placeOrder = async (req, res, next) => {
       razorpay_signature,
     } = req.body;
 
+    req.session.orderFail = {
+      paymentMethod,
+      selectedAddress,
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+    }
+
     let { appliedCoupon, couponDiscount } = req.body;
     if (!couponDiscount) {
       let theCoupon = req.session.coupon;

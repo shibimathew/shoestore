@@ -15,7 +15,7 @@ const getCheckoutPage = async (req, res, next) => {
 
     const addressDoc = await Address.findOne({ userId }).lean();
     const addresses = addressDoc?.address || [];
-
+    console.log("addresses",addresses)
     const cart = await Cart.findOne({ userId })
       .populate({
         path: "items.productId",
@@ -292,6 +292,89 @@ const loadOrderSuccess = async (req, res) => {
   }
 };
 
+const saveOrderFail = async (req, res) => {
+  try {
+    const userId = req.user?._id || req.session?.user;
+    const user = await User.findById(userId);
+    const { paymentMethod, selectedAddress, razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.session.orderFail;
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
+
+    if (!cart || !cart.items.length) {
+      return res.status(400).json({ success: false, message: "Cart is empty" });
+    }
+
+    const addressDoc = await Address.findOne({ userId });
+    if (!addressDoc) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Address not found" });
+    }
+
+    const addressDetail = addressDoc.address.id(selectedAddress);
+    if (!addressDetail) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid address selected" });
+    }
+
+    const orderItems = cart.items.map((item) => ({
+      product: item.productId._id,
+      quantity: item.quantity,
+      basePrice: item.basePrice,
+      price: item.price,
+      variant: { size: item.variants.size },
+      productImage: item.productImage || item.productId.images[0],
+      currentStatus: "Pending",
+      statusHistory: [{ status: "Pending", timestamp: new Date() }],
+    }));
+
+    const subTotal = orderItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    const deliveryCharge = 41;
+    const tax = parseFloat((subTotal * 0.05).toFixed(2));
+    const totalAmount = parseFloat(  (subTotal + deliveryCharge + tax).toFixed(2));
+
+  const order = new Order({
+    orderId: "#SM" + Math.floor(Math.random() * 1e9).toString(),
+    userId,
+    orderItems: orderItems.map((item) => ({
+      ...item,
+      currentStatus: "Failed",
+      statusHistory: [
+        { status: "Failed", timestamp: new Date() },
+        { status: "Failed", timestamp: new Date() },
+      ],
+    })),
+    address: {
+      addressDocId: selectedAddress.addressDocId,
+      addressDetailId: selectedAddress.addressDetailId,
+    },
+    totalAmount,
+    paymentMethod,
+    paymentStatus: "Failed",
+    paymentVerified: false,
+    paymentId: `wallet_${Date.now()}`,
+    subTotal,
+    deliveryCharge,
+    tax,
+    discount: 0,
+    appliedCoupon: null,
+    selectedAddress,
+    razorpay_payment_id,
+    razorpay_order_id,
+    razorpay_signature,
+    status: "Payment Failed",
+  })
+  await order.save();
+
+ 
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 const loadOrderFailurePage = async (req, res) => {
   try {
     const userId = req.user?._id || req.session?.user;
@@ -325,6 +408,8 @@ const loadOrderFailurePage = async (req, res) => {
     if (!addressDetail) {
       return res.redirect("/orders?error=address-not-found");
     }
+
+    await saveOrderFail(req, res);
 
     res.render("user/orderFailure", {
       order: latestOrder,

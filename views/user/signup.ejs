@@ -48,6 +48,10 @@
                             <input type="password" name="cPassword" id="cPassword" class="form-control" placeholder="Confirm password">
                             <div id="error5" class="error-message"></div>
                         </div>
+                        <div class="form-group mb-3">
+                            <input type="text" name="referralcode" id="referralcode" class="form-control" placeholder="Referral code">
+                            <div id="error6" class="error-message"></div>
+                        </div>
 
                         <div class="login_footer form-group mb-3 d-flex justify-content-between align-items-center">
                             <div class="custome-checkbox">
@@ -170,12 +174,14 @@
     const phoneid = document.getElementById("phone");
     const passid = document.getElementById("password");
     const cpassid = document.getElementById("cPassword");
+    const referralcode= document.getElementById("referralcode")
 
     const error1 = document.getElementById("error1");
     const error2 = document.getElementById("error2");
     const error3 = document.getElementById("error3");
     const error4 = document.getElementById("error4");
     const error5 = document.getElementById("error5");
+    const error6 = document.getElementById("error6")
     const signform = document.getElementById("signform");
 
     function nameValidateChecking() {

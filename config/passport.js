@@ -2,7 +2,19 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/userSchema");
 const env = require("dotenv").config();
+function generateReferralCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const timestamp = Date.now().toString(); // e.g., '1722787200000'
+  
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    // Use timestamp digits to get some pseudo-randomness
+    const index = (parseInt(timestamp[i % timestamp.length]) + i * 7) % chars.length;
+    code += chars[index];
+  }
 
+  return code;
+}
 passport.use(
   new GoogleStrategy(
     {
@@ -38,13 +50,15 @@ passport.use(
 
             return done(null, existingUser);
           } else {
+            let code = generateReferralCode()
             // Create new user if no existing user found
             user = new User({
               name: profile.displayName,
               email: profile.emails[0].value,
               googleId: profile.id,
               phone: "0000000000", // Initialize with default phone number
-              isVerified: true, // Google accounts are pre-verified
+              isVerified: true, 
+              referralCode:code// Google accounts are pre-verified
             });
             await user.save();
             return done(null, user);

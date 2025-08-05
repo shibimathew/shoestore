@@ -926,8 +926,8 @@ var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'fals
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="form-label">Join Date</label>
-                                                <p><%= user.createdOn ? new Date(user.createdOn).toLocaleDateString() : 'Not available' %></p>
+                                                <label class="form-label">Referral code</label>
+                                                <p><%= user.referralCode%></p>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
