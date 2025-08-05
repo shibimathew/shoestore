@@ -109,7 +109,7 @@ const loadEditCategory = async (req, res) => {
       return res.redirect("/admin/category");
     }
 
-    res.render("admin/editCategory", {
+    res.render("admin/editcategory", {
       category,
       cat: categories,
     });
