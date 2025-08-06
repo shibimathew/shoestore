@@ -15,7 +15,8 @@ const getCheckoutPage = async (req, res, next) => {
 
     const addressDoc = await Address.findOne({ userId }).lean();
     const addresses = addressDoc?.address || [];
-    console.log("addresses",addresses)
+    
+
     const cart = await Cart.findOne({ userId })
       .populate({
         path: "items.productId",
@@ -292,93 +293,115 @@ const loadOrderSuccess = async (req, res) => {
   }
 };
 
-const saveOrderFail = async (req, res) => {
+// Place this wherever your payment failure is handled:
+const handleOrderPaymentFailure = async (req, res) => {
+  try {
+    const userId = req.user?._id || req.session?.user;
+
+    // You must extract all required order data from cart/session
+    // For brevity, assuming req.session.cart & req.session.selectedAddress exist
+    const cart = req.session.cart; // Update as per your logic
+    const address = req.session.selectedAddress; // Should have _id and addressSubdocId
+    const paymentMethod = req.body.paymentMethod || "razorpay"; // or from where it is
+
+    // Guard: Check if needed fields exist, else handle error/redirect
+
+    // Calculate prices/amounts as per your checkout logic
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const deliveryCharge = 50; // Example, or calculate based on order
+    const tax = parseFloat((0.18 * subtotal).toFixed(2)); // Example 18%
+    const totalAmount = parseFloat((subtotal + deliveryCharge + tax).toFixed(2)); // final amount
+
+    // Build orderItems as your schema needs
+    const orderItems = cart.map(item => ({
+      product: item.productId,
+      quantity: item.quantity,
+      price: item.price,
+      basePrice: item.basePrice,
+      currentStatus: "Payment Failed",
+      variant: { size: item.size },
+      productImage: item.productImage,
+      statusHistory: [
+        { status: "Payment Failed", timestamp: new Date() }
+      ]
+    }));
+
+    // Build the order object
+   
+
+    // Redirect to failure page with order ID
+ 
+  } catch (err) {
+    console.error("Order saving failed", err);
+    
+  }
+};
+
+
+const loadOrderFailurePage = async (req, res) => {
   try {
     const userId = req.user?._id || req.session?.user;
     const user = await User.findById(userId);
-    const { paymentMethod, selectedAddress, razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.session.orderFail;
+
+    const failAddress = await Address.findOne({ userId });
+        if (!failAddress) {
+          return res
+            .status(400)
+            .json({ success: false, message: "Address not found" });
+        }
+    
+        const length = failAddress.address.length
+        let index = Math.floor(length/2)
+        if(index!==0 && index >= length){
+          index--;
+        }
+        const failAddressDetail = failAddress.address[index]
+        
     const cart = await Cart.findOne({ userId }).populate("items.productId");
 
-    if (!cart || !cart.items.length) {
-      return res.status(400).json({ success: false, message: "Cart is empty" });
-    }
-
-    const addressDoc = await Address.findOne({ userId });
-    if (!addressDoc) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Address not found" });
-    }
-
-    const addressDetail = addressDoc.address.id(selectedAddress);
-    if (!addressDetail) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid address selected" });
-    }
-
-    const orderItems = cart.items.map((item) => ({
+      const orderItems = cart.items.map((item) => ({
       product: item.productId._id,
       quantity: item.quantity,
       basePrice: item.basePrice,
       price: item.price,
       variant: { size: item.variants.size },
       productImage: item.productImage || item.productId.images[0],
-      currentStatus: "Pending",
-      statusHistory: [{ status: "Pending", timestamp: new Date() }],
+      currentStatus: "Payment Failed",
+      statusHistory: [{ status: "Payment Failed", timestamp: new Date() }],
     }));
+  
 
     const subTotal = orderItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
+      (sum, i) => sum + i.price * i.quantity,
       0
     );
-    const deliveryCharge = 41;
-    const tax = parseFloat((subTotal * 0.05).toFixed(2));
-    const totalAmount = parseFloat(  (subTotal + deliveryCharge + tax).toFixed(2));
+    const failDeliveryCharge = 41;
+    const failTax = parseFloat((subTotal * 0.05).toFixed(2));
+    // const discount = parseFloat(couponDiscount) || 0;
+    const failTotal = parseFloat(
+      (subTotal + failDeliveryCharge + failTax - 0).toFixed(2)
+    );
+   
 
-  const order = new Order({
-    orderId: "#SM" + Math.floor(Math.random() * 1e9).toString(),
-    userId,
-    orderItems: orderItems.map((item) => ({
-      ...item,
-      currentStatus: "Failed",
-      statusHistory: [
-        { status: "Failed", timestamp: new Date() },
-        { status: "Failed", timestamp: new Date() },
-      ],
-    })),
-    address: {
-      addressDocId: selectedAddress.addressDocId,
-      addressDetailId: selectedAddress.addressDetailId,
-    },
-    totalAmount,
-    paymentMethod,
-    paymentStatus: "Failed",
-    paymentVerified: false,
-    paymentId: `wallet_${Date.now()}`,
-    subTotal,
-    deliveryCharge,
-    tax,
-    discount: 0,
-    appliedCoupon: null,
-    selectedAddress,
-    razorpay_payment_id,
-    razorpay_order_id,
-    razorpay_signature,
-    status: "Payment Failed",
-  })
-  await order.save();
+     const orderData = {
+      userId,
+      orderItems,
+      address: {
+        addressDocId: failAddress._id,
+        addressDetailId: failAddressDetail._id, // make sure you save the subdocument's _id at address select
+      },
+      paymentMethod: "razorpay",
+      paymentStatus: "Failed",
+      paymentVerified: false,
+      failureReason: "Payment gateway error", // Update with real reason if available
+      deliveryCharge : failDeliveryCharge,
+      tax : failTax,
+      totalAmount : failTotal,
+      status: "Payment Failed",
+    };
 
- 
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-const loadOrderFailurePage = async (req, res) => {
-  try {
-    const userId = req.user?._id || req.session?.user;
-    const user = await User.findById(userId);
+    const failedOrder = new Order(orderData);
+    await failedOrder.save();
 
     const latestOrder = await Order.findOne({ userId })
       .sort({ createdAt: -1 })
@@ -409,7 +432,6 @@ const loadOrderFailurePage = async (req, res) => {
       return res.redirect("/orders?error=address-not-found");
     }
 
-    await saveOrderFail(req, res);
 
     res.render("user/orderFailure", {
       order: latestOrder,

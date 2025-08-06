@@ -102,6 +102,8 @@ const addProduct = async (req, res) => {
       }
     }
 
+    
+
     const images = req.files.map((file) => file.path);
 
     // Check for existing product

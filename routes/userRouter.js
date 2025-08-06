@@ -135,6 +135,7 @@ router.get("/payment-failed", userAuth);
 
 // order success & failure routes
 router.get("/order-success", userAuth, checkoutController.loadOrderSuccess);
+
 router.get("/order-failure", userAuth, checkoutController.loadOrderFailurePage);
 router.get("/wallet-balance", userAuth, checkoutController.getWalletBalance);
 
