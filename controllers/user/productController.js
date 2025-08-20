@@ -74,7 +74,7 @@ const productDetails = async (req, res) => {
       .populate("category")
       .lean();
 
-    // Calculate offers for related products too
+    // Calculate offers -related products too
     const productsWithOffers = relatedProducts.map((relProduct) => {
       const relCategoryOffer = relProduct.category?.categoryOffer || 0;
       const relProductOffer = relProduct.productOffer || 0;

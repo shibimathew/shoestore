@@ -3,7 +3,6 @@ const Cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema");
 const User = require("../../models/userSchema");
 const Wallet = require("../../models/walletSchema");
-const Coupon = require("../../models/couponSchema");
 const Razorpay = require("razorpay");
 
 
@@ -179,26 +178,19 @@ const loadOrderSuccess = async (req, res) => {
   }
 };
 
-// Place this wherever your payment failure is handled:
+
 const handleOrderPaymentFailure = async (req, res) => {
   try {
     const userId = req.user?._id || req.session?.user;
 
-    // You must extract all required order data from cart/session
-    // For brevity, assuming req.session.cart & req.session.selectedAddress exist
-    const cart = req.session.cart; // Update as per your logic
-    const address = req.session.selectedAddress; // Should have _id and addressSubdocId
-    const paymentMethod = req.body.paymentMethod || "razorpay"; // or from where it is
+    const cart = req.session.cart; 
+    const address = req.session.selectedAddress; 
+    const paymentMethod = req.body.paymentMethod || "razorpay";
 
-    // Guard: Check if needed fields exist, else handle error/redirect
-
-    // Calculate prices/amounts as per your checkout logic
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const deliveryCharge = 50; // Example, or calculate based on order
-    const tax = parseFloat((0.18 * subtotal).toFixed(2)); // Example 18%
-    const totalAmount = parseFloat((subtotal + deliveryCharge + tax).toFixed(2)); // final amount
-
-    // Build orderItems as your schema needs
+    const deliveryCharge = 50; 
+    const tax = parseFloat((0.18 * subtotal).toFixed(2)); 
+    const totalAmount = parseFloat((subtotal + deliveryCharge + tax).toFixed(2));
     const orderItems = cart.map(item => ({
       product: item.productId,
       quantity: item.quantity,
@@ -212,10 +204,7 @@ const handleOrderPaymentFailure = async (req, res) => {
       ]
     }));
 
-    // Build the order object
    
-
-    // Redirect to failure page with order ID
  
   } catch (err) {
     console.error("Order saving failed", err);
@@ -274,7 +263,7 @@ const loadOrderFailurePage = async (req, res) => {
       orderItems,
       address: {
         addressDocId: failAddress._id,
-        addressDetailId: failAddressDetail._id, // make sure you save the subdocument's _id at address select
+        addressDetailId: failAddressDetail._id, 
       },
       paymentMethod: "razorpay",
       paymentStatus: "Failed",

@@ -86,6 +86,8 @@ const loadShoppingPage = async (req, res) => {
 
 const filterProduct = async (req, res) => {
   try {
+  
+
     const user = req.session.user;
     const userData = user ? await User.findOne({ _id: user }) : null;
     const categories = await Category.find({ isListed: true });
@@ -164,6 +166,8 @@ const filterProduct = async (req, res) => {
 
 const filterByPrice = async (req, res) => {
   try {
+   
+    
     const user = req.session.user;
     const userData = await User.findOne({ _id: user });
     const categories = await Category.find({ isListed: true }).lean();

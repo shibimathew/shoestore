@@ -1,11 +1,7 @@
 require("dotenv").config();
 const User = require("../../models/userSchema");
-const fs = require("fs");
-const path = require("path");
-const sharp = require("sharp");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-const crypto = require("crypto");
 const cloudinary = require("../../config/cloudinary.js");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });

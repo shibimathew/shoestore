@@ -1,12 +1,10 @@
-const mongoose = require("mongoose");
+
 const Order = require("../../models/orderSchema");
 const User = require("../../models/userSchema");
 const Refund = require("../../models/refundSchema");
 const Wallet = require("../../models/walletSchema");
 const Product = require("../../models/productSchema");
 const PDFDocument = require("pdfkit");
-const fs = require("fs");
-const path = require("path");
 
 const getMyOrdersPage = async (req, res) => {
   try {
