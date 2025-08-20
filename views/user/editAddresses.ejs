@@ -204,6 +204,12 @@ var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'fals
     <a href="/home" class="menu-link <%= (typeof page !== 'undefined' && page === 'home') ? 'active' : '' %>">Home</a>
     <a href="/shop" class="menu-link <%= (typeof page !== 'undefined' && page === 'shop') ? 'active' : '' %>">Shop</a>
     <a href="/profileinfo" class="menu-link <%= (typeof page !== 'undefined' && page === 'profile') ? 'active' : '' %>">Profile</a>
+
+    <a href="/myorders" class="menu-link <%= (typeof page !== 'undefined' && page === 'myorders') ? 'active' : '' %>">Orders</a>
+<a href="/myAddresses" class="menu-link <%= (typeof page !== 'undefined' && page === 'myAddresses') ? 'active' : '' %>">Address</a>
+<a href="/wishlist" class="menu-link <%= (typeof page !== 'undefined' && page === 'wishlist') ? 'active' : '' %>">Wishlist</a>
+<a href="/wallet" class="menu-link <%= (typeof page !== 'undefined' && page === 'wallet') ? 'active' : '' %>">Wallet</a>
+<a href="/security" class="menu-link <%= (typeof page !== 'undefined' && page === 'security') ? 'active' : '' %>">security</a>
     <a href="/logout" class="menu-link <%= (typeof page !== 'undefined' && page === 'logout') ? 'active' : '' %>">Logout</a>
 </nav>
 
@@ -843,10 +849,10 @@ var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'fals
 
 <main class="main">
     <!-- Sidebar Toggle Button -->
-    <button class="sidebar-toggle" id="sidebarToggle">
+    <!-- <button class="sidebar-toggle" id="sidebarToggle">
         <div class="hamburger"></div>
     </button>
-    
+     -->
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     

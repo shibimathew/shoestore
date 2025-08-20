@@ -5,19 +5,6 @@ const env = require("dotenv").config();
 const session = require("express-session");
 const { text } = require("express");
 
-// const userProfile = async (req,res) =>{
-//     try {
-//         const userId = req.session.user;
-//         const userData = await user.findById(userId);
-//         res.render("profile",{
-//             user:userData,
-//         })
-//     } catch (error) {
-//         console.error("Error for retrieve profile data",error);
-//         res.redirect("/pageNotFound")
-
-//     }
-// }
 
 function generateOtp() {
   //generating globally

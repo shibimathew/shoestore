@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const loginController = require("../controllers/admin/loginController");
 const adminController = require("../controllers/admin/admincontroller");
 const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
@@ -10,12 +11,12 @@ const orderController = require("../controllers/admin/orderController");
 const couponController = require("../controllers/admin/couponController");
 const salesController = require("../controllers/admin/salesController");
 
-router.get("/pageerror", adminController.pageerror);
-router.get("/login", adminController.loadLogin);
-router.post("/login", adminController.login);
+router.get("/pageerror", loginController.pageerror);
+router.get("/login", loginController.loadLogin);
+router.post("/login", loginController.login);
 router.get("/dashboard", adminAuth, adminController.loadDashboard);
 router.get("/dashboard/daterange", adminController.getDashboardDateRange);
-router.get("/logout", adminController.logout);
+router.get("/logout", loginController.logout);
 
 // //customer management
 router.get("/users", adminAuth, customerController.customerInfo);

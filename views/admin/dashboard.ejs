@@ -1,5 +1,21 @@
 <%- include('../partials/admin/header.ejs') %>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
 <style>
+    /* Root box-sizing fix */
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    /* Prevent horizontal scroll */
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
     .wrapper {
         display: flex;
         width: 100%;
@@ -9,6 +25,7 @@
 
     .main-wrap {
         width: 100%;
+        min-width: 0; /* Important for flex items to shrink */
         overflow-x: hidden;
     }
 
@@ -31,6 +48,7 @@
 
     .navbar-aside {
         width: 250px;
+        min-width: 250px; /* Prevent sidebar from shrinking */
         height: 100vh;
         position: fixed;
         overflow-y: auto;
@@ -40,66 +58,41 @@
         left: 0;
         top: 0;
     }
-    @media (max-width: 991px) {
-        .navbar-aside {
-            transform: translateX(-100%) !important;
-        }
-        .navbar-aside.show {
-            transform: translateX(0) !important;
-        }
-        .sidebar-overlay {
-            display: block;
-        }
-        .main-wrap {
-            margin-left: 0;
-            width: 100%;
-        }
-    }
-    @media (min-width: 992px) {
-        .sidebar-overlay {
-            display: none !important;
-        }
-        .navbar-aside {
-            transform: none !important;
-        }
-    }
 
     .chart-container {
         position: relative;
         margin: auto;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
     }
 
     .top-products-container {
         max-height: 300px;
         overflow-y: auto;
+        width: 100%;
     }
 
     .card {
         box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
         transition: all 0.3s cubic-bezier(.25,.8,.25,1);
         margin-bottom: 1rem;
+        max-width: 100%;
+        overflow: hidden;
     }
 
     .card:hover {
         box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     }
 
-    .navbar-aside {
-        width: 250px;
-        height: 100vh;
-        position: fixed;
-        overflow-y: auto;
-        z-index: 1030;
-        background: #fff;
-        transition: transform 0.3s ease-in-out;
-    }
-
     .progress {
         overflow: hidden;
+        width: 100%;
     }
 
     canvas {
-        max-width: 100%;
+        max-width: 100% !important;
+        height: auto !important;
     }
 
     .global-filter-btn.active {
@@ -107,71 +100,88 @@
         color: white;
     }
 
-    /* Add these styles to your existing style section */
-.date-range-container {
-    animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.filter-controls {
-    gap: 1rem;
-}
-
-@media (max-width: 768px) {
-    .filter-controls {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .filter-controls .btn-group {
-        width: 100%;
-        margin-bottom: 1rem;
-    }
-    
-    .filter-controls .btn-group .btn {
-        flex: 1;
-        font-size: 0.8rem;
-    }
-    
+    /* Date range container styles */
     .date-range-container {
+        animation: slideDown 0.3s ease-out;
         width: 100%;
+        max-width: 100%;
     }
-    
-    .date-range-container .d-flex {
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 0.5rem;
+
+     .hamburger-btn{
+            margin-left: auto;
+        }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-    
-    .date-range-container input {
-        flex: 1;
-        min-width: 120px;
+
+    .filter-controls {
+        gap: 1rem;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
     }
-}
 
-.global-filter-btn.active {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
-    color: white;
-}
+    .global-filter-btn.active {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
 
-.spinner-border-sm {
-    width: 1rem;
-    height: 1rem;
-}
+    .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+    }
 
-    /* Mobile and Tablet Responsive Styles */
+    /* Ensure all containers respect max-width */
+    .container, .container-fluid, .row, [class*="col-"] {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Fix for tables */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    /* Desktop styles */
+    @media (min-width: 992px) {
+        .main-wrap {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            max-width: calc(100% - 250px);
+        }
+        
+        .navbar-aside {
+            transform: none !important;
+        }
+        
+        .sidebar-overlay {
+            display: none !important;
+        }
+    }
+
+    /* Tablet and Mobile Responsive Styles */
     @media (max-width: 991px) {
+        .mobile-header {
+            display: flex;
+        }
+
         .navbar-aside {
             transform: translateX(-100%) !important;
             width: 250px;
@@ -185,7 +195,7 @@
         }
 
         .navbar-aside.show {
-            transform: translateX(0) !important;
+            transform: translateX(0%) !important;
         }
 
         body.sidebar-open {
@@ -195,6 +205,12 @@
         .main-wrap {
             margin-left: 0;
             width: 100%;
+            max-width: 100%;
+           
+        }
+
+        .main-header.navbar {
+            display: none !important; /* Hide main header on mobile */
         }
 
         .main-header.navbar .col-nav #mobile-menu-toggle {
@@ -210,25 +226,26 @@
             opacity: 1 !important;
         }
 
-        .main-header.navbar {
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-
         .col-search {
             flex-grow: 1;
         }
 
         .content-main {
             padding: 1rem;
+            width: 100%;
+            max-width: 100%;
         }
 
         .row {
-            flex-direction: column;
+            margin-left: 0;
+            margin-right: 0;
+            width: 100%;
+            max-width: 100%;
         }
 
-        .col-lg-3, .col-xl-8, .col-xl-4, .col-lg-12 {
+        .row > [class*="col-"] {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
             width: 100%;
             max-width: 100%;
         }
@@ -236,28 +253,24 @@
         .chart-container {
             height: 250px !important;
             min-height: 250px !important;
+            width: 100%;
+            max-width: 100%;
         }
 
         .top-products-container {
             max-height: 200px;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .table {
             width: 100%;
-            min-width: 600px;
         }
 
         .btn-group {
             flex-wrap: wrap;
+            width: 100%;
         }
 
         .btn-group .btn {
             margin-bottom: 0.5rem;
+            flex: 1;
+            min-width: 0;
         }
 
         .content-header h2 {
@@ -271,6 +284,12 @@
         .icontext .icon {
             width: 2rem;
             height: 2rem;
+            flex-shrink: 0;
+        }
+
+        .icontext .text {
+            min-width: 0;
+            flex: 1;
         }
 
         .icontext .text h6 {
@@ -280,11 +299,57 @@
         .icontext .text span {
             font-size: 0.9rem;
         }
+
+        /* Filter controls responsive */
+        .filter-controls {
+            width: 100%;
+            justify-content: center;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-controls .btn-group {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .filter-controls .btn-group .btn {
+            flex: 1;
+            font-size: 0.8rem;
+        }
+
+        .date-range-container {
+            width: 100%;
+        }
+
+        .date-range-container .d-flex {
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .date-range-container input {
+            flex: 1;
+            min-width: 120px;
+            max-width: 150px;
+        }
     }
 
     @media (max-width: 767px) {
+
+       
+
+        .mobile-header {
+            display: flex;
+        }
+
         .navbar-aside {
-            width: 200px;
+            width: 280px;
+            max-width: 85vw;
+        }
+
+        .main-header {
+            display: none !important; /* Completely hide main header on mobile */
         }
 
         .content-main {
@@ -320,21 +385,132 @@
         .top-products-container .font-xs {
             font-size: 0.8rem;
         }
+
+        /* Ensure cards stack properly */
+        .row > div[class*="col-"] {
+            width: 100% !important;
+            max-width: 100% !important;
+            flex: 0 0 100%;
+        }
+
+        .screen-overlay {
+            display: block;
+        }
     }
-   @media (max-width: 991px) {
-  #offcanvas_aside {
-    transform: translateX(-100%) !important;
-    transition: transform 0.3s ease-in-out !important;
-  }
 
-  #offcanvas_aside.show {
-    transform: translateX(0%) !important;
-  }
+    @media (max-width: 480px) {
+        .navbar-aside {
+            width: 260px;
+            max-width: 90vw;
+        }
 
-  body.sidebar-open {
-    overflow: hidden;
-  }
-}
+        .content-main {
+            padding: 0.5rem;
+        }
+
+        .card-body {
+            padding: 0.75rem;
+        }
+
+        .chart-container {
+            height: 180px !important;
+            min-height: 180px !important;
+        }
+
+        .btn-group .btn {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .icontext .text span:first-of-type {
+            font-size: 1.1rem;
+        }
+
+        .filter-controls .btn-group .btn {
+            font-size: 0.75rem;
+            padding: 0.4rem 0.3rem;
+        }
+    }
+
+    /* Mobile menu toggle styles */
+    @media (max-width: 991px) {
+        #offcanvas_aside {
+            transform: translateX(-100%) !important;
+            transition: transform 0.3s ease-in-out !important;
+        }
+
+        #offcanvas_aside.show {
+            transform: translateX(0%) !important;
+        }
+
+        body.sidebar-open {
+            overflow: hidden;
+        }
+    }
+
+    /* Specific fixes for horizontal scroll prevention */
+    .d-flex {
+        max-width: 100%;
+    }
+
+    .flex-wrap {
+        max-width: 100%;
+    }
+
+    .justify-content-between {
+        max-width: 100%;
+    }
+
+    .align-items-center {
+        max-width: 100%;
+    }
+
+    /* Progress bar container fix */
+    .product-progress-item {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .product-progress-item .progress {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Text overflow fixes */
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+    }
+
+    /* Ensure form controls don't overflow */
+    .form-control, .btn, input, select, textarea {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Icon text responsive fix */
+    .icontext {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .icontext .text {
+        min-width: 0;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .icontext .text span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 </style>
 <body>
     <!-- Mobile Header with Logo and Hamburger -->
@@ -343,9 +519,7 @@
             <img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore">
         </div>
         <button class="hamburger-btn" id="sidebarHamburger" aria-label="Toggle sidebar" aria-controls="offcanvas_aside" aria-expanded="false">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
+            <i class="fas fa-bars"></i>
         </button>
     </div>
     <!-- Overlay -->
@@ -404,17 +578,6 @@
         </nav>
     </aside>
     <main class="main-wrap" id="mainWrap">
-        <header class="main-header navbar" style="display: flex !important; visibility: visible !important;">
-            <div class="col-search">
-
-            </div>
-            <div class="col-nav" style="display: flex !important; visibility: visible !important;">
-                <!-- Mobile menu button for <992px -->
-                <button class="btn btn-icon btn-aside-minimize d-lg-none" id="mobile-menu-toggle-header" aria-label="Open sidebar" aria-controls="offcanvas_aside" aria-expanded="false">
-                    <i class="material-icons md-menu_open"></i>
-                </button>
-            </div>
-        </header>
 
         <section class="content-main">
             <div class="content-header">
@@ -558,6 +721,160 @@
             </div>
         </section>
     </main>
+
+<script>
+// Sidebar toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.getElementById('sidebarHamburger');
+    const mobileToggle = document.getElementById('mobile-menu-toggle-header');
+    const sidebar = document.getElementById('offcanvas_aside');
+    const overlay = document.getElementById('sidebarOverlay');
+    const screenOverlay = document.getElementById('sidebarOverlay'); // Use same overlay
+    const body = document.body;
+
+    function toggleSidebar() {
+        const isCurrentlyOpen = sidebar.classList.contains('show');
+        
+        if (isCurrentlyOpen) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    }
+
+    function openSidebar() {
+        sidebar.classList.add('show');
+        if (overlay) overlay.classList.add('show');
+        if (screenOverlay) screenOverlay.classList.add('show');
+        body.classList.add('sidebar-open');
+        
+        if (sidebarToggle) sidebarToggle.setAttribute('aria-expanded', 'true');
+        if (mobileToggle) mobileToggle.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('show');
+        if (overlay) overlay.classList.remove('show');
+        if (screenOverlay) screenOverlay.classList.remove('show');
+        body.classList.remove('sidebar-open');
+        
+        if (sidebarToggle) sidebarToggle.setAttribute('aria-expanded', 'false');
+        if (mobileToggle) mobileToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    // Event listeners
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSidebar();
+        });
+    }
+
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSidebar();
+        });
+    }
+
+    // Close sidebar when clicking on overlay
+    if (overlay) {
+        overlay.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeSidebar();
+        });
+    }
+
+    if (screenOverlay && screenOverlay !== overlay) {
+        screenOverlay.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeSidebar();
+        });
+    }
+
+    // Close sidebar on window resize if opened on mobile
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+            closeSidebar();
+        }
+    });
+
+    // Prevent clicks inside sidebar from closing it
+    if (sidebar) {
+        sidebar.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+
+    // Filter functionality
+    const filterButtons = document.querySelectorAll('.global-filter-btn');
+    const dateRangeContainer = document.getElementById('dateRangeContainer');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+
+            // Show/hide date range inputs
+            if (this.getAttribute('data-filter') === 'custom') {
+                dateRangeContainer.classList.remove('d-none');
+            } else {
+                dateRangeContainer.classList.add('d-none');
+                // You can add your data loading logic here
+            }
+        });
+    });
+
+    // Apply date range
+    const applyDateRange = document.getElementById('applyDateRange');
+    if (applyDateRange) {
+        applyDateRange.addEventListener('click', function() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            if (startDate && endDate) {
+                // Add your date range filtering logic here
+                if (loadingIndicator) {
+                    loadingIndicator.classList.remove('d-none');
+                    
+                    setTimeout(() => {
+                        loadingIndicator.classList.add('d-none');
+                    }, 1500);
+                }
+            }
+        });
+    }
+
+    // Animate progress bars when they come into view
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+        const percentage = bar.getAttribute('data-percentage');
+        if (percentage) {
+            setTimeout(() => {
+                bar.style.width = percentage + '%';
+            }, 500);
+        }
+    });
+});
+
+// Prevent horizontal scroll on touch devices
+document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+        e.preventDefault();
+    }
+}, { passive: false });
+
+document.addEventListener('touchmove', function(e) {
+    if (e.touches.length > 1) {
+        e.preventDefault();
+    }
+}, { passive: false });
+</script>
 </body>
 
 <!-- jQuery CDN (must be first) -->

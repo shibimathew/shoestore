@@ -1,4 +1,75 @@
 <%- include('../partials/user/header.ejs') %>
+<style>
+    .form-control {
+        height: 45px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        padding: 0 15px;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        border-color: #1e918b;
+        box-shadow: 0 0 0 0.2rem rgba(30, 145, 139, 0.15);
+    }
+
+    .btn-fill-out {
+        background-color: #1e918b;
+        color: white;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        padding: 12px 20px;
+        transition: 0.3s ease;
+    }
+
+    .btn-fill-out:hover {
+        background-color: #167571;
+        color: white;
+    }
+
+    .btn-google {
+        background: #db4437;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+    }
+
+    .btn-google:hover {
+        background: #c23321;
+        color: white;
+    }
+
+    .divider-text-center {
+        position: relative;
+        text-align: center;
+    }
+
+    .divider-text-center span {
+        background: #fff;
+        padding: 0 15px;
+        color: #777;
+        font-size: 14px;
+    }
+
+    .divider-text-center:before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #ddd;
+        z-index: -1;
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+</style>
 
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -95,78 +166,6 @@
 
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<style>
-    .form-control {
-        height: 45px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        padding: 0 15px;
-        font-size: 14px;
-    }
-
-    .form-control:focus {
-        border-color: #1e918b;
-        box-shadow: 0 0 0 0.2rem rgba(30, 145, 139, 0.15);
-    }
-
-    .btn-fill-out {
-        background-color: #1e918b;
-        color: white;
-        font-weight: 600;
-        border: none;
-        border-radius: 6px;
-        padding: 12px 20px;
-        transition: 0.3s ease;
-    }
-
-    .btn-fill-out:hover {
-        background-color: #167571;
-        color: white;
-    }
-
-    .btn-google {
-        background: #db4437;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 6px;
-    }
-
-    .btn-google:hover {
-        background: #c23321;
-        color: white;
-    }
-
-    .divider-text-center {
-        position: relative;
-        text-align: center;
-    }
-
-    .divider-text-center span {
-        background: #fff;
-        padding: 0 15px;
-        color: #777;
-        font-size: 14px;
-    }
-
-    .divider-text-center:before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: #ddd;
-        z-index: -1;
-    }
-
-    .error-message {
-        color: #dc3545;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-        display: none;
-    }
-</style>
 
 <script>
     const nameid = document.getElementById("name");

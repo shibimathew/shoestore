@@ -1,15 +1,12 @@
 const Address = require("../../models/addressSchema");
 const Cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema");
-const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
 const Wallet = require("../../models/walletSchema");
 const Coupon = require("../../models/couponSchema");
-const mongoose = require("mongoose");
-const Razorpay = require("razorpay");
 const crypto = require("crypto");
 
-const placeOrder = async (req, res, next) => {
+const placeOrder = async (req, res) => {
   try {
     const userId = req.user?._id || req.session?.user;
     const {

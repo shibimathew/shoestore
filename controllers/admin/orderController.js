@@ -176,7 +176,7 @@ const updateOrderStatus = async (req, res) => {
     let cancelledItemsCount = 0;
 
     order.orderItems.forEach((item) => {
-      // Only update items that are not cancelled
+     
       if (item.currentStatus !== 'Cancelled') {
         item.currentStatus = newStatus;
         updatedItemsCount++;
@@ -193,23 +193,22 @@ const updateOrderStatus = async (req, res) => {
           });
         }
       } else {
-        // Keep cancelled items as cancelled
+       
         cancelledItemsCount++;
         console.log(`Item ${item._id} remains cancelled: ${item.product?.productName || 'Unknown Product'}`);
       }
     });
 
-    // Recalculate total amount excluding cancelled items
+    
     const totalAmount = order.orderItems
       .filter(item => item.currentStatus !== 'Cancelled')
       .reduce((sum, item) => {
         return sum + (item.product?.salePrice || 0) * (item.quantity || 1);
       }, 0);
 
-    // Apply discount if any
+ 
     const finalAmount = order.discount ? totalAmount - order.discount : totalAmount;
-    
-    // Update the order total amount
+ 
     order.totalAmount = finalAmount;
 
     if (order.paymentMethod === "cod") {
@@ -278,12 +277,12 @@ const cancelIndividualItem = async (req, res) => {
       );
     }
 
-    // Handle refund for individual item if payment was made online
+    
     const paymentMethod = (order.paymentMethod || "").toLowerCase();
     if (paymentMethod !== "cod" && order.paymentStatus === "Paid") {
       const userId = order.userId;
 
-      // Calculate refund amount for this specific item
+   
       const itemPrice = itemToCancel.product?.salePrice || itemToCancel.price || 0;
       const itemTotal = itemPrice * itemToCancel.quantity;
 
@@ -298,7 +297,7 @@ const cancelIndividualItem = async (req, res) => {
 
       const refundAmount = itemTotal + proportionalDeliveryCharge + proportionalTax;
 
-      // Create wallet entry for refund
+     
       await new Wallet({
         userId: userId,
         transactionId: `ADMIN-ITEM-REFUND-${Date.now()}`,
@@ -311,7 +310,7 @@ const cancelIndividualItem = async (req, res) => {
         itemId: itemToCancel._id,
       }).save();
 
-      // Update user wallet
+    
       await User.findByIdAndUpdate(userId, {
         $inc: { wallet: refundAmount },
         $push: {
@@ -326,7 +325,7 @@ const cancelIndividualItem = async (req, res) => {
       });
     }
 
-    // Recalculate total amount excluding cancelled items
+    
     const totalAmount = order.orderItems
       .filter(item => item.currentStatus !== 'Cancelled')
       .reduce((sum, item) => {
@@ -336,7 +335,6 @@ const cancelIndividualItem = async (req, res) => {
     // Apply discount if any
     const finalAmount = order.discount ? totalAmount - order.discount : totalAmount;
     
-    // Update the order total amount
     order.totalAmount = finalAmount;
 
     // Check if all items are cancelled to update order status

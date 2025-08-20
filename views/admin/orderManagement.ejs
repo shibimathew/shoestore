@@ -36,6 +36,7 @@
         display: none;
         position: fixed;
         right: 18px;
+        top: 7px;
         z-index: 1100;
         background: #fff;
         border: none;
@@ -73,6 +74,39 @@
             user-select: none;
         }
     }
+     @media (max-width: 576px) {
+            .navbar-aside {
+                width: 280px;
+            }
+            
+            .mobile-logo img {
+                height: 28px;
+            }
+            
+            .pagination-area {
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .pagination {
+                font-size: 0.85rem;
+            }
+            
+            .pagination .page-link {
+                padding: 0.375rem 0.5rem;
+            }
+            
+            /* Search form mobile adjustments */
+            .search-form .d-flex .d-flex {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .search-form .btn {
+                width: 100%;
+                margin-bottom: 0.25rem;
+            }
+        }
     /* Center pagination and make it responsive */
     .pagination-area {
         display: flex;
@@ -97,11 +131,16 @@
     }
 </style>
 
-<button class="hamburger-btn" id="sidebarHamburger" aria-label="Toggle sidebar" aria-controls="offcanvas_aside" aria-expanded="false">
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-</button>
+ <div class="mobile-header">
+        <div class="mobile-logo">
+            <img src="/assets/imgs/theme/shoestore-logo.svg" alt="Shoestore">
+        </div>
+        <button class="hamburger-btn" id="sidebarHamburger" aria-label="Toggle sidebar" aria-controls="offcanvas_aside" aria-expanded="false">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </div>
 <div class="screen-overlay" id="sidebarOverlay"></div>
 
 <aside class="navbar-aside" id="offcanvas_aside">

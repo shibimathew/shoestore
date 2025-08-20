@@ -2,11 +2,13 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const userController = require("../controllers/user/userController.js");
+const shopController = require("../controllers/user/shopController.js");
 const profileController = require("../controllers/user/profileController");
 const productController = require("../controllers/user/productController.js");
 const { userAuth, adminAuth, blockedAuth } = require("../middleware/auth.js");
 const accountController = require("../controllers/user/accountController");
 const addressController = require("../controllers/user/addressController");
+const couponController = require("../controllers/user/couponController")
 const checkoutController = require("../controllers/user/checkoutController");
 const orderController = require("../controllers/user/orderController");
 const placeorderController = require("../controllers/user/placeorderController");
@@ -24,10 +26,10 @@ router.get("/home", userController.loadHomepage);
 router.get("/pageNotFound", userController.pageNotFound);
 
 // Shop routes
-router.get("/shop", userAuth, userController.loadShoppingPage);
-router.get("/filter", userAuth, userController.filterProduct);
-router.get("/filterPrice", userAuth, userController.filterByPrice);
-router.post("/search", userAuth, userController.searchProducts);
+router.get("/shop", userAuth, shopController.loadShoppingPage);
+router.get("/filter", userAuth, shopController.filterProduct);
+router.get("/filterPrice", userAuth, shopController.filterByPrice);
+router.post("/search", userAuth, shopController.searchProducts);
 
 // Product routes
 router.get("/productDetails", userAuth, productController.productDetails);
@@ -127,8 +129,8 @@ router.post(
   userAuth,
   checkoutController.createRazorpayOrder
 );
-router.get("/available-coupons", userAuth, checkoutController.getCoupon);
-router.post("/apply-coupon", userAuth, checkoutController.applyCoupon);
+router.get("/available-coupons", userAuth, couponController.getCoupon);
+router.post("/apply-coupon", userAuth, couponController.applyCoupon);
 router.get("/check-stock", userAuth, checkoutController.checkStockAvailability);
 
 router.get("/payment-failed", userAuth);

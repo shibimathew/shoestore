@@ -16,8 +16,10 @@ const loadCouponManagement = async (req, res) => {
         ],
       };
     }
+   
     const coupons = await Coupon.find(query).sort({ createdAt: -1 });
-    return res.render("admin/couponManagement", {
+    
+    return res.render("admin/couponManagement",{
       coupons,
       success: success || null,
       error: error || null,

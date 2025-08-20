@@ -199,9 +199,421 @@
     height: auto;
   }
 }
+/* Responsive design */
+@media (max-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    .sidebar {
+        width: 260px;
+    }
+}
+
+@media (max-width: 900px) {
+    .mobile-filter-btn {
+        display: flex;
+    }
+    
+    .shop-layout {
+        gap: 1.5rem;
+    }
+    
+    .sidebar {
+        width: 240px;
+        padding: 1.25rem;
+    }
+    
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+    .mobile-filter-btn {
+        padding: 14px 300px;
+        font-size: 15px;
+        margin-bottom: 1rem;
+    }
+    
+    .mobile-filter-btn .material-icons {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    .mobile-filter-btn {
+        display: flex;
+    }
+
+    .shop-layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 300px;
+        height: 100vh;
+        z-index: 1000;
+        overflow-y: auto;
+        transition: left 0.3s ease;
+        border-radius: 0;
+        padding: 2rem 1.5rem;
+        box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-close-btn {
+        display: flex;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .shop-header h1 {
+        font-size: 2rem;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .search-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-container {
+        padding: 10px;
+    }
+
+    .shop-header {
+        padding: 1.5rem;
+    }
+
+    .shop-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .product-card {
+        max-width: 320px;
+        margin: 0 auto;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+    }
+
+    .mobile-menu-toggle {
+        top: 15px;
+        left: 15px;
+        padding: 10px;
+    }
+
+    .mobile-menu-toggle .material-icons {
+        font-size: 20px;
+    }
+
+    .mobile-filter-btn {
+        padding: 10px 90px;
+        font-size: 13px;
+        margin-bottom: 0.75rem;
+    }
+
+    .mobile-filter-btn .material-icons {
+        font-size: 16px;
+    }
+
+    .sidebar {
+        width: 280px;
+        padding: 1.5rem 1rem;
+    }
+}
+
+/* Loading animation */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3BB77E;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    max-width: 300px;
+}
+
+.notification.success {
+    background: #28a745;
+}
+
+.notification.error {
+    background: #dc3545;
+}
+
+.notification.info {
+    background: #17a2b8;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+</style>
+
+<!-- Responsive Header for Mobile/Tablet (copied from home.ejs, adjusted for shop context) -->
+<style>
+/* General Reset */
+.header, .header-area, .header-middle, .header-bottom, .header-top, .header-wrap, .header-action-right, .header-action-2, .header-action-icon-2, .logo {
+    box-sizing: border-box;
+}
+/* Modern Flex Header */
+.responsive-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 1002;
+}
+.responsive-header .logo {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #222;
+    letter-spacing: 1px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+.responsive-header .logo img {
+    height: 36px;
+    margin-right: 8px;
+}
+.responsive-header .header-icons {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+.responsive-header .header-icons a {
+    display: flex;
+    align-items: center;
+    position: relative;
+    color: #222;
+    transition: color 0.2s;
+    font-size: 1.3rem;
+}
+.responsive-header .header-icons a .wishlist-heart.red {
+    color: #ff3b3b !important;
+}
+.responsive-header .header-icons a .wishlist-heart {
+    transition: color 0.2s;
+}
+.responsive-header .header-icons a:hover {
+    color: #007bff;
+}
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    cursor: pointer;
+    align-items: center;
+    z-index: 1101;
+    margin-left: 0.5rem;
+}
+.hamburger span {
+    display: block;
+    width: 22px;
+    height: 3px;
+    background: #222;
+    margin: 3px 0;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.25);
+    z-index: 1199;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 240px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+    z-index: 1200;
+    transition: left 0.3s;
+    padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.mobile-menu.active {
+    left: 0;
+    display: flex;
+}
+.mobile-menu .menu-link {
+    font-size: 1.15rem;
+    color: #222;
+    text-decoration: none;
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.mobile-menu .menu-link.active,
+.mobile-menu .menu-link:hover {
+    color: #007bff;
+}
+.mobile-menu .close-menu {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #222;
+    cursor: pointer;
+}
+@media (max-width: 991px) {
+    .header-area, .header-middle, .header-bottom, .header-top {
+        display: none !important;
+    }
+    .responsive-header {
+        display: flex;
+    }
+    .hamburger {
+        display: flex;
+    }
+    .mobile-menu {
+        display: flex;
+    }
+}
+@media (min-width: 992px) {
+    .responsive-header, .mobile-menu, .menu-overlay {
+        display: none !important;
+    }
+    .responsive-header .logo {
+        margin-left: auto;
+        margin-right: 0;
+    }
+}
 </style>
     
-    
+    <div class="responsive-header">
+    <a href="/home" class="logo">
+        <img src="/assets/imgs/theme/shoestore-logo.svg" alt="ShoeStore" onerror="this.style.display='none';">
+    </a>
+    <div class="header-icons">
+        <a href="/wishlist" title="Wishlist"><i class="fi-rs-heart wishlist-heart"></i></a>
+        <a href="/cart" title="Cart"><i class="fi-rs-shopping-cart"></i></a>
+        <button class="hamburger" id="mobileMenuToggle" aria-label="Open menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+<nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
+    <button class="close-menu" id="closeMobileMenu" aria-label="Close menu">&times;</button>
+    <a href="/home" class="menu-link">Home</a>
+    <a href="/shop" class="menu-link">Shop</a>
+    <a href="/cart" class="menu-link">Cart</a>
+    <a href="/profileinfo" class="menu-link">Profile</a>
+    <a href="/logout" class="menu-link">Logout</a>
+</nav>
+<script>
+// Mobile menu toggle
+(function() {
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const closeMenuBtn = document.getElementById('closeMobileMenu');
+    function openMenu() {
+        mobileMenu.classList.add('active');
+        menuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+        mobileMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    menuToggle.addEventListener('click', openMenu);
+    closeMenuBtn.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) closeMenu();
+    });
+})();
+</script>
 
     <header class="header-area header-style-1 header-height-2">
         <div class="header-top header-top-ptb-1 d-none d-lg-block">
@@ -222,19 +634,18 @@
                         <div class="header-info header-info-right">
                             <ul>
                                 <li>
-                                    <a class="language-dropdown-active" href="#"> <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i></a>
+                                    <!-- <a class="language-dropdown-active" href="#"> <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i></a>
                                     <ul class="language-dropdown">
                                         <li><a href="#"><img src="assets/imgs/theme/flag-fr.png" alt="">Français</a></li>
                                         <li><a href="#"><img src="assets/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                        <li><a href="#"><img src="assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
-                                    </ul>
+                                        <li><a href="#"><img src="assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li> -->
+                                    <!-- </ul> -->
                                     <% if (locals.user) { %>
                                         <li class="dropdown">
                                             <a href="#" class="sign-in-link"><%= locals.user.name %></a>
                                             <ul class="dropdown-content">
-                                                <li><a href="/userProfile">Profile</a></li>
-                                                <li><a href="/orders">Orders</a></li>
-                                                <!-- <li><a href="/wishlist">Wishlist</a></li> -->
+                                                <li><a href="/profileinfo">Profile</a></li>
+                                            
                                                 <li><a href="/logout">Logout</a></li>
                                             </ul>
                                         </li>
@@ -346,7 +757,7 @@
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
+                    <a href="/home" rel="nofollow">Home</a>
                     <span></span> style
                     <span></span> shoe
                 </div>

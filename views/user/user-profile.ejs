@@ -204,6 +204,12 @@ var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'fals
     <a href="/home" class="menu-link <%= (typeof page !== 'undefined' && page === 'home') ? 'active' : '' %>">Home</a>
     <a href="/shop" class="menu-link <%= (typeof page !== 'undefined' && page === 'shop') ? 'active' : '' %>">Shop</a>
     <a href="/profileinfo" class="menu-link <%= (typeof page !== 'undefined' && page === 'profile') ? 'active' : '' %>">Profile</a>
+
+    <a href="/myorders" class="menu-link <%= (typeof page !== 'undefined' && page === 'myorders') ? 'active' : '' %>">Orders</a>
+<a href="/myAddresses" class="menu-link <%= (typeof page !== 'undefined' && page === 'myAddresses') ? 'active' : '' %>">Address</a>
+<a href="/wishlist" class="menu-link <%= (typeof page !== 'undefined' && page === 'wishlist') ? 'active' : '' %>">Wishlist</a>
+<a href="/wallet" class="menu-link <%= (typeof page !== 'undefined' && page === 'wallet') ? 'active' : '' %>">Wallet</a>
+<a href="/security" class="menu-link <%= (typeof page !== 'undefined' && page === 'security') ? 'active' : '' %>">security</a>
     <a href="/logout" class="menu-link <%= (typeof page !== 'undefined' && page === 'logout') ? 'active' : '' %>">Logout</a>
 </nav>
 
@@ -692,14 +698,7 @@ var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'fals
                     <div class="header-info header-info-right">
                         <ul>
                             <li>
-                                <a class="language-dropdown-active" href="#"> 
-                                    <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
-                                </a>
-                                <ul class="language-dropdown">
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
-                                </ul>
+                                
                             </li>
                             <% if (typeof user !== 'undefined' && user) { %>
                                 <div class="dropdown">
@@ -722,8 +721,12 @@ var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'fals
         <div class="container">
             <div class="header-wrap">
                 <div class="logo logo-width-1">
-                   <!-- <img src="/assets/imgs/theme/shoestore-logo.svg" alt="logo"> -->
-                </div>
+    <a href="/">
+        <img src="/assets/imgs/theme/shoestore-logo.svg" 
+             alt="ShoeStore Logo" 
+             onerror="this.parentElement.innerHTML='<span class=\'logo-text\'>ShoeStore</span>';">
+    </a>
+</div>
                 <div class="header-right">
                     <div class="search-style-2">
                         <!-- <form action="/search" method="get">
@@ -734,13 +737,13 @@ var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'fals
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
                                 <a href="/wishlist">
-                                    <img class="svgInject" alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg">
+                                        <i class="fi-rs-heart wishlist-heart"></i>
                                     <!-- <span class="pro-count blue">0</span> -->
                                 </a>
                             </div>
                             <div class="header-action-icon-2">
                                 <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg">
+                                  <i class="fi-rs-shopping-cart"></i>
                                     <!-- <span class="pro-count blue">0</span> -->
                                 </a>
                             </div>
@@ -814,9 +817,9 @@ var isUserLoggedIn = "<%= (typeof user !== 'undefined' && user) ? 'true' : 'fals
 
 <main class="main">
     <!-- Sidebar Toggle Button -->
-    <button class="sidebar-toggle" id="sidebarToggle">
+    <!-- <button class="sidebar-toggle" id="sidebarToggle">
         <div class="hamburger"></div>
-    </button>
+    </button> -->
     
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>

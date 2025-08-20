@@ -1,41 +1,8 @@
-const User = require("../../models/userSchema");
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
 const Order = require("../../models/orderSchema");
 const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
-const moment = require("moment");
 
-const pageerror = async (req, res) => {
-  res.render("admin/pageerror");
-};
 
-const loadLogin = (req, res) => {
-  if (req.session.admin) {
-    return res.redirect("/admin/dashboard");
-  }
-  res.render("admin/login", { message: null });
-};
-
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const admin = await User.findOne({ email, isAdmin: true });
-
-    if (admin) {
-      const passwordMatch = await bcrypt.compare(password, admin.password);
-      if (passwordMatch) {
-        req.session.admin = admin;
-        return res.redirect("/admin/dashboard");
-      }
-    } else {
-      return res.redirect("/login");
-    }
-  } catch (error) {
-    console.log("Login error:", error);
-    return res.redirect("/admin/pageerror");
-  }
-};
 
 const getDateRanges = () => {
   const now = new Date();
@@ -503,20 +470,7 @@ const loadDashboard = async (req, res) => {
     res.redirect("/admin/login");
   }
 };
-const logout = async (req, res) => {
-  try {
-    req.session.destroy((err) => {
-      if (err) {
-        console.log("Error destroying session ", err);
-        return res.redirect("/pageerror");
-      }
-      res.redirect("/admin/login");
-    });
-  } catch (error) {
-    console.log("unexpected error during logout", error);
-    res.redirect("/pageerror");
-  }
-};
+
 
 const getBestSellingCategories = async (req, res) => {
   try {
@@ -550,10 +504,10 @@ const getBestSellingCategories = async (req, res) => {
       { $limit: 5 }, // Top 5 categories
     ]);
     res.json({ success: true, bestSellingCategories: result });
-  } catch (err) {
-    res
-      .status(500)
+  } catch (error) {
+    res.status(500)
       .json({
+        error : error,
         success: false,
         message: "Error fetching best selling categories",
       });
@@ -720,41 +674,11 @@ const getDashboardDateRange = async (req, res) => {
   }
 };
 
-// Add a test endpoint to check monthly data
-const testMonthlyData = async (req, res) => {
-  try {
-    const dateRanges = getDateRanges();
-    
-    const monthlyCategoryData = await getBestSellingCategoriesForPeriod(
-      dateRanges.monthly.start,
-      dateRanges.monthly.end
-    );
-    
-    const monthlyTopProducts = await getTopProductsForPeriod(
-      dateRanges.monthly.start,
-      dateRanges.monthly.end
-    );
-    
-    res.json({
-      monthlyCategoryData,
-      monthlyTopProducts,
-      dateRange: {
-        start: dateRanges.monthly.start,
-        end: dateRanges.monthly.end
-      }
-    });
-  } catch (error) {
-    console.error("Error testing monthly data:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
+
+
 
 module.exports = {
-  loadLogin,
-  login,
   loadDashboard,
-  pageerror,
-  logout,
   getBestSellingCategories,
   getDashboardDateRange,
   getDateRangeStats,

@@ -34,8 +34,7 @@ const getMyWalletPage = async (req, res, next) => {
       }
     });
 
-    console.log("User wallet balance:", balance);
-    console.log("Calculated from transactions:", calculatedBalance);
+    
     
     // If there's a mismatch, you might want to sync them
     if (Math.abs(balance - calculatedBalance) > 0.01) {
